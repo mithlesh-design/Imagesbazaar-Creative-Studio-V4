@@ -1,0 +1,87 @@
+/* Sits clear of the editor's floating prompt dock on small screens, where the
+   dock spans nearly the full width. */
+.support {
+  position: fixed;
+  right: var(--space-4);
+  bottom: calc(var(--space-4) + 64px);
+  z-index: var(--z-support);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-3);
+}
+
+.support__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-pill);
+  background: var(--color-accent);
+  color: var(--color-white);
+  box-shadow: var(--shadow-md);
+  transition: transform var(--dur-base) var(--ease),
+    background-color var(--dur-base) var(--ease);
+}
+
+.support__button:hover {
+  transform: scale(1.06);
+  background: var(--color-accent-hover);
+}
+
+.support__card {
+  width: min(78vw, 268px);
+  padding: var(--space-4);
+  background: var(--color-white);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  animation: support-in var(--dur-slow) var(--ease);
+}
+
+.support__title {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.support__text {
+  margin-top: var(--space-1);
+  font-size: 14px;
+  color: var(--color-text-secondary);
+}
+
+.support__link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  margin-top: var(--space-2);
+  font-size: 14px;
+  font-weight: 600;
+  border-bottom: 1px solid currentColor;
+}
+
+@keyframes support-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+@media (min-width: 600px) {
+  .support {
+    bottom: var(--space-4);
+  }
+}
+
+@media (min-width: 1024px) {
+  .support {
+    right: 20px;
+    bottom: 20px;
+  }
+
+  .support__button {
+    width: 52px;
+    height: 52px;
+  }
+}

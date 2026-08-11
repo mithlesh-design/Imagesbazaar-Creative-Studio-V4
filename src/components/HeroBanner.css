@@ -1,0 +1,110 @@
+.hero {
+  margin-top: var(--space-5);
+}
+
+.hero__frame {
+  position: relative;
+  margin-inline: var(--space-2);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.hero__img {
+  width: 100%;
+  /* height:auto is required — without it the `height` attribute on the <img>
+     wins and CSS aspect-ratio is ignored. */
+  height: auto;
+  /* Taller crop on mobile so the subjects stay legible (DESIGN.md §14). */
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  object-position: 28% center;
+  background: var(--color-surface-secondary);
+}
+
+/* ---------- Promo ---------- */
+.hero__promo {
+  padding: var(--space-4);
+  background: var(--color-black);
+  color: var(--color-white);
+}
+
+.hero__promo-figure {
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+
+.hero__promo-label {
+  margin-top: 2px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.76);
+}
+
+.hero__promo-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 44px;
+  margin-top: var(--space-1);
+  font-size: 15px;
+  font-weight: 600;
+  transition: gap var(--dur-base) var(--ease);
+}
+
+.hero__promo-cta:hover {
+  gap: var(--space-3);
+}
+
+@media (min-width: 640px) {
+  .hero__img {
+    aspect-ratio: 21 / 9;
+  }
+}
+
+/* ---------- Desktop: overlay inside the photograph ---------- */
+@media (min-width: 1024px) {
+  .hero {
+    margin-top: var(--space-6);
+  }
+
+  .hero__frame {
+    margin-inline: 10px;
+  }
+
+  .hero__img {
+    aspect-ratio: 3 / 1;
+    object-position: center;
+  }
+
+  .hero__promo {
+    position: absolute;
+    top: 50%;
+    right: clamp(var(--space-6), 6vw, var(--space-12));
+    transform: translateY(-50%);
+    padding: var(--space-6) var(--space-7);
+    background: var(--color-overlay);
+    border-radius: 28px;
+  }
+
+  .hero__promo-figure {
+    font-size: 52px;
+  }
+
+  .hero__promo-label {
+    font-size: 14px;
+  }
+}
+
+@media (min-width: 1440px) {
+  .hero__promo {
+    padding: 42px var(--space-11);
+  }
+
+  .hero__promo-figure {
+    font-size: 60px;
+  }
+}

@@ -1,0 +1,182 @@
+.stage {
+  position: relative;
+  display: grid;
+  place-items: center;
+  /* Room for the floating dock to sit over the lower edge without covering
+     the picture. */
+  min-height: 420px;
+  /* Top padding clears the filename pill so it never sits over the photo. */
+  padding: var(--space-7) var(--space-4) var(--space-12);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  transition: background-color var(--dur-base) var(--ease),
+    outline-color var(--dur-base) var(--ease);
+  outline: 2px dashed transparent;
+  outline-offset: -8px;
+}
+
+.stage.is-dragging {
+  background: var(--color-surface-secondary);
+  outline-color: var(--color-black);
+}
+
+.stage__canvas {
+  max-width: 100%;
+  /* Keeps the whole picture visible alongside the dock on short viewports. */
+  max-height: min(58vh, 560px);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-md);
+  background: var(--color-white);
+}
+
+/* ---------- Empty ---------- */
+.stage__empty {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-2);
+  max-width: 420px;
+  padding: var(--space-6) var(--space-4);
+  text-align: center;
+}
+
+.stage__empty-icon {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  margin-bottom: var(--space-2);
+  border-radius: var(--radius-pill);
+  background: var(--color-white);
+  color: var(--color-text-muted);
+}
+
+.stage__empty-title {
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.stage__empty-sub {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+}
+
+.stage__empty-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}
+
+.stage__cta,
+.stage__ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 44px;
+  padding: 0 var(--space-5);
+  border-radius: var(--radius-pill);
+  font-size: 14px;
+  font-weight: 600;
+  transition: background-color var(--dur-base) var(--ease),
+    border-color var(--dur-base) var(--ease);
+}
+
+.stage__cta {
+  background: var(--color-accent);
+  color: var(--color-white);
+}
+
+.stage__cta:hover {
+  background: var(--color-accent-hover);
+}
+
+.stage__ghost {
+  border: 1px solid var(--color-border);
+  background: var(--color-white);
+}
+
+.stage__ghost:hover {
+  border-color: var(--color-black);
+}
+
+/* ---------- Overlays ---------- */
+.stage__loading {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+
+.stage__spin {
+  animation: stage-spin 900ms linear infinite;
+}
+
+@keyframes stage-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.stage__meta {
+  position: absolute;
+  top: var(--space-2);
+  left: var(--space-3);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  max-width: calc(100% - var(--space-8));
+  padding: 5px 6px 5px 12px;
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid var(--color-border-light);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.stage__name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.stage__meta button {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  border-radius: var(--radius-pill);
+  color: var(--color-text-secondary);
+  transition: background-color var(--dur-fast) var(--ease);
+}
+
+.stage__meta button:hover {
+  background: var(--color-surface-secondary);
+  color: var(--color-text-primary);
+}
+
+.stage__error {
+  position: absolute;
+  bottom: var(--space-3);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-pill);
+  background: var(--color-error);
+  color: var(--color-white);
+  font-size: 13px;
+}
+
+@media (min-width: 1024px) {
+  .stage {
+    min-height: 520px;
+    padding: var(--space-8) var(--space-6) var(--space-13);
+  }
+
+  .stage__meta {
+    top: var(--space-3);
+  }
+}

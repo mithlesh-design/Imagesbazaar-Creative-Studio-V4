@@ -1,0 +1,43 @@
+.ce {
+  padding-top: var(--space-6);
+}
+
+.ce__inner {
+  width: 100%;
+  max-width: 1200px;
+  margin-inline: auto;
+  padding-inline: var(--page-pad);
+}
+
+.ce__head {
+  margin-bottom: var(--space-4);
+  text-align: center;
+}
+
+.ce__title {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.ce__sub {
+  margin-top: 2px;
+  font-size: 14px;
+  color: var(--color-text-secondary);
+}
+
+/* The stage is the positioning context for the floating dock. */
+.ce__work {
+  position: relative;
+  margin-top: var(--space-3);
+}
+
+@media (min-width: 1024px) {
+  .ce {
+    padding-top: var(--space-8);
+  }
+
+  .ce__title {
+    font-size: 24px;
+  }
+}

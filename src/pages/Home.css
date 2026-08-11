@@ -1,0 +1,15 @@
+.home__search {
+  padding-top: var(--space-6);
+}
+
+@media (min-width: 640px) {
+  .home__search {
+    padding-top: var(--space-8);
+  }
+}
+
+@media (min-width: 1024px) {
+  .home__search {
+    padding-top: var(--space-9);
+  }
+}

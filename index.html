@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/brand/imagesbazaar-logo.svg" />
+
+    <title>ImagesBazaar — The largest collection of Indian images</title>
+    <meta
+      name="description"
+      content="Search over 100,000 authentic Indian photographs — families, festivals, business, rural life and culture, shot across India."
+    />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Hero is the LCP element: preload the size the browser will actually pick. -->
+    <link
+      rel="preload"
+      as="image"
+      href="/images/hero/hero-1600.webp"
+      imagesrcset="/images/hero/hero-960.webp 960w, /images/hero/hero-1600.webp 1600w, /images/hero/hero-2400.webp 2400w"
+      imagesizes="100vw"
+      fetchpriority="high"
+    />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

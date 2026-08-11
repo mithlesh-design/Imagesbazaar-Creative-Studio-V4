@@ -1,0 +1,235 @@
+.tb {
+  position: relative;
+  z-index: 2;
+}
+
+.tb__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-white);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-pill);
+}
+
+/* ---------- Ratios ---------- */
+.tb__ratios,
+.tb__tools {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.tb__ratio {
+  min-height: 36px;
+  padding: 0 12px;
+  border-radius: var(--radius-pill);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  transition: background-color var(--dur-base) var(--ease),
+    color var(--dur-base) var(--ease);
+}
+
+.tb__ratio:hover:not(:disabled) {
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+}
+
+.tb__ratio.is-active {
+  background: var(--color-black);
+  color: var(--color-white);
+}
+
+/* ---------- Tools ---------- */
+.tb__tool,
+.tb__reset {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 0 12px;
+  border-radius: var(--radius-pill);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  transition: background-color var(--dur-base) var(--ease),
+    color var(--dur-base) var(--ease);
+}
+
+.tb__tool:hover:not(:disabled),
+.tb__reset:hover:not(:disabled) {
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+}
+
+.tb__tool.is-active {
+  background: var(--color-black);
+  color: var(--color-white);
+}
+
+.tb__tool:disabled,
+.tb__reset:disabled,
+.tb__ratio:disabled,
+.tb__download:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.tb__divider {
+  width: 1px;
+  height: 22px;
+  margin-inline: 4px;
+  background: var(--color-border-light);
+}
+
+.tb__download {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 38px;
+  padding: 0 16px;
+  border-radius: var(--radius-pill);
+  background: var(--color-accent);
+  color: var(--color-white);
+  font-size: 13px;
+  font-weight: 600;
+  transition: background-color var(--dur-base) var(--ease);
+}
+
+.tb__download:hover:not(:disabled) {
+  background: var(--color-accent-hover);
+}
+
+/* ---------- Popover ---------- */
+.tb__pop {
+  position: absolute;
+  top: calc(100% + var(--space-2));
+  right: 0;
+  z-index: 5;
+  display: grid;
+  gap: var(--space-3);
+  width: min(92vw, 340px);
+  padding: var(--space-4);
+  background: var(--color-white);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  animation: tb-pop var(--dur-base) var(--ease);
+}
+
+@keyframes tb-pop {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+
+.tb__slider {
+  display: grid;
+  gap: 6px;
+}
+
+.tb__slider-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.tb__slider-top output {
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+
+.tb__slider input[type='range'] {
+  width: 100%;
+  height: 22px;
+  accent-color: var(--color-black);
+  cursor: pointer;
+}
+
+.tb__presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.tb__preset {
+  min-height: 36px;
+  padding: 0 12px;
+  border: 1px solid var(--color-chip-border);
+  border-radius: var(--radius-pill);
+  font-size: 13px;
+  font-weight: 500;
+  transition: background-color var(--dur-base) var(--ease),
+    color var(--dur-base) var(--ease), border-color var(--dur-base) var(--ease);
+}
+
+.tb__preset:hover {
+  border-color: var(--color-black);
+}
+
+.tb__preset.is-active {
+  background: var(--color-black);
+  border-color: var(--color-black);
+  color: var(--color-white);
+}
+
+.tb__actions {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.tb__action {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 0 var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  font-size: 14px;
+  font-weight: 600;
+  transition: border-color var(--dur-base) var(--ease),
+    background-color var(--dur-base) var(--ease);
+}
+
+.tb__action:hover {
+  border-color: var(--color-black);
+  background: var(--color-surface);
+}
+
+.tb__hint {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--color-text-muted);
+}
+
+/* Labels collapse to icons on small screens to keep one clean row. */
+@media (max-width: 899px) {
+  .tb__tool-label {
+    display: none;
+  }
+}
+
+@media (max-width: 599px) {
+  .tb__row {
+    border-radius: var(--radius-md);
+  }
+
+  .tb__pop {
+    left: 0;
+    right: 0;
+    width: auto;
+  }
+}

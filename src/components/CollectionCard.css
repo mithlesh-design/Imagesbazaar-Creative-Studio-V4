@@ -1,0 +1,62 @@
+.card {
+  min-width: 0;
+}
+
+.card__button {
+  position: relative;
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-secondary);
+}
+
+.card__media {
+  display: block;
+  overflow: hidden;
+}
+
+.card__img {
+  width: 100%;
+  /* See HeroBanner.css — height:auto lets aspect-ratio beat the height attr. */
+  height: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  transition: transform var(--dur-slow) var(--ease);
+}
+
+/* Title sits on a gradient scrim so it stays readable without hiding the
+   photograph (DESIGN.md §8). */
+.card__title {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  padding: var(--space-6) var(--space-3) var(--space-3);
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.72), rgba(0, 0, 0, 0));
+  color: var(--color-white);
+  font-size: 13px;
+  font-weight: 600;
+  text-align: left;
+  line-height: 1.3;
+}
+
+@media (min-width: 640px) {
+  .card__title {
+    font-size: 14px;
+    padding-inline: var(--space-4);
+  }
+}
+
+@media (min-width: 1024px) {
+  .card__title {
+    font-size: 15px;
+  }
+
+  /* Hover effects only where there's a real pointer. */
+  @media (hover: hover) and (pointer: fine) {
+    .card__button:hover .card__img,
+    .card__button:focus-visible .card__img {
+      transform: scale(1.03);
+    }
+  }
+}

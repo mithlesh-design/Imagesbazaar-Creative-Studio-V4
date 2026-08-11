@@ -1,0 +1,123 @@
+.menu {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-modal);
+}
+
+.menu__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.42);
+  animation: menu-fade var(--dur-base) var(--ease);
+}
+
+.menu__panel {
+  position: absolute;
+  inset-block: 0;
+  left: 0;
+  width: min(86vw, 360px);
+  display: flex;
+  flex-direction: column;
+  background: var(--color-white);
+  box-shadow: var(--shadow-lg);
+  animation: menu-slide var(--dur-slow) var(--ease);
+  overflow-y: auto;
+}
+
+.menu__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  height: var(--header-h);
+  padding-inline: var(--space-4);
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.menu__title {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.menu__close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  margin-right: calc(-1 * var(--space-3));
+  border-radius: var(--radius-pill);
+  transition: background-color var(--dur-base) var(--ease);
+}
+
+.menu__close:hover {
+  background: var(--color-surface);
+}
+
+.menu__list {
+  padding: var(--space-2) 0;
+}
+
+.menu__item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: 48px;
+  padding: var(--space-3) var(--space-4);
+  text-align: left;
+  font-size: 16px;
+  font-weight: 500;
+  transition: background-color var(--dur-fast) var(--ease);
+}
+
+.menu__item:hover {
+  background: var(--color-surface);
+}
+
+.menu__foot {
+  margin-top: auto;
+  padding: var(--space-4);
+  border-top: 1px solid var(--color-border-light);
+  display: grid;
+  gap: var(--space-3);
+}
+
+.menu__item--plain {
+  padding-inline: 0;
+}
+
+.menu__signin {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  border-radius: var(--radius-pill);
+  background: var(--color-accent);
+  color: var(--color-white);
+  font-weight: 600;
+  transition: background-color var(--dur-base) var(--ease);
+}
+
+.menu__signin:hover {
+  background: var(--color-accent-hover);
+}
+
+@keyframes menu-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes menu-slide {
+  from {
+    transform: translateX(-100%);
+  }
+}
+
+@media (min-width: 1024px) {
+  /* Categories live in the drawer at every width, but the panel reads better
+     centred once there is room. */
+  .menu__panel {
+    width: 380px;
+  }
+}
