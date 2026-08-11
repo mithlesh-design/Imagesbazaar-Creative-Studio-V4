@@ -1,0 +1,281 @@
+/**
+ * Pinned to the foot of the stage.
+ *
+ * The editor is a fixed height that never scrolls, so "always visible at the
+ * bottom" is simply the stage's second grid row — no sticky, no absolute
+ * positioning, and no chance of it drifting over the picture. The row's own
+ * padding is the spacing above and below it.
+ */
+.dock {
+  display: grid;
+  justify-self: center;
+  gap: 6px;
+  width: min(680px, calc(100% - var(--space-6)));
+  min-width: 0;
+  padding-bottom: var(--space-4);
+}
+
+/* ---------- The bar ---------- */
+.dock__bar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+  padding: 4px 4px 4px 6px;
+  border: 1px solid var(--studio-border);
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.97);
+  backdrop-filter: blur(10px);
+  box-shadow: var(--shadow-lg);
+}
+
+.dock__attach {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.dock__icon {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-pill);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
+}
+
+.dock__icon:hover,
+.dock__icon.is-active {
+  background: var(--studio-surface);
+  color: var(--color-text-primary);
+}
+
+.dock__count {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  flex-shrink: 0;
+  max-width: 150px;
+  height: 26px;
+  padding: 0 7px 0 10px;
+  border-radius: var(--radius-pill);
+  background: var(--studio-accent-soft);
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--studio-accent);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease);
+}
+
+.dock__count:hover {
+  background: var(--studio-track);
+}
+
+.dock__input {
+  flex: 1;
+  min-width: 0;
+  height: 34px;
+  border: 0;
+  background: transparent;
+  font-size: 13.5px;
+  color: var(--color-text-primary);
+}
+
+.dock__input::placeholder {
+  color: var(--color-text-muted);
+}
+
+.dock__input:focus {
+  outline: none;
+}
+
+.dock__send {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  border-radius: var(--radius-pill);
+  background: var(--color-accent);
+  color: var(--color-white);
+  cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease);
+}
+
+.dock__send:hover:not(:disabled) {
+  background: var(--color-accent-hover);
+}
+
+.dock__send:disabled {
+  background: var(--studio-track);
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+}
+
+.dock__spin {
+  animation: dock-spin 900ms linear infinite;
+}
+
+@keyframes dock-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ---------- Reference menu ---------- */
+.dock__menu {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 0;
+  display: grid;
+  gap: 2px;
+  min-width: 176px;
+  padding: 6px;
+  border: 1px solid var(--studio-border);
+  border-radius: var(--radius-md);
+  background: var(--color-white);
+  box-shadow: var(--shadow-lg);
+}
+
+.dock__menu button {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  min-height: 36px;
+  padding-inline: var(--space-3);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease);
+}
+
+.dock__menu button:hover {
+  background: var(--studio-hover);
+}
+
+/* ---------- Reference chips ---------- */
+.dock__chips {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 5px;
+}
+
+.dock__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  max-width: 200px;
+  padding: 3px 3px 3px 9px;
+  border: 1px solid var(--studio-border);
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: var(--shadow-sm);
+  font-size: 11.5px;
+  font-weight: 600;
+}
+
+.dock__chip-name {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.dock__chip button {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  border-radius: var(--radius-pill);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease);
+}
+
+.dock__chip button:hover {
+  background: var(--studio-surface);
+  color: var(--color-text-primary);
+}
+
+/* ---------- Notice ---------- */
+.dock__notice {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--studio-border);
+  border-radius: var(--radius-md);
+  background: var(--color-white);
+  box-shadow: var(--shadow-md);
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+}
+
+.dock__notice svg:first-child {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--studio-accent);
+}
+
+.dock__notice button {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: var(--radius-sm);
+  color: var(--color-text-muted);
+  cursor: pointer;
+}
+
+.dock__notice button:hover {
+  background: var(--studio-surface);
+}
+
+@media (max-width: 767px) {
+  .dock {
+    width: calc(100% - var(--space-4));
+    padding-bottom: var(--space-3);
+  }
+}
+
+@media (pointer: coarse), (max-width: 767px) {
+  .dock__icon,
+  .dock__send {
+    width: 44px;
+    height: 44px;
+  }
+
+  .dock__input {
+    height: 44px;
+  }
+
+  .dock__count {
+    height: 34px;
+  }
+
+  .dock__chip button::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 44px;
+    height: 44px;
+    transform: translate(-50%, -50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dock__spin {
+    animation-duration: 2s;
+  }
+}

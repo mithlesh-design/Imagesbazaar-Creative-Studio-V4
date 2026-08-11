@@ -1,27 +1,44 @@
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import Header from '../components/Header'
 import MobileMenu from '../components/MobileMenu'
 import SearchBar from '../components/SearchBar'
 import ImageSearchModal from '../components/ImageSearchModal'
-import CreativeEditor from '../components/editor/CreativeEditor'
 import HeroBanner from '../components/HeroBanner'
 import CollectionGrid from '../components/CollectionGrid'
 import AboutSection from '../components/AboutSection'
 import PopularSearches from '../components/PopularSearches'
 import Footer from '../components/Footer'
 import SupportButton from '../components/SupportButton'
+import CreativeStudio from '../studio/CreativeStudio'
+import { useStudioActions } from '../studio/StudioProvider'
 import { useSearch } from '../hooks/useSearch'
-import { useImageEditor } from '../hooks/useImageEditor'
 import './Home.css'
 
 export default function Home() {
   const search = useSearch()
-  const editor = useImageEditor()
+  const studio = useStudioActions()
   const [menuOpen, setMenuOpen] = useState(false)
   const [imageSearchOpen, setImageSearchOpen] = useState(false)
+  const [studioInView, setStudioInView] = useState(false)
 
   const inputRef = useRef(null)
-  const editorRef = useRef(null)
+  const studioRef = useRef(null)
+
+  /**
+   * The studio's prompt dock is sticky to the bottom of the viewport, and the
+   * support button is fixed there too — on a phone they would sit on top of one
+   * another. The support button stands down while the studio is on screen.
+   */
+  useEffect(() => {
+    const node = studioRef.current
+    if (!node) return
+    const io = new IntersectionObserver(
+      ([entry]) => setStudioInView(entry.isIntersecting),
+      { rootMargin: '-25% 0px -25% 0px' }
+    )
+    io.observe(node)
+    return () => io.disconnect()
+  }, [])
 
   /** Chips, menu items: fill the search field so image results surface. */
   const runSearch = useCallback(
@@ -39,23 +56,23 @@ export default function Home() {
 
   /**
    * The single entry point for "select an image" — used by both search results
-   * and collection cards. Loads the high-resolution variant into the editor
-   * and brings it into view.
+   * and collection cards. Loads the high-resolution variant and brings the
+   * studio into view.
    */
   const selectImage = useCallback(
     (collection) => {
       if (!collection) return
-      editor.loadFromSource({
+      studio.loadFromSource({
         url: collection.imageFull,
         name: `${collection.id}.jpg`,
         title: collection.title,
         alt: collection.alt,
       })
       requestAnimationFrame(() => {
-        editorRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        studioRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
       })
     },
-    [editor]
+    [studio]
   )
 
   const focusSearch = useCallback(() => {
@@ -91,7 +108,7 @@ export default function Home() {
           />
         </div>
 
-        <CreativeEditor ref={editorRef} editor={editor} onFocusSearch={focusSearch} />
+        <CreativeStudio ref={studioRef} onFocusSearch={focusSearch} />
 
         <HeroBanner />
         <CollectionGrid onSelect={selectImage} />
@@ -100,7 +117,7 @@ export default function Home() {
       </main>
 
       <Footer />
-      <SupportButton />
+      <SupportButton hidden={studioInView} />
 
       <ImageSearchModal
         open={imageSearchOpen}

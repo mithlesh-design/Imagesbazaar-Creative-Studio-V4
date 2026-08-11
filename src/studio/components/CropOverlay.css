@@ -1,0 +1,127 @@
+.crop {
+  position: absolute;
+  inset: 0;
+  touch-action: none;
+}
+
+/* One shadow paints the whole dimmed region — cheaper and crisper than four
+   positioned scrims, and it can never leave a seam. The clip keeps it inside
+   the picture instead of darkening the mat. */
+.crop__scrim-clip {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.crop__scrim {
+  position: absolute;
+  box-shadow: 0 0 0 9999px var(--studio-scrim);
+}
+
+.crop__box {
+  position: absolute;
+  outline: 1px solid rgba(255, 255, 255, 0.9);
+  cursor: move;
+}
+
+.crop__box:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 0;
+}
+
+/* Rule of thirds, revealed only while the frame is being manipulated. */
+.crop__grid {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--dur-fast) var(--ease);
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.55) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.55) 1px, transparent 1px);
+  background-size: 33.333% 33.333%;
+  background-position: 33.333% 33.333%;
+  background-repeat: repeat;
+}
+
+.crop__box.is-active .crop__grid,
+.crop__box:hover .crop__grid,
+.crop__box:focus-visible .crop__grid {
+  opacity: 1;
+}
+
+/* ---------- Handles ---------- */
+.crop__handle {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  border: 2px solid var(--color-white);
+  border-radius: 2px;
+  background: var(--color-accent);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+}
+
+.crop__handle:focus-visible {
+  outline: 2px solid var(--color-white);
+  outline-offset: 2px;
+}
+
+.crop__handle--nw { top: -8px; left: -8px; cursor: nwse-resize; }
+.crop__handle--ne { top: -8px; right: -8px; cursor: nesw-resize; }
+.crop__handle--se { bottom: -8px; right: -8px; cursor: nwse-resize; }
+.crop__handle--sw { bottom: -8px; left: -8px; cursor: nesw-resize; }
+
+.crop__handle--n { top: -8px; left: 50%; margin-left: -8px; cursor: ns-resize; }
+.crop__handle--s { bottom: -8px; left: 50%; margin-left: -8px; cursor: ns-resize; }
+.crop__handle--w { left: -8px; top: 50%; margin-top: -8px; cursor: ew-resize; }
+.crop__handle--e { right: -8px; top: 50%; margin-top: -8px; cursor: ew-resize; }
+
+.crop__size {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 0;
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  background: var(--color-accent);
+  color: var(--color-white);
+  font-size: 11px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--dur-fast) var(--ease);
+}
+
+.crop__box.is-active .crop__size,
+.crop__box:hover .crop__size,
+.crop__box:focus-visible .crop__size {
+  opacity: 1;
+}
+
+/* Bigger grab targets where there is no cursor to aim with. */
+@media (pointer: coarse) {
+  .crop__handle {
+    width: 22px;
+    height: 22px;
+  }
+
+  .crop__handle--nw, .crop__handle--ne { top: -11px; }
+  .crop__handle--se, .crop__handle--sw { bottom: -11px; }
+  .crop__handle--nw, .crop__handle--sw { left: -11px; }
+  .crop__handle--ne, .crop__handle--se { right: -11px; }
+  .crop__handle--n { top: -11px; margin-left: -11px; }
+  .crop__handle--s { bottom: -11px; margin-left: -11px; }
+  .crop__handle--w { left: -11px; margin-top: -11px; }
+  .crop__handle--e { right: -11px; margin-top: -11px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .crop__grid,
+  .crop__size {
+    transition: none;
+  }
+}

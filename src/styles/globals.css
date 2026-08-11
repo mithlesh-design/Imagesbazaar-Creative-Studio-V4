@@ -15,8 +15,12 @@ body,
 
 body {
   margin: 0;
-  /* Belt and braces against horizontal overflow on small screens. */
-  overflow-x: hidden;
+  /* Belt and braces against horizontal overflow on small screens.
+     `clip` rather than `hidden` deliberately: `hidden` computes the cross axis
+     to `auto`, which makes the body a scroll container and silently breaks
+     `position: sticky` anywhere inside it — including the studio's prompt dock.
+     `clip` gives the same guard without creating that container. */
+  overflow-x: clip;
   background: var(--color-background);
   color: var(--color-text-primary);
   font-family: var(--font-sans);

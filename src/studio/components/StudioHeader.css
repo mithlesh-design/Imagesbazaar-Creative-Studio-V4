@@ -1,0 +1,271 @@
+.shead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  height: var(--studio-header-h);
+  flex-shrink: 0;
+  padding-inline: var(--space-3);
+  border-bottom: 1px solid var(--studio-border);
+  background: var(--studio-chrome);
+}
+
+/* ---------- Identity ---------- */
+.shead__id {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.shead__title {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+
+.shead__sep {
+  width: 1px;
+  height: 16px;
+  background: var(--studio-border);
+}
+
+.shead__file {
+  min-width: 0;
+  overflow: hidden;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.shead__dims {
+  flex-shrink: 0;
+  font-size: 11.5px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.shead__edited {
+  flex-shrink: 0;
+  padding: 2px 7px;
+  border-radius: var(--radius-pill);
+  background: var(--studio-accent-soft);
+  color: var(--studio-accent);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+/* ---------- Actions ---------- */
+.shead__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+.shead__group {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  border-radius: var(--radius-md);
+  background: var(--studio-surface);
+}
+
+.shead__icon {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
+}
+
+.shead__icon:hover:not(:disabled) {
+  background: var(--color-white);
+  box-shadow: var(--shadow-sm);
+}
+
+.shead__icon:disabled {
+  color: var(--studio-text-disabled);
+  cursor: not-allowed;
+}
+
+.shead__level {
+  min-width: 46px;
+  height: 28px;
+  border-radius: var(--radius-sm);
+  font-size: 11.5px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease);
+}
+
+.shead__level:hover:not(:disabled) {
+  background: var(--color-white);
+}
+
+.shead__level:disabled {
+  color: var(--studio-text-disabled);
+  cursor: not-allowed;
+}
+
+.shead__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  padding-inline: var(--space-3);
+  border: 1px solid var(--studio-border);
+  border-radius: var(--radius-md);
+  background: var(--color-white);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease);
+}
+
+.shead__btn:hover:not(:disabled) {
+  border-color: var(--studio-border-strong);
+}
+
+.shead__btn.is-active {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--color-white);
+}
+
+.shead__btn:disabled {
+  color: var(--studio-text-disabled);
+  cursor: not-allowed;
+}
+
+.shead__btn--square {
+  width: 34px;
+  padding: 0;
+  justify-content: center;
+}
+
+.shead__download {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  padding-inline: var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--color-accent);
+  color: var(--color-white);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease);
+}
+
+.shead__download:hover:not(:disabled) {
+  background: var(--color-accent-hover);
+}
+
+.shead__download:disabled {
+  background: var(--studio-surface);
+  color: var(--studio-text-disabled);
+  cursor: not-allowed;
+}
+
+/* Shed labels before anything wraps. */
+@media (max-width: 1279px) {
+  .shead__btn span {
+    display: none;
+  }
+
+  .shead__btn {
+    width: 34px;
+    padding: 0;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 899px) {
+  .shead__dims,
+  .shead__file {
+    display: none;
+  }
+}
+
+@media (max-width: 639px) {
+  .shead {
+    padding-inline: var(--space-2);
+    gap: var(--space-2);
+  }
+
+  .shead__title {
+    font-size: 13px;
+  }
+
+  .shead__download span {
+    display: none;
+  }
+
+  .shead__download {
+    padding-inline: var(--space-3);
+  }
+}
+
+/* Where there is no cursor to aim, everything reaches 44px — and the strip
+   grows to pay for it rather than cramming. */
+@media (pointer: coarse), (max-width: 767px) {
+  /* At 44px targets the action cluster is ~412px wide — more than a phone has.
+     It wraps onto its own line rather than squeezing the filename to a single
+     letter, which is what clipping did. */
+  .shead {
+    height: auto;
+    min-height: 56px;
+    flex-wrap: wrap;
+    row-gap: 4px;
+    padding-block: 6px;
+  }
+
+  .shead__id {
+    width: 100%;
+  }
+
+  .shead__actions {
+    width: 100%;
+    min-width: 0;
+    /* Even on its own line the cluster is ~444px at 44px targets, so it wraps
+       again rather than pushing the document wider than the screen. */
+    flex-wrap: wrap;
+    row-gap: 4px;
+    justify-content: flex-start;
+  }
+
+  .shead__download {
+    margin-left: auto;
+  }
+
+  .shead__icon {
+    width: 44px;
+    height: 44px;
+  }
+
+  .shead__level {
+    min-width: 48px;
+    height: 44px;
+  }
+
+  .shead__btn,
+  .shead__btn--square,
+  .shead__download {
+    min-width: 44px;
+    height: 44px;
+  }
+}

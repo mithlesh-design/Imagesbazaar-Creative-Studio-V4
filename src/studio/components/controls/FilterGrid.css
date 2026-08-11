@@ -1,0 +1,56 @@
+.fgrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-2);
+}
+
+.fgrid__item {
+  display: grid;
+  justify-items: center;
+  gap: 5px;
+  padding: 5px 3px 6px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  background: transparent;
+  cursor: pointer;
+  transition: border-color var(--dur-fast) var(--ease), background-color var(--dur-fast) var(--ease);
+}
+
+.fgrid__item:hover:not(:disabled) {
+  background: var(--studio-hover);
+}
+
+.fgrid__item.is-active {
+  border-color: var(--color-accent);
+  background: var(--studio-accent-soft);
+}
+
+.fgrid__item:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.fgrid__thumb {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: var(--radius-sm);
+  background: var(--studio-surface);
+}
+
+.fgrid__thumb canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.fgrid__label {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.fgrid__item.is-active .fgrid__label {
+  color: var(--color-accent);
+}

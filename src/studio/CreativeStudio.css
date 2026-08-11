@@ -1,0 +1,82 @@
+.studio {
+  padding: var(--space-5) var(--page-pad);
+  /* So `scrollIntoView` leaves the gutter visible rather than butting the
+     editor against the top of the window. */
+  scroll-margin-top: var(--space-5);
+}
+
+/**
+ * One viewport, minus the gutter above and below. Everything inside is sized
+ * against this budget, so the editor never asks to be scrolled.
+ */
+.studio__frame {
+  display: flex;
+  flex-direction: column;
+  height: var(--studio-h);
+  min-height: 520px;
+  border: 1px solid var(--studio-border);
+  border-radius: var(--radius-md);
+  background: var(--studio-chrome);
+  /* No `overflow: hidden` — each column clips its own content, and hiding here
+     would make this the scrollport for anything sticky inside. */
+}
+
+.studio__body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+}
+
+.studio__frame > :last-child,
+.studio__body > :last-child {
+  border-bottom-right-radius: 5px;
+}
+
+.studio__body > :first-child {
+  border-bottom-left-radius: 5px;
+}
+
+/* ---------- Full screen: same DOM, different box ---------- */
+.studio.is-fullscreen {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-studio);
+  padding: var(--space-3);
+  background: var(--studio-bg);
+}
+
+.studio.is-fullscreen .studio__frame {
+  height: 100%;
+  min-height: 0;
+}
+
+@media (max-width: 767px) {
+  .studio {
+    padding: var(--space-3) var(--space-3);
+  }
+
+  .studio__frame {
+    /* Stacked columns need more room than a single viewport can give, so the
+       phone layout is allowed its own height rather than being crushed. */
+    height: auto;
+    min-height: 0;
+  }
+
+  .studio__body {
+    flex-direction: column;
+  }
+
+  /* Canvas first, then the controls beneath it. */
+  .studio__body > .sstage {
+    order: 1;
+  }
+
+  .studio__body > .tpanel {
+    order: 2;
+  }
+
+  .studio__body > .trail {
+    order: 3;
+  }
+}

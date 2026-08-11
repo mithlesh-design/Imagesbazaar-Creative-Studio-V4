@@ -1,0 +1,239 @@
+.sld {
+  display: grid;
+  gap: 7px;
+}
+
+.sld.is-disabled {
+  opacity: 0.5;
+}
+
+.sld__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.sld__label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  cursor: pointer;
+}
+
+.sld__value {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.sld__number {
+  width: 46px;
+  height: 24px;
+  padding: 0 4px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-size: 12.5px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  transition: border-color var(--dur-fast) var(--ease), background-color var(--dur-fast) var(--ease);
+}
+
+.sld__number:hover:not(:disabled) {
+  border-color: var(--studio-border);
+}
+
+.sld__number:focus {
+  border-color: var(--color-accent);
+  background: var(--color-white);
+  color: var(--color-text-primary);
+  outline: none;
+}
+
+/* Spinners steal width and nobody uses them on a slider read-out. */
+.sld__number::-webkit-outer-spin-button,
+.sld__number::-webkit-inner-spin-button {
+  appearance: none;
+  margin: 0;
+}
+
+.sld__number {
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+.sld__suffix {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+.sld__reset {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  margin-left: 2px;
+  border-radius: var(--radius-sm);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity var(--dur-fast) var(--ease), background-color var(--dur-fast) var(--ease);
+}
+
+.sld:hover .sld__reset:not(:disabled),
+.sld__reset:focus-visible {
+  opacity: 1;
+}
+
+.sld__reset:hover:not(:disabled) {
+  background: var(--studio-hover);
+  color: var(--color-text-primary);
+}
+
+.sld__reset:disabled {
+  opacity: 0;
+  cursor: default;
+}
+
+/* ---------- Track ---------- */
+.sld__track-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 20px;
+}
+
+.sld__origin {
+  position: absolute;
+  top: 50%;
+  width: 2px;
+  height: 8px;
+  margin-top: -4px;
+  margin-left: -1px;
+  border-radius: 1px;
+  background: var(--studio-border-strong);
+  pointer-events: none;
+}
+
+.sld__range {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 100%;
+  height: 20px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.sld__range:disabled {
+  cursor: not-allowed;
+}
+
+/* The fill is painted on the track itself, between the default and the value. */
+.sld__range::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 2px;
+  background:
+    linear-gradient(
+      to right,
+      transparent var(--fill-from),
+      var(--color-accent) var(--fill-from),
+      var(--color-accent) var(--fill-to),
+      transparent var(--fill-to)
+    ),
+    var(--studio-track);
+}
+
+.sld__range::-moz-range-track {
+  height: 4px;
+  border-radius: 2px;
+  background:
+    linear-gradient(
+      to right,
+      transparent var(--fill-from),
+      var(--color-accent) var(--fill-from),
+      var(--color-accent) var(--fill-to),
+      transparent var(--fill-to)
+    ),
+    var(--studio-track);
+}
+
+.sld__range::-webkit-slider-thumb {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 15px;
+  height: 15px;
+  margin-top: -5.5px;
+  border: 1px solid var(--studio-border-strong);
+  border-radius: 50%;
+  background: var(--color-white);
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease);
+}
+
+.sld__range::-moz-range-thumb {
+  width: 15px;
+  height: 15px;
+  border: 1px solid var(--studio-border-strong);
+  border-radius: 50%;
+  background: var(--color-white);
+  box-shadow: var(--shadow-sm);
+}
+
+.sld__range:hover:not(:disabled)::-webkit-slider-thumb,
+.sld__range:active:not(:disabled)::-webkit-slider-thumb {
+  border-color: var(--color-accent);
+  transform: scale(1.12);
+}
+
+.sld__range:focus-visible::-webkit-slider-thumb {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.sld__range:focus-visible::-moz-range-thumb {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+@media (pointer: coarse), (max-width: 767px) {
+  .sld__track-wrap {
+    height: 44px;
+  }
+
+  .sld__range {
+    height: 44px;
+  }
+
+  .sld__range::-webkit-slider-thumb {
+    width: 22px;
+    height: 22px;
+    margin-top: -9px;
+  }
+
+  .sld__number {
+    height: 44px;
+  }
+
+  .sld__reset {
+    opacity: 1;
+  }
+
+  /* Grows the hit area to 44px without inflating the glyph, which would
+     unbalance the row for a control that is only occasionally used. */
+  .sld__reset::before {
+    content: '';
+    position: absolute;
+    inset: -11px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sld__range::-webkit-slider-thumb {
+    transition: none;
+  }
+}

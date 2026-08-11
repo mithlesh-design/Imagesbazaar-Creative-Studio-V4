@@ -1,0 +1,248 @@
+.cpick {
+  display: grid;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+/* ---------- Search ---------- */
+.cpick__search {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding-inline: var(--space-2);
+  border: 1px solid var(--studio-border);
+  border-radius: var(--radius-md);
+  background: var(--color-white);
+  color: var(--color-text-muted);
+  transition: border-color var(--dur-fast) var(--ease);
+}
+
+.cpick__search:focus-within {
+  border-color: var(--color-accent);
+  color: var(--color-text-secondary);
+}
+
+.cpick__input {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  border: 0;
+  background: transparent;
+  font-size: 12.5px;
+  color: var(--color-text-primary);
+}
+
+.cpick__input::placeholder {
+  color: var(--color-text-muted);
+}
+
+.cpick__input:focus {
+  outline: none;
+}
+
+/* The UA's own clear affordance would sit alongside ours. */
+.cpick__input::-webkit-search-cancel-button {
+  appearance: none;
+}
+
+.cpick__clear {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  border-radius: var(--radius-pill);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
+}
+
+.cpick__clear:hover {
+  background: var(--studio-surface);
+  color: var(--color-text-primary);
+}
+
+/* ---------- Filters ---------- */
+.cpick__filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.cpick__chip {
+  height: 24px;
+  padding-inline: 9px;
+  border: 1px solid var(--studio-border);
+  border-radius: var(--radius-pill);
+  background: var(--color-white);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease),
+    border-color var(--dur-fast) var(--ease);
+}
+
+.cpick__chip:hover {
+  border-color: var(--studio-border-strong);
+  color: var(--color-text-primary);
+}
+
+.cpick__chip.is-active {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--color-white);
+}
+
+/* ---------- Results ---------- */
+.cpick__list {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.cpick__person {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  min-width: 0;
+  padding: 5px 6px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease);
+}
+
+.cpick__person:hover {
+  background: var(--studio-hover);
+}
+
+.cpick__person.is-selected {
+  border-color: var(--color-accent);
+  background: var(--studio-accent-soft);
+}
+
+.cpick__avatar {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+  border-radius: var(--radius-pill);
+  /* Distinct hue per character, low saturation so the list never competes
+     with the photograph beside it. */
+  background: hsl(var(--hue) 42% 94%);
+  color: hsl(var(--hue) 44% 32%);
+  box-shadow: inset 0 0 0 1px hsl(var(--hue) 34% 84%);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.cpick__text {
+  display: grid;
+  min-width: 0;
+}
+
+.cpick__name {
+  overflow: hidden;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.cpick__role {
+  overflow: hidden;
+  font-size: 11px;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.cpick__tick {
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  margin-left: auto;
+  border-radius: var(--radius-pill);
+  background: var(--color-accent);
+  color: var(--color-white);
+}
+
+.cpick__none {
+  padding: var(--space-3) var(--space-2);
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--color-text-muted);
+}
+
+/* ---------- Footer ---------- */
+.cpick__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--studio-border);
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.cpick__foot button {
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--studio-accent);
+  cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease);
+}
+
+.cpick__foot button:hover {
+  background: var(--studio-hover);
+}
+
+@media (pointer: coarse), (max-width: 767px) {
+  .cpick__search {
+    height: 44px;
+  }
+
+  /* Filter chips stay chip-sized; the tap area is grown behind them, because a
+     44px-tall chip row would dominate the panel it is meant to narrow. */
+  .cpick__chip {
+    position: relative;
+    height: 32px;
+  }
+
+  .cpick__chip::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 44px;
+    transform: translateY(-50%);
+  }
+
+  .cpick__filters {
+    gap: 6px;
+    row-gap: 12px;
+  }
+
+  .cpick__person {
+    min-height: 44px;
+  }
+
+  .cpick__clear {
+    width: 32px;
+    height: 32px;
+  }
+}

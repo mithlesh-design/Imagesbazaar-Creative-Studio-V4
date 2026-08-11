@@ -2,8 +2,15 @@ import { useState } from 'react'
 import { MessageCircle, X } from 'lucide-react'
 import './SupportButton.css'
 
-export default function SupportButton() {
+/**
+ * `hidden` stands the button down while the Creative Studio is on screen — its
+ * sticky prompt dock occupies the same bottom corner on a phone, and two things
+ * fighting for that corner is worse than briefly losing one of them.
+ */
+export default function SupportButton({ hidden = false }) {
   const [open, setOpen] = useState(false)
+
+  if (hidden) return null
 
   return (
     <div className="support">

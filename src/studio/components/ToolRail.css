@@ -1,0 +1,114 @@
+.trail {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: var(--studio-rail-w);
+  flex-shrink: 0;
+  min-height: 0;
+  padding: var(--space-2) 6px;
+  border-right: 1px solid var(--studio-border);
+  background: var(--studio-rail-bg);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+}
+
+.trail__tool {
+  display: grid;
+  justify-items: center;
+  gap: 3px;
+  flex-shrink: 0;
+  padding: 8px 2px;
+  border-radius: var(--radius-md);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
+}
+
+/* Characters composes the prompt rather than editing pixels, so it sits apart
+   from the editing tools instead of reading as one of them. */
+.trail__tool.is-detached {
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid var(--studio-border);
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+}
+
+.trail__icon {
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+
+.trail__badge {
+  position: absolute;
+  top: -5px;
+  right: -9px;
+  min-width: 15px;
+  height: 15px;
+  padding-inline: 3px;
+  border-radius: var(--radius-pill);
+  background: var(--color-accent);
+  color: var(--color-white);
+  font-size: 9.5px;
+  font-weight: 700;
+  line-height: 15px;
+  text-align: center;
+  box-shadow: 0 0 0 2px var(--studio-rail-bg);
+}
+
+.trail__tool.is-active .trail__badge {
+  background: var(--color-white);
+  color: var(--color-accent);
+  box-shadow: none;
+}
+
+.trail__label {
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.trail__tool:hover:not(:disabled) {
+  background: var(--studio-hover);
+  color: var(--color-text-primary);
+}
+
+.trail__tool.is-active {
+  background: var(--color-accent);
+  color: var(--color-white);
+}
+
+.trail__tool:disabled {
+  color: var(--studio-text-disabled);
+  cursor: not-allowed;
+}
+
+/* ---------- Mobile: the rail lies down under the canvas ---------- */
+@media (max-width: 767px) {
+  .trail {
+    flex-direction: row;
+    width: 100%;
+    padding: 4px var(--space-2);
+    border-right: 0;
+    border-top: 1px solid var(--studio-border);
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  .trail__tool {
+    flex: 1 0 auto;
+    min-width: 56px;
+    min-height: 46px;
+  }
+
+  .trail__tool.is-detached {
+    margin-top: 0;
+    margin-left: auto;
+    padding-top: 8px;
+    padding-left: 10px;
+    border-top: 0;
+    border-left: 1px solid var(--studio-border);
+    border-radius: var(--radius-md);
+  }
+}

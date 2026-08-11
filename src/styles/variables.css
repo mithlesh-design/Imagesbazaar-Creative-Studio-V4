@@ -63,32 +63,65 @@
   --dur-slow: 300ms;
 
   /* ---- Layout ---- */
-  --page-max: 1440px;
-  --page-pad: var(--space-4); /* mobile default; scaled up per breakpoint */
+  /* Full-bleed: the page runs edge to edge with a fixed 24px gutter rather
+     than centring inside a 1440px column. */
+  --page-max: 100%;
+  --page-pad: var(--space-5); /* 24px, at every breakpoint */
   --search-max: 1020px;
   --header-h: 64px;
   --z-header: 20;
   --z-dropdown: 40;
   --z-support: 50;
   --z-modal: 60;
+  --z-studio: 70;
+  --z-studio-dialog: 80;
+
+  /* ---- Creative Studio ----
+     The workspace stays in the brand's white, editorial register. The one
+     departure is the mat: a neutral mid-grey immediately around the picture,
+     the way a photographic mount works. Pure white running edge-to-edge
+     against a photo is what skews how you read its exposure. */
+  --studio-bg: #ffffff;
+  --studio-chrome: #ffffff;
+  --studio-rail-bg: #fbfbfc;
+  --studio-surface: #f4f4f6;
+  --studio-hover: #f1f1f4;
+  --studio-mat: #e8e8ea;
+  --studio-track: #e2e2e6;
+  --studio-scrim: rgba(24, 24, 27, 0.55);
+  --studio-frame-shadow: 0 2px 10px rgba(0, 0, 0, 0.14), 0 0 0 1px rgba(0, 0, 0, 0.06);
+
+  --studio-border: #e5e5e7;
+  --studio-border-strong: #c9c9ce;
+  --studio-text-disabled: #b4b4bb;
+
+  --studio-accent: #171717;
+  --studio-accent-soft: #f0f0f2;
+
+  /* The whole editor is one viewport tall, so nothing about using it requires
+     scrolling. Everything below is measured against that budget. */
+  --studio-h: calc(100dvh - 48px);
+  --studio-header-h: 52px;
+  --studio-rail-w: 86px;    /* tools + characters */
+  --studio-detail-w: 248px; /* controls for the selected tool */
+  --studio-dock-reserve: 76px; /* space kept clear for the prompt bar */
+}
+
+@media (min-width: 1440px) {
+  :root {
+    --studio-rail-w: 92px;
+    --studio-detail-w: 268px;
+  }
 }
 
 @media (min-width: 640px) {
   :root {
-    --page-pad: 20px;
     --header-h: 68px;
   }
 }
 
 @media (min-width: 1024px) {
   :root {
-    --page-pad: var(--space-5);
-    --header-h: 88px;
-  }
-}
-
-@media (min-width: 1440px) {
-  :root {
-    --page-pad: var(--space-6);
+    --header-h: 76px;
   }
 }

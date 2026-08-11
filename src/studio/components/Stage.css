@@ -1,0 +1,231 @@
+/**
+ * Two rows: the picture, then the dock.
+ *
+ * Giving the dock its own grid row is what guarantees it cannot sit on the
+ * photograph — the fit calculation measures the picture's row, so the image is
+ * only ever scaled into space the dock does not occupy. No magic padding, no
+ * collision detection.
+ */
+/**
+ * The canvas column — everything the rail and panel leave.
+ *
+ * Two rows: the picture, then the prompt bar. Giving the dock its own row is
+ * what guarantees it cannot sit on the photograph — the fit calculation
+ * measures the picture's row, so the image is only ever scaled into space the
+ * dock does not occupy. No overlap detection, no magic offsets.
+ */
+.sstage {
+  position: relative;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  /* `minmax(0, 1fr)` rather than the implicit `auto` track: an auto track is
+     sized by its content, so anything with an internal scroller would stretch
+     the stage instead of scrolling inside it. */
+  grid-template-columns: minmax(0, 1fr);
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  background: var(--studio-mat);
+  outline: 2px dashed transparent;
+  outline-offset: -8px;
+  transition: outline-color var(--dur-base) var(--ease);
+}
+
+.sstage:focus {
+  outline: none;
+}
+
+.sstage.is-dragging {
+  outline-color: var(--color-accent);
+}
+
+.sstage__area {
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  /* The mat is a photo mount: it stops pure white sitting edge-to-edge against
+     the picture, which is what skews how you read exposure. */
+  padding: var(--space-3);
+}
+
+.sstage__frame {
+  position: relative;
+  flex-shrink: 0;
+  box-shadow: var(--studio-frame-shadow);
+  background: var(--color-white);
+}
+
+.sstage__frame.can-pan {
+  cursor: grab;
+}
+
+.sstage__frame.can-pan:active {
+  cursor: grabbing;
+}
+
+.sstage__canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.sstage__badge {
+  position: absolute;
+  top: var(--space-2);
+  left: var(--space-2);
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  background: var(--color-accent);
+  color: var(--color-white);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+
+/* ---------- Empty & loading ---------- */
+.sstage__empty {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-2);
+  max-width: 380px;
+  padding: var(--space-5);
+  text-align: center;
+}
+
+.sstage__empty-icon {
+  display: grid;
+  place-items: center;
+  width: 60px;
+  height: 60px;
+  margin-bottom: var(--space-2);
+  border-radius: var(--radius-pill);
+  background: var(--color-white);
+  color: var(--color-text-muted);
+}
+
+.sstage__empty-title {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.sstage__empty-sub {
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--color-text-secondary);
+}
+
+.sstage__empty-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}
+
+.sstage__cta,
+.sstage__ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 44px;
+  padding-inline: var(--space-4);
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color var(--dur-base) var(--ease), border-color var(--dur-base) var(--ease);
+}
+
+.sstage__cta {
+  background: var(--color-accent);
+  color: var(--color-white);
+}
+
+.sstage__cta:hover {
+  background: var(--color-accent-hover);
+}
+
+.sstage__ghost {
+  border: 1px solid var(--studio-border-strong);
+  background: var(--color-white);
+}
+
+.sstage__ghost:hover {
+  border-color: var(--color-accent);
+}
+
+.sstage__loading {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+
+.sstage__spin {
+  animation: sstage-spin 900ms linear infinite;
+}
+
+@keyframes sstage-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.sstage__error {
+  position: absolute;
+  top: var(--space-3);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 4;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 8px 8px 8px var(--space-4);
+  border-radius: var(--radius-pill);
+  background: var(--color-error);
+  color: var(--color-white);
+  font-size: 13px;
+  font-weight: 500;
+  box-shadow: var(--shadow-md);
+}
+
+.sstage__error button {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: var(--radius-pill);
+  color: inherit;
+  cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease);
+}
+
+.sstage__error button:hover {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+@media (max-width: 767px) {
+  .sstage {
+    min-height: 46dvh;
+  }
+
+  .sstage__area {
+    padding: var(--space-2);
+  }
+
+  .sstage__empty {
+    padding: var(--space-4);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sstage__spin {
+    animation-duration: 2s;
+  }
+}
