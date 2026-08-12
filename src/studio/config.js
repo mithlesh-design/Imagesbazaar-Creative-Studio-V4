@@ -21,6 +21,15 @@ export const aspectRatios = [
   { id: '9:16', label: '9:16', ratio: 9 / 16 },
 ]
 
+/**
+ * The ratios that earn a pill above the canvas. The rest — free-form, the
+ * image's own proportions, portrait video — live behind "Custom", which also
+ * takes a typed width and height. Four pills and an escape hatch, rather than
+ * seven pills nobody reads.
+ */
+export const aspectPills = ['1:1', '4:3', '16:9', '3:2']
+export const customAspects = ['free', 'original', '9:16']
+
 export const DEFAULT_ADJUSTMENTS = {
   brightness: 100,
   exposure: 0, // -100..100
@@ -33,53 +42,67 @@ export const DEFAULT_ADJUSTMENTS = {
 }
 
 /**
- * Editing is grouped into plain-language tools rather than a wall of sliders —
- * the audience is not professional retouchers. `key` maps to a field in
- * `adjustments`; `reset` is the value a double-click returns the slider to and
- * the origin its fill grows from.
+ * The toolbar beneath the canvas: one button per thing you might want to
+ * change, named the way a photograph is talked about rather than the way the
+ * pipeline is built. `key` maps to a field in `adjustments`; `reset` is the
+ * value a double-click returns the slider to, and the origin its fill grows
+ * from.
+ *
+ * `icon` is a string, not a component, so this module stays plain data — it is
+ * imported by the reducer and the renderer, which have no business pulling in
+ * React. `EditToolbar` owns the string → glyph mapping.
+ *
+ * `mode: true` means the tool has no popover: selecting it changes what the
+ * stage is doing instead of opening controls.
  */
-export const toolGroups = [
+export const editTools = [
   {
     id: 'crop',
     label: 'Crop',
+    icon: 'crop',
+    mode: true,
     hint: 'Drag inside the frame to reposition, or pull a corner to resize.',
   },
+  { id: 'rotate', label: 'Rotate', icon: 'rotate', actions: true },
   {
-    id: 'light',
-    label: 'Light',
+    id: 'brightness',
+    label: 'Brightness',
+    icon: 'sun',
     sliders: [
       { key: 'brightness', label: 'Brightness', min: 20, max: 180, step: 1, suffix: '%', reset: 100 },
       { key: 'exposure', label: 'Exposure', min: -100, max: 100, step: 1, reset: 0 },
+    ],
+  },
+  {
+    id: 'contrast',
+    label: 'Contrast',
+    icon: 'contrast',
+    sliders: [
       { key: 'contrast', label: 'Contrast', min: 20, max: 180, step: 1, suffix: '%', reset: 100 },
     ],
   },
   {
-    id: 'colour',
-    label: 'Colour',
+    id: 'saturation',
+    label: 'Saturation',
+    icon: 'droplet',
     sliders: [
       { key: 'saturation', label: 'Saturation', min: 0, max: 200, step: 1, suffix: '%', reset: 100 },
       { key: 'warmth', label: 'Warmth', min: -100, max: 100, step: 1, reset: 0 },
     ],
   },
-  { id: 'filters', label: 'Filters', presets: true },
+  { id: 'filters', label: 'Filters', icon: 'filters', presets: true },
   {
-    id: 'detail',
-    label: 'Detail',
-    sliders: [
-      { key: 'sharpen', label: 'Sharpen', min: 0, max: 100, step: 1, suffix: '%', reset: 0 },
-      { key: 'blur', label: 'Soften', min: 0, max: 20, step: 0.5, suffix: 'px', reset: 0 },
-    ],
-    hint: 'Zoom to 100% to judge sharpening — it is invisible on a fitted view.',
+    id: 'blur',
+    label: 'Blur',
+    icon: 'blur',
+    sliders: [{ key: 'blur', label: 'Blur', min: 0, max: 20, step: 0.5, suffix: 'px', reset: 0 }],
   },
-  { id: 'rotate', label: 'Rotate', actions: true },
   {
-    id: 'characters',
-    label: 'Characters',
-    characters: true,
-    // Not an editing tool — it composes the prompt — so it sits apart at the
-    // foot of the rail rather than in among Crop and Light.
-    detached: true,
-    hint: 'Attached characters are sent with your prompt. Generation isn’t connected in this build.',
+    id: 'sharpen',
+    label: 'Sharpen',
+    icon: 'sharpen',
+    sliders: [{ key: 'sharpen', label: 'Sharpen', min: 0, max: 100, step: 1, suffix: '%', reset: 0 }],
+    hint: 'Zoom to 100% to judge sharpening — it is invisible on a fitted view.',
   },
 ]
 

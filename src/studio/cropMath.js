@@ -26,9 +26,19 @@ export function normaliseRotation(rotation) {
 
 /**
  * The numeric ratio for an aspect id, or null when the crop is free-form.
+ *
  * `'original'` resolves against the base size so it follows the image.
+ * `'custom:5:4'` carries a typed ratio in the id itself — that keeps the aspect
+ * a single serialisable string, so history snapshots and undo need to know
+ * nothing about custom ratios being a different kind of thing.
  */
 export function ratioFor(aspectId, baseSize) {
+  if (typeof aspectId === 'string' && aspectId.startsWith('custom:')) {
+    const [, w, h] = aspectId.split(':')
+    const ratio = Number(w) / Number(h)
+    return Number.isFinite(ratio) && ratio > 0 ? ratio : null
+  }
+
   const found = aspectRatios.find((a) => a.id === aspectId)
   if (!found || found.ratio === null) return null
   if (found.ratio === 'source') {

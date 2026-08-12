@@ -1,0 +1,239 @@
+.cpanel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-height: 0;
+  padding: var(--space-5);
+}
+
+.cpanel__title {
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.cpanel__sub {
+  margin-top: 2px;
+  font-size: 13px;
+  color: var(--color-text-secondary);
+}
+
+/* ---------- Male / Female ---------- */
+.cpanel__toggle {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2);
+}
+
+.cpanel__seg {
+  min-height: 40px;
+  border: 1px solid var(--studio-border);
+  border-radius: var(--radius-pill);
+  background: var(--color-white);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: background-color var(--dur-base) var(--ease),
+    border-color var(--dur-base) var(--ease), color var(--dur-base) var(--ease);
+}
+
+.cpanel__seg:hover:not(.is-active) {
+  border-color: var(--studio-border-strong);
+  background: var(--studio-hover);
+}
+
+.cpanel__seg.is-active {
+  border-color: var(--color-accent);
+  background: var(--color-accent);
+  color: var(--color-white);
+}
+
+/* ---------- The faces ---------- */
+.cpanel__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-4) var(--space-2);
+  /* The grid is the one part that may scroll — the heading, the toggle and the
+     footer link stay put however many characters exist. */
+  min-height: 0;
+  overflow-y: auto;
+  padding-block: var(--space-1);
+}
+
+.cpanel__person {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1);
+  border-radius: var(--radius-lg);
+  background: none;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease);
+}
+
+.cpanel__person:hover {
+  background: var(--studio-hover);
+}
+
+.cpanel__avatar {
+  position: relative;
+  display: grid;
+  place-items: center;
+  /* Fills its column up to 62px rather than being fixed at it. The column is
+     as narrow as 66px on a 1280px screen, and a fixed disc overflows it. */
+  width: 100%;
+  max-width: 62px;
+  aspect-ratio: 1;
+  border-radius: var(--radius-pill);
+  background: var(--character-avatar);
+  color: var(--character-avatar-text);
+  font-size: 21px;
+  font-weight: 700;
+  transition: background-color var(--dur-base) var(--ease), color var(--dur-base) var(--ease);
+}
+
+.cpanel__person:hover .cpanel__avatar {
+  background: #c9defa;
+}
+
+.cpanel__person.is-selected .cpanel__avatar {
+  background: var(--color-accent);
+  color: var(--color-white);
+}
+
+/* Selection is a fill *and* a tick. Colour alone would be the only signal for
+   anyone who cannot separate the two states by hue. */
+.cpanel__tick {
+  position: absolute;
+  right: -2px;
+  bottom: -2px;
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--color-white);
+  border-radius: var(--radius-pill);
+  background: var(--color-accent);
+  color: var(--color-white);
+}
+
+.cpanel__name {
+  font-size: 12.5px;
+  font-weight: 500;
+  line-height: 1.3;
+  color: var(--color-text-secondary);
+  text-align: center;
+  /* Long names truncate rather than reflowing the row height and making the
+     grid ragged. */
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cpanel__person.is-selected .cpanel__name {
+  color: var(--color-text-primary);
+  font-weight: 600;
+}
+
+/* ---------- Footer ---------- */
+.cpanel__foot {
+  margin-top: auto;
+  display: grid;
+  gap: var(--space-2);
+}
+
+.cpanel__note {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+}
+
+.cpanel__all {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: 40px;
+  border: 1px solid var(--studio-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-white);
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: background-color var(--dur-base) var(--ease),
+    border-color var(--dur-base) var(--ease);
+}
+
+.cpanel__all:hover {
+  border-color: var(--color-accent);
+  background: var(--studio-hover);
+}
+
+/**
+ * Below three columns the panel stops being a column and becomes a band across
+ * the top — so it has to stop *behaving* like one too.
+ *
+ * Left as a stacked column it grew to ~460px tall on a 1024px screen, six
+ * avatars marooned in white space, pushing the canvas most of the way off the
+ * fold. Laid out as a row it is one line of faces and roughly 120px tall, which
+ * is all a band of six ever needed to be.
+ */
+@media (max-width: 1279px) {
+  .cpanel {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3) var(--space-5);
+    padding: var(--space-4);
+  }
+
+  .cpanel__head,
+  .cpanel__foot {
+    flex: 0 0 auto;
+  }
+
+  .cpanel__toggle {
+    flex: 0 0 200px;
+  }
+
+  /* auto-fill rather than a fixed count: the faces lay out in one line across
+     whatever width is left, however wide that turns out to be. */
+  .cpanel__grid {
+    flex: 1 1 300px;
+    grid-template-columns: repeat(auto-fill, minmax(76px, 1fr));
+    gap: var(--space-2);
+    overflow-y: visible;
+  }
+
+  .cpanel__foot {
+    margin-top: 0;
+  }
+
+  .cpanel__all {
+    padding-inline: var(--space-4);
+  }
+}
+
+@media (max-width: 639px) {
+  /* Too narrow for a band; back to stacked, but still compact. */
+  .cpanel {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .cpanel__toggle {
+    flex: 0 0 auto;
+  }
+}
+
+@media (pointer: coarse) {
+  .cpanel__seg,
+  .cpanel__all {
+    min-height: 44px;
+  }
+}

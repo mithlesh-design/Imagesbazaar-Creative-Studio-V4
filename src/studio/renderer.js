@@ -17,13 +17,28 @@ import { DEFAULT_ADJUSTMENTS, filterPresets } from './config'
 const PREVIEW_MAX = 2600
 const PREVIEW_MIN = 900
 
+/**
+ * Intrinsic size of a drawable source.
+ *
+ * A source is normally an `Image`, but "Apply Edits" bakes to a `canvas` and
+ * hands that back as the new source — and a canvas has `width`/`height` where
+ * an image has `naturalWidth`/`naturalHeight`. One accessor keeps every caller
+ * from having to care which it is holding.
+ */
+export function sourceSize(source) {
+  if (!source) return { w: 0, h: 0 }
+  return {
+    w: source.naturalWidth ?? source.width,
+    h: source.naturalHeight ?? source.height,
+  }
+}
+
 /** Builds the offscreen base canvas: the source with rotation and flip applied. */
 export function buildBaseCanvas(source, rotation, flipH) {
   if (!source) return null
   const rot = ((rotation % 360) + 360) % 360
   const swap = rot === 90 || rot === 270
-  const iw = source.naturalWidth
-  const ih = source.naturalHeight
+  const { w: iw, h: ih } = sourceSize(source)
 
   const base = document.createElement('canvas')
   base.width = swap ? ih : iw
@@ -140,6 +155,28 @@ export function previewBufferSize(crop, displayW, displayH, dpr = 1) {
     w: Math.max(1, Math.round(crop.w * scale)),
     h: Math.max(1, Math.round(crop.h * scale)),
   }
+}
+
+/**
+ * Flattens the current edit into a standalone canvas at full crop resolution —
+ * what "Apply Edits" bakes and then treats as the new source.
+ *
+ * It goes through `drawTo` at final quality, the same call `exportBlob` makes,
+ * so a baked image is pixel-for-pixel what a download at that moment would have
+ * given you. Anything else would mean the preview, the export and the bake
+ * could drift apart.
+ */
+export function bakeCanvas(base, crop, adjustments) {
+  if (!base || !crop?.w || !crop?.h) return null
+
+  const out = document.createElement('canvas')
+  out.width = Math.max(1, Math.round(crop.w))
+  out.height = Math.max(1, Math.round(crop.h))
+
+  // willReadFrequently: the sharpen pass reads this canvas back.
+  const ctx = out.getContext('2d', { willReadFrequently: true })
+  drawTo(ctx, out.width, out.height, { base, crop, adjustments, quality: 'final' })
+  return out
 }
 
 /** Full-resolution export. Resolves to a Blob, or null if there is nothing to draw. */

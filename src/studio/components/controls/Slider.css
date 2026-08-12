@@ -68,7 +68,9 @@
 .sld__suffix {
   font-size: 12px;
   font-weight: 600;
-  color: var(--color-text-muted);
+  /* `--color-text-muted` is 3.0:1 on white — under the 4.5:1 floor, and this
+     is a unit people read. */
+  color: var(--color-text-secondary);
 }
 
 .sld__reset {
@@ -79,7 +81,7 @@
   height: 22px;
   margin-left: 2px;
   border-radius: var(--radius-sm);
-  color: var(--color-text-muted);
+  color: var(--color-text-secondary);
   cursor: pointer;
   opacity: 0;
   transition: opacity var(--dur-fast) var(--ease), background-color var(--dur-fast) var(--ease);

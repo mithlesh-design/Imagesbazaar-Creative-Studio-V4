@@ -16,7 +16,7 @@ import './Stage.css'
  */
 const MAT_PAD = 6
 
-export default function Stage({ cropping = false, onFitScale, onFocusSearch, children }) {
+export default function Stage({ cropping = false, onFitScale, onFocusSearch }) {
   const { baseRef, baseVersion, baseSize, edit, comparing, hasImage, loading, error, meta, view } =
     useStudio()
   const a = useStudioActions()
@@ -38,8 +38,9 @@ export default function Stage({ cropping = false, onFitScale, onFocusSearch, chi
     [cropping, baseSize.w, baseSize.h, edit.crop]
   )
 
-  // Measure the picture's own area, not the whole viewport — the dock occupies
-  // its own grid row, so it is already excluded from what we fit into.
+  // Measure the picture's own area rather than the panel's. The toolbar and the
+  // top bar are siblings outside this box, so their height is already excluded
+  // from what the image is fitted into.
   useEffect(() => {
     const node = areaRef.current
     if (!node) return
@@ -127,7 +128,7 @@ export default function Stage({ cropping = false, onFitScale, onFocusSearch, chi
 
   return (
     <div
-      className={`sstage${dragging ? ' is-dragging' : ''}`}
+      className={`sstage${dragging ? ' is-dragging' : ''}${hasImage ? ' has-image' : ''}`}
       /* Capture phase, so focus lands even when the crop overlay stops the
          event — that is what arms the keyboard shortcuts for this section. */
       onPointerDownCapture={(e) => {
@@ -197,7 +198,7 @@ export default function Stage({ cropping = false, onFitScale, onFocusSearch, chi
             <span className="sstage__empty-icon" aria-hidden="true">
               <ImageIcon size={28} strokeWidth={1.4} />
             </span>
-            <p className="sstage__empty-title">Nothing loaded yet</p>
+            <p className="sstage__empty-title">Your image will appear here</p>
             <p className="sstage__empty-sub">
               Drop an image here, upload one, or pick a photo from the library.
             </p>
@@ -219,11 +220,14 @@ export default function Stage({ cropping = false, onFitScale, onFocusSearch, chi
               </button>
             </div>
 
+            {/* Opened by "Upload your own" above, never reached directly. */}
             <input
               ref={fileRef}
               type="file"
               accept="image/*"
               className="sr-only"
+              tabIndex={-1}
+              aria-label="Upload an image to edit"
               onChange={(e) => {
                 a.loadFile(e.target.files?.[0])
                 e.target.value = ''
@@ -232,9 +236,6 @@ export default function Stage({ cropping = false, onFitScale, onFocusSearch, chi
           </div>
         )}
       </div>
-
-      {/* The dock gets its own row, so it can never be laid over the picture. */}
-      {children}
 
       {error && (
         <p className="sstage__error" role="alert">

@@ -1,0 +1,200 @@
+import {
+  Download,
+  Maximize2,
+  Minimize2,
+  Minus,
+  Plus,
+  Redo2,
+  RotateCcw,
+  SplitSquareHorizontal,
+  Undo2,
+} from 'lucide-react'
+import { useStudio, useStudioActions } from '../StudioProvider'
+import RatioPills from './controls/RatioPills'
+import EditToolbar from './EditToolbar'
+import Stage from './Stage'
+import './CanvasPanel.css'
+
+/**
+ * The centre card: ratios and session actions on top, the picture in the
+ * middle, the tool strip beneath.
+ *
+ * Three siblings rather than three grid rows inside the stage — the stage then
+ * measures only the space the image may occupy, so the fit calculation needs no
+ * awareness of what is above or below it.
+ *
+ * The action cluster is deliberately dense. Undo, redo, reset, compare, zoom
+ * and full screen are things you reach for constantly but never read, so they
+ * are icons at the end of a row you are already looking at, rather than a
+ * second toolbar competing with the eight tools that do have labels.
+ */
+export default function CanvasPanel({
+  activeTool,
+  onSelectTool,
+  fullscreen,
+  onToggleFullscreen,
+  onDownload,
+  fitScale,
+  onFitScale,
+  onFocusSearch,
+}) {
+  const { hasImage, canUndo, canRedo, isEdited, comparing, view, edit, meta } = useStudio()
+  const a = useStudioActions()
+
+  // "Fit" is a measured scale, not a stored one — it depends on the size of the
+  // stage, which only the stage knows. It reports it up; we display it.
+  const shownZoom = Math.round((view.fit ? fitScale : view.zoom) * 100)
+
+  // Compare is press-and-hold, not a toggle — you want the original in view
+  // only while you are actually looking at it.
+  const holdCompare = {
+    onPointerDown: (e) => {
+      e.currentTarget.setPointerCapture?.(e.pointerId)
+      a.setComparing(true)
+    },
+    onPointerUp: () => a.setComparing(false),
+    onPointerCancel: () => a.setComparing(false),
+    onPointerLeave: () => a.setComparing(false),
+  }
+
+  return (
+    <section className="cvpanel" aria-labelledby="cvpanel-heading">
+      <h2 className="sr-only" id="cvpanel-heading">
+        Creative Studio canvas
+      </h2>
+
+      <div className="cvpanel__bar">
+        <RatioPills />
+
+        <div className="cvpanel__actions">
+          <button
+            type="button"
+            className={`cvpanel__fit${view.fit ? ' is-active' : ''}`}
+            onClick={a.zoomFit}
+            disabled={!hasImage}
+            aria-pressed={view.fit}
+            title="Fit to canvas (0)"
+          >
+            Fit to Canvas
+          </button>
+
+          <div className="cvpanel__group" role="group" aria-label="Zoom">
+            <button
+              type="button"
+              className="cvpanel__icon"
+              onClick={() => a.zoomStep(-1)}
+              disabled={!hasImage}
+              aria-label="Zoom out"
+              title="Zoom out (−)"
+            >
+              <Minus size={15} aria-hidden="true" />
+            </button>
+            <span className="cvpanel__level" aria-live="off">
+              {hasImage ? `${shownZoom}%` : '—'}
+            </span>
+            <button
+              type="button"
+              className="cvpanel__icon"
+              onClick={() => a.zoomStep(1)}
+              disabled={!hasImage}
+              aria-label="Zoom in"
+              title="Zoom in (+)"
+            >
+              <Plus size={15} aria-hidden="true" />
+            </button>
+          </div>
+
+          <div className="cvpanel__group" role="group" aria-label="History">
+            <button
+              type="button"
+              className="cvpanel__icon"
+              onClick={a.undo}
+              disabled={!canUndo}
+              aria-label="Undo"
+              title="Undo (⌘Z)"
+            >
+              <Undo2 size={16} aria-hidden="true" />
+            </button>
+            <button
+              type="button"
+              className="cvpanel__icon"
+              onClick={a.redo}
+              disabled={!canRedo}
+              aria-label="Redo"
+              title="Redo (⇧⌘Z)"
+            >
+              <Redo2 size={16} aria-hidden="true" />
+            </button>
+            <button
+              type="button"
+              className="cvpanel__icon"
+              onClick={a.reset}
+              disabled={!isEdited}
+              aria-label="Reset all edits"
+              title="Reset all edits"
+            >
+              <RotateCcw size={15} aria-hidden="true" />
+            </button>
+          </div>
+
+          <button
+            type="button"
+            className={`cvpanel__icon cvpanel__icon--bare${comparing ? ' is-active' : ''}`}
+            disabled={!hasImage || !isEdited}
+            aria-pressed={comparing}
+            aria-label="Hold to see the original"
+            title="Hold to see the original (\)"
+            {...holdCompare}
+          >
+            <SplitSquareHorizontal size={15} aria-hidden="true" />
+          </button>
+
+          <button
+            type="button"
+            className="cvpanel__icon cvpanel__icon--bare"
+            onClick={onToggleFullscreen}
+            aria-pressed={fullscreen}
+            aria-label={fullscreen ? 'Exit full screen' : 'Expand to full screen'}
+            title={fullscreen ? 'Exit full screen (Esc)' : 'Expand to full screen'}
+          >
+            {fullscreen ? (
+              <Minimize2 size={15} aria-hidden="true" />
+            ) : (
+              <Maximize2 size={15} aria-hidden="true" />
+            )}
+          </button>
+
+          <button
+            type="button"
+            className="cvpanel__download"
+            onClick={onDownload}
+            disabled={!hasImage}
+          >
+            <Download size={16} aria-hidden="true" />
+            <span className="cvpanel__download-label">Download</span>
+          </button>
+        </div>
+      </div>
+
+      {hasImage && (
+        <p className="cvpanel__meta">
+          <span className="cvpanel__file" title={meta?.title || meta?.name}>
+            {meta?.title || meta?.name}
+          </span>
+          <span className="cvpanel__dims">
+            {Math.round(edit.crop.w)} × {Math.round(edit.crop.h)}
+          </span>
+          {isEdited && <span className="cvpanel__edited">Edited</span>}
+        </p>
+      )}
+
+      <Stage
+        cropping={activeTool === 'crop'}
+        onFitScale={onFitScale}
+        onFocusSearch={onFocusSearch}
+      />
+
+      <EditToolbar activeTool={activeTool} onSelectTool={onSelectTool} />
+    </section>
+  )
+}

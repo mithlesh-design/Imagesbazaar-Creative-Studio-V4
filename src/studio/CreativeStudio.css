@@ -6,35 +6,35 @@
 }
 
 /**
- * One viewport, minus the gutter above and below. Everything inside is sized
- * against this budget, so the editor never asks to be scrolled.
+ * Three cards, one viewport tall.
+ *
+ * The outer columns are fixed and the canvas takes the rest, so widening the
+ * window gives every extra pixel to the picture — which is the only thing here
+ * that benefits from more room. `minmax(0, 1fr)` rather than `1fr`: a plain
+ * `1fr` track is floored at its content's min-content width, and the canvas
+ * would then refuse to shrink below whatever the tool strip needs.
  */
-.studio__frame {
+.studio__grid {
+  display: grid;
+  grid-template-columns: var(--studio-left-w) minmax(0, 1fr) var(--studio-right-w);
+  gap: var(--studio-gap);
+  height: var(--studio-h);
+  min-height: 560px;
+}
+
+.studio__card {
   display: flex;
   flex-direction: column;
-  height: var(--studio-h);
-  min-height: 520px;
+  min-width: 0;
+  min-height: 0;
   border: 1px solid var(--studio-border);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-card);
   background: var(--studio-chrome);
-  /* No `overflow: hidden` — each column clips its own content, and hiding here
-     would make this the scrollport for anything sticky inside. */
 }
 
-.studio__body {
-  display: flex;
+.studio__card > * {
   flex: 1;
   min-height: 0;
-  min-width: 0;
-}
-
-.studio__frame > :last-child,
-.studio__body > :last-child {
-  border-bottom-right-radius: 5px;
-}
-
-.studio__body > :first-child {
-  border-bottom-left-radius: 5px;
 }
 
 /* ---------- Full screen: same DOM, different box ---------- */
@@ -46,37 +46,73 @@
   background: var(--studio-bg);
 }
 
-.studio.is-fullscreen .studio__frame {
+.studio.is-fullscreen .studio__grid {
   height: 100%;
   min-height: 0;
 }
 
-@media (max-width: 767px) {
-  .studio {
-    padding: var(--space-3) var(--space-3);
+/* ---------- Narrower desktops ---------- */
+@media (max-width: 1279px) {
+  /* Two columns. Characters becomes a band across the top: it is a short,
+     wide thing by nature — six faces in a row — so it loses nothing by
+     lying down, and the canvas keeps the height it actually needs. */
+  .studio__grid {
+    grid-template-columns: minmax(0, 1fr) var(--studio-right-w);
+    grid-template-rows: auto minmax(0, 1fr);
   }
 
-  .studio__frame {
-    /* Stacked columns need more room than a single viewport can give, so the
-       phone layout is allowed its own height rather than being crushed. */
+  .studio__card--left {
+    grid-column: 1 / -1;
+  }
+}
+
+/* ---------- Stacked ---------- */
+@media (max-width: 1023px) {
+  .studio__grid {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: none;
+    /* Stacked columns need more room than a single viewport can give, so this
+       layout is allowed its own height rather than being crushed. */
     height: auto;
     min-height: 0;
   }
 
-  .studio__body {
-    flex-direction: column;
+  .studio__card {
+    grid-column: auto;
   }
 
-  /* Canvas first, then the controls beneath it. */
-  .studio__body > .sstage {
+  /* The picture first, then what you say about it, then who is in it. */
+  .studio__card--canvas {
     order: 1;
   }
 
-  .studio__body > .tpanel {
+  .studio__card--right {
     order: 2;
   }
 
-  .studio__body > .trail {
+  .studio__card--left {
     order: 3;
+  }
+
+  .studio__card--canvas > .cvpanel {
+    min-height: 62dvh;
+  }
+
+  .studio.is-fullscreen {
+    overflow-y: auto;
+  }
+
+  .studio.is-fullscreen .studio__grid {
+    height: auto;
+  }
+}
+
+@media (max-width: 767px) {
+  .studio {
+    padding: var(--space-3);
+  }
+
+  .studio__grid {
+    gap: var(--space-3);
   }
 }

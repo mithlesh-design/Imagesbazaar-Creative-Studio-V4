@@ -1,34 +1,36 @@
 /**
- * Two rows: the picture, then the dock.
+ * The picture, and nothing else.
  *
- * Giving the dock its own grid row is what guarantees it cannot sit on the
- * photograph — the fit calculation measures the picture's row, so the image is
- * only ever scaled into space the dock does not occupy. No magic padding, no
- * collision detection.
- */
-/**
- * The canvas column — everything the rail and panel leave.
+ * The top bar and the tool strip are siblings in `CanvasPanel`, not rows in
+ * here — so the area this measures for the fit calculation is exactly the space
+ * the image is allowed to occupy. No overlap detection, no magic offsets.
  *
- * Two rows: the picture, then the prompt bar. Giving the dock its own row is
- * what guarantees it cannot sit on the photograph — the fit calculation
- * measures the picture's row, so the image is only ever scaled into space the
- * dock does not occupy. No overlap detection, no magic offsets.
+ * Empty, it is white with a hairline border, as the reference draws it. Loaded,
+ * it fills with a soft neutral: pure white running edge-to-edge against a photo
+ * is what skews how you read its exposure, which is the whole reason a
+ * photographic mount is grey.
  */
 .sstage {
   position: relative;
   display: grid;
-  grid-template-rows: minmax(0, 1fr) auto;
   /* `minmax(0, 1fr)` rather than the implicit `auto` track: an auto track is
      sized by its content, so anything with an internal scroller would stretch
      the stage instead of scrolling inside it. */
+  grid-template-rows: minmax(0, 1fr);
   grid-template-columns: minmax(0, 1fr);
-  flex: 1;
   min-width: 0;
   min-height: 0;
-  background: var(--studio-mat);
+  border: 1px solid var(--studio-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-white);
   outline: 2px dashed transparent;
   outline-offset: -8px;
-  transition: outline-color var(--dur-base) var(--ease);
+  transition: outline-color var(--dur-base) var(--ease),
+    background-color var(--dur-slow) var(--ease);
+}
+
+.sstage.has-image {
+  background: #f2f2f4;
 }
 
 .sstage:focus {
@@ -45,9 +47,8 @@
   min-width: 0;
   min-height: 0;
   overflow: hidden;
-  /* The mat is a photo mount: it stops pure white sitting edge-to-edge against
-     the picture, which is what skews how you read exposure. */
-  padding: var(--space-3);
+  border-radius: inherit;
+  padding: var(--space-4);
 }
 
 .sstage__frame {
@@ -99,21 +100,22 @@
 .sstage__empty-icon {
   display: grid;
   place-items: center;
-  width: 60px;
-  height: 60px;
-  margin-bottom: var(--space-2);
+  width: 56px;
+  height: 56px;
+  margin-bottom: var(--space-1);
   border-radius: var(--radius-pill);
-  background: var(--color-white);
-  color: var(--color-text-muted);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
 }
 
 .sstage__empty-title {
-  font-size: 16px;
-  font-weight: 600;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
 }
 
 .sstage__empty-sub {
-  font-size: 13.5px;
+  font-size: 13px;
   line-height: 1.55;
   color: var(--color-text-secondary);
 }
@@ -133,7 +135,7 @@
   gap: var(--space-2);
   min-height: 44px;
   padding-inline: var(--space-4);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;

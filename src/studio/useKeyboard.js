@@ -20,6 +20,9 @@ function isTypingTarget(el) {
  * while focus is somewhere inside the studio section. Clicking the stage focuses
  * it, so they come alive exactly when you would expect them to.
  *
+ * `c`, `b` and `s` open a tool — crop mode, brightness, sharpen. The remaining
+ * five tools have no letter: a shortcut nobody can guess is not worth the key.
+ *
  * Held keys (compare) release on keyup and on window blur, so tabbing away
  * mid-hold cannot strand the preview showing the original.
  */
@@ -77,8 +80,11 @@ export function useKeyboard({
         case 'c':
           onSelectTool?.('crop')
           break
-        case 'l':
-          onSelectTool?.('light')
+        case 'b':
+          onSelectTool?.('brightness')
+          break
+        case 's':
+          onSelectTool?.('sharpen')
           break
         case 'r':
           a.rotate(e.shiftKey ? -1 : 1)

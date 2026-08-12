@@ -24,6 +24,16 @@ import * as H from './history'
 
 const DEFAULT_ASPECT = 'original'
 
+/**
+ * How many baked images to keep behind you.
+ *
+ * Ordinary undo snapshots are twenty numbers, so sixty of them cost nothing.
+ * A bake entry pins a whole canvas — tens of megabytes for a large photo — so
+ * this stack is deliberately shallow. Three is enough to walk back a stray
+ * Apply without the editor quietly hoarding memory.
+ */
+const BAKE_LIMIT = 3
+
 /** Two edits are the same if every tracked field matches. */
 export function editEquals(a, b) {
   if (a === b) return true
@@ -57,6 +67,9 @@ export const initialState = {
 
   edit: freshEdit(null),
   history: H.emptyHistory(),
+
+  // Sessions parked by "Apply Edits". Undo drains `history` first, then these.
+  bakeStack: [],
 
   view: { zoom: 1, fit: true, panX: 0, panY: 0 },
 
@@ -105,6 +118,40 @@ export function studioReducer(state, action) {
         error: null,
         edit: freshEdit(naturalSize),
         history: H.emptyHistory(),
+        bakeStack: [],
+        view: { zoom: 1, fit: true, panX: 0, panY: 0 },
+        comparing: false,
+      }
+    }
+
+    /**
+     * "Apply Edits": the flattened canvas becomes the source, and the edit
+     * state starts clean against it.
+     *
+     * History is emptied rather than carried over — every snapshot in it
+     * describes crop rectangles in the *old* base's coordinates, so replaying
+     * one against the new image would silently render the wrong region. What
+     * makes the bake undoable instead is `bakeStack`, which parks the entire
+     * prior session and is unwound by UNDO once ordinary history runs out.
+     */
+    case 'BAKE': {
+      if (!state.source) return state
+      const { source, size } = action
+      const parked = {
+        source: state.source,
+        meta: state.meta,
+        naturalSize: state.naturalSize,
+        edit: state.edit,
+        history: state.history,
+      }
+      const stack = [...state.bakeStack, parked]
+      return {
+        ...state,
+        source,
+        naturalSize: size,
+        edit: freshEdit(size),
+        history: H.emptyHistory(),
+        bakeStack: stack.length > BAKE_LIMIT ? stack.slice(stack.length - BAKE_LIMIT) : stack,
         view: { zoom: 1, fit: true, panX: 0, panY: 0 },
         comparing: false,
       }
@@ -195,8 +242,22 @@ export function studioReducer(state, action) {
     // ---------- history ----------
     case 'UNDO': {
       const result = H.undo(state.history, state.edit)
-      if (!result) return state
-      return { ...state, edit: result.snapshot, history: result.history }
+      if (result) return { ...state, edit: result.snapshot, history: result.history }
+
+      // Ordinary history is spent. If a bake is sitting behind it, stepping
+      // back means restoring the whole session that produced it — source and
+      // all — not just an edit snapshot. The baked canvas is dropped, so this
+      // step is not redoable; that is the honest trade for not pinning two
+      // full-resolution images per Apply.
+      if (!state.bakeStack.length) return state
+      const parked = state.bakeStack[state.bakeStack.length - 1]
+      return {
+        ...state,
+        ...parked,
+        bakeStack: state.bakeStack.slice(0, -1),
+        view: { zoom: 1, fit: true, panX: 0, panY: 0 },
+        comparing: false,
+      }
     }
 
     case 'REDO': {

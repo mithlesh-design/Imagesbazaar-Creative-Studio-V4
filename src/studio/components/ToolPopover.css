@@ -1,0 +1,119 @@
+/**
+ * Floats above the strip. `width` and `left` are set inline by `EditToolbar`,
+ * which solves the clamp in pixels — see the note there for why that is not
+ * done here.
+ */
+.tpop {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  transform: translateX(-50%);
+  z-index: var(--z-dropdown);
+  animation: tpop-in var(--dur-fast) var(--ease);
+}
+
+@keyframes tpop-in {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(6px);
+  }
+}
+
+.tpop__body {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border: 1px solid var(--studio-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-white);
+  box-shadow: var(--shadow-md);
+}
+
+.tpop__title {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+
+.tpop__readout {
+  margin-top: calc(var(--space-3) * -1 + 2px);
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.tpop__sliders {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.tpop__actions {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.tpop__action {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 38px;
+  padding-inline: var(--space-3);
+  border: 1px solid var(--studio-border);
+  border-radius: var(--radius-md);
+  background: var(--color-white);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease),
+    border-color var(--dur-fast) var(--ease);
+}
+
+.tpop__action:hover {
+  border-color: var(--color-accent);
+  background: var(--studio-hover);
+}
+
+.tpop__hint {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+}
+
+.tpop__hint svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+/* ---------- Arrow ----------
+   `left` is set inline: the box can be pinned to the card's edge while its
+   trigger is not, so the arrow tracks the button independently. */
+.tpop__arrow {
+  position: absolute;
+  top: 100%;
+  width: 12px;
+  height: 12px;
+  margin: -6px 0 0 -6px;
+  transform: rotate(45deg);
+  border-right: 1px solid var(--studio-border);
+  border-bottom: 1px solid var(--studio-border);
+  background: var(--color-white);
+}
+
+@media (pointer: coarse) {
+  .tpop__action {
+    min-height: 44px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tpop {
+    animation: none;
+  }
+}

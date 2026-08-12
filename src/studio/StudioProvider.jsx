@@ -9,7 +9,7 @@ import {
   useState,
 } from 'react'
 import * as H from './history'
-import { buildBaseCanvas, exportBlob as renderExportBlob } from './renderer'
+import { bakeCanvas, buildBaseCanvas, exportBlob as renderExportBlob } from './renderer'
 import { exportSizeFor, maxLongEdgeFor } from './cropMath'
 import {
   initialState,
@@ -95,11 +95,26 @@ export function StudioProvider({ children }) {
       return renderExportBlob(baseRef.current, s.edit.crop, s.edit.adjustments, size, type, quality)
     }
 
+    /**
+     * "Apply Edits" — flatten what is on screen and carry on editing it.
+     *
+     * Reads through `stateRef` rather than closing over state, so `actions`
+     * keeps its stable identity: the toolbar and the panels subscribe to it and
+     * would otherwise re-render on every slider tick.
+     */
+    const bake = () => {
+      const s = stateRef.current
+      const canvas = bakeCanvas(baseRef.current, s.edit.crop, s.edit.adjustments)
+      if (!canvas) return
+      dispatch({ type: 'BAKE', source: canvas, size: { w: canvas.width, h: canvas.height } })
+    }
+
     return {
       dispatch,
       loadFile,
       loadFromSource,
       exportImage,
+      bake,
 
       // Discrete
       clear: () => dispatch({ type: 'CLEAR' }),
@@ -138,7 +153,8 @@ export function StudioProvider({ children }) {
       ratio: selectRatio(state),
       isEdited: selectIsEdited(state),
       hasImage: Boolean(state.source),
-      canUndo: H.canUndo(state.history),
+      // A parked bake is a step back even when the edit stack is empty.
+      canUndo: H.canUndo(state.history) || state.bakeStack.length > 0,
       canRedo: H.canRedo(state.history),
       maxLongEdge: maxLongEdgeFor(state.edit.crop),
     }

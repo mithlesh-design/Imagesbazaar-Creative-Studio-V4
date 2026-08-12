@@ -1,0 +1,95 @@
+/**
+ * The strip, and the popover that floats over it.
+ *
+ * `position: relative` here is what the popover's anchoring is measured
+ * against — it is deliberately the same box the buttons live in, so an offset
+ * read from a button is directly usable as a popover offset.
+ */
+.etools {
+  position: relative;
+  flex-shrink: 0;
+}
+
+/**
+ * Eight equal columns, always one row.
+ *
+ * A wrapping flex row was the obvious first choice and the wrong one: at
+ * 1280px the eight buttons want 664px and the card gives 602, so "Sharpen"
+ * dropped to a second line and the strip grew by 66px — the picture paying for
+ * the toolbar. Equal columns share whatever there is instead, and the labels
+ * truncate before the row ever breaks.
+ */
+.etools__strip {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  gap: var(--space-2);
+}
+
+.etools__tool {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: 5px;
+  min-width: 0;
+  min-height: 58px;
+  padding: var(--space-2) var(--space-1);
+  border: 1px solid var(--studio-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-white);
+  font-family: inherit;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease),
+    border-color var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
+}
+
+.etools__tool:hover:not(:disabled):not(.is-active) {
+  border-color: var(--studio-border-strong);
+  background: var(--studio-hover);
+}
+
+.etools__tool.is-active {
+  border-color: var(--color-accent);
+  background: var(--color-accent);
+  color: var(--color-white);
+}
+
+.etools__tool:disabled {
+  color: var(--studio-text-disabled);
+  cursor: not-allowed;
+}
+
+.etools__label {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.2;
+  /* Secondary weight against the icon, but still past 4.5:1 on white — the
+     lighter `--color-text-muted` is not. Truncation here is visual only: the
+     button's accessible name is the full text either way. */
+  color: var(--color-text-secondary);
+}
+
+.etools__tool.is-active .etools__label {
+  color: var(--color-white);
+}
+
+.etools__tool:disabled .etools__label {
+  color: inherit;
+}
+
+@media (max-width: 767px) {
+  /* Eight across is unreadable on a phone; four and four is not. */
+  .etools__strip {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (pointer: coarse) {
+  .etools__tool {
+    min-height: 62px;
+  }
+}

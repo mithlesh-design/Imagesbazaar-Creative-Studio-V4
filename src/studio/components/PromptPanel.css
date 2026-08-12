@@ -1,0 +1,295 @@
+.ppanel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-height: 0;
+  padding: var(--space-5);
+}
+
+.ppanel__title {
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.ppanel__input {
+  min-height: 108px;
+  padding: var(--space-3);
+  border: 1px solid var(--studio-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-white);
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--color-text-primary);
+  resize: vertical;
+  transition: border-color var(--dur-base) var(--ease);
+}
+
+.ppanel__input::placeholder {
+  color: var(--color-text-secondary);
+}
+
+/* No `outline: none` here — `globals.css` already drops the ring for pointer
+   focus via `:focus:not(:focus-visible)`. Killing it outright took the keyboard
+   ring with it, leaving a 1px border shift as the only focus signal. */
+.ppanel__input:focus {
+  border-color: var(--color-accent);
+}
+
+/* ---------- Attached characters ---------- */
+.ppanel__chars {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  gap: var(--space-2);
+  max-width: 100%;
+  min-height: 30px;
+  padding-inline: var(--space-3) var(--space-2);
+  border-radius: var(--radius-pill);
+  background: var(--studio-accent-soft);
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease);
+}
+
+.ppanel__chars:hover {
+  background: var(--studio-track);
+}
+
+.ppanel__chars span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---------- References ---------- */
+.ppanel__legend {
+  margin-top: var(--space-1);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.ppanel__adders {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-2);
+}
+
+.ppanel__adder {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: 6px;
+  min-height: 66px;
+  padding: var(--space-2);
+  /* Dashed, because these are drop-targets in spirit: something goes in here
+     that is not there yet. The solid-bordered controls elsewhere all act on
+     something that already exists. */
+  border: 1px dashed var(--studio-border-strong);
+  border-radius: var(--radius-lg);
+  background: var(--color-white);
+  font-family: inherit;
+  font-size: 11.5px;
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--color-text-secondary);
+  text-align: center;
+  cursor: pointer;
+  transition: border-color var(--dur-fast) var(--ease),
+    background-color var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
+}
+
+.ppanel__adder:hover {
+  border-color: var(--color-accent);
+  background: var(--studio-hover);
+  color: var(--color-text-primary);
+}
+
+.ppanel__adder svg {
+  color: var(--color-text-primary);
+}
+
+/* The references area is the panel's slack: it absorbs whatever height the
+   prompt and the buttons leave, so the two CTAs stay pinned to the foot. */
+.ppanel__refs,
+.ppanel__empty {
+  flex: 1;
+  min-height: 76px;
+  border-radius: var(--radius-lg);
+  background: var(--studio-surface);
+}
+
+.ppanel__empty {
+  display: grid;
+  place-items: center;
+  padding: var(--space-4);
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  text-align: center;
+}
+
+.ppanel__refs {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow-y: auto;
+  padding: var(--space-2);
+  list-style: none;
+}
+
+.ppanel__ref {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 34px;
+  padding-inline: var(--space-2);
+  border-radius: var(--radius-md);
+  background: var(--color-white);
+  font-size: 12.5px;
+  color: var(--color-text-primary);
+}
+
+.ppanel__ref-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ppanel__ref button {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-pill);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
+}
+
+.ppanel__ref button:hover {
+  background: var(--studio-hover);
+  color: var(--color-text-primary);
+}
+
+/* ---------- Honest notice ---------- */
+.ppanel__notice {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border-radius: var(--radius-lg);
+  background: var(--studio-accent-soft);
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--color-text-primary);
+}
+
+.ppanel__notice svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.ppanel__notice button {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: var(--radius-pill);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease);
+}
+
+.ppanel__notice button:hover {
+  background: var(--studio-track);
+}
+
+/* ---------- The two actions ---------- */
+.ppanel__cta {
+  display: grid;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+.ppanel__generate,
+.ppanel__apply {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: 50px;
+  border-radius: var(--radius-lg);
+  font-family: inherit;
+  font-size: 14.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color var(--dur-base) var(--ease),
+    border-color var(--dur-base) var(--ease), color var(--dur-base) var(--ease);
+}
+
+.ppanel__generate {
+  background: var(--color-accent);
+  color: var(--color-white);
+}
+
+.ppanel__generate:hover:not(:disabled) {
+  background: var(--color-accent-hover);
+}
+
+.ppanel__generate:disabled {
+  background: var(--studio-surface);
+  color: var(--studio-text-disabled);
+  cursor: not-allowed;
+}
+
+.ppanel__apply {
+  border: 1px solid var(--studio-border-strong);
+  background: var(--color-white);
+  color: var(--color-text-primary);
+}
+
+.ppanel__apply:hover:not(:disabled) {
+  border-color: var(--color-accent);
+  background: var(--studio-hover);
+}
+
+.ppanel__apply:disabled {
+  border-color: var(--studio-border);
+  color: var(--studio-text-disabled);
+  cursor: not-allowed;
+}
+
+.ppanel__spin {
+  animation: ppanel-spin 900ms linear infinite;
+}
+
+@keyframes ppanel-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 1023px) {
+  .ppanel {
+    padding: var(--space-4);
+  }
+
+  .ppanel__refs,
+  .ppanel__empty {
+    flex: 0 0 auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ppanel__spin {
+    animation-duration: 2s;
+  }
+}
