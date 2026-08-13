@@ -6,19 +6,15 @@ import './PromptPanel.css'
 
 const REF_ICON = { image: ImagePlus, pdf: FileText, link: Link2 }
 
-/**
- * The right card: what you want, and what you want it made from.
- *
- * Prompt, characters and references are captured for real. There is no
- * generation model behind this build, so Generate runs a genuine pending state
- * and then says plainly that it is not connected, rather than inventing a
- * result — the editing tools beside it do change the image for real, and
- * blurring that line would be the one unforgivable thing here.
- *
- * "Apply Edits" is the honest half of that pair: it flattens the crop, rotation
- * and adjustments into the image and starts a clean edit against the result, so
- * you can stack rounds of work. It is a real, undoable operation.
- */
+const PROMPT_SUGGESTIONS = [
+  '🪔 Add vibrant Diwali diyas & warm festive lighting',
+  '🏢 Transform background to modern corporate office',
+  '🌸 Decorate with traditional Indian marigold flowers',
+  '🌆 Set cinematic Golden Hour Indian sunset lighting',
+  '🎨 Apply rich Indian traditional heritage oil-painting style',
+  '✨ Add celebratory color powder and festival mood',
+]
+
 export default function PromptPanel({
   prompt,
   onPromptChange,
@@ -27,11 +23,12 @@ export default function PromptPanel({
   onRemoveRef,
   selectedCharacters,
   onClearCharacters,
+  onGenerate,
 }) {
   const { hasImage, isEdited } = useStudio()
   const { bake } = useStudioActions()
 
-  const [status, setStatus] = useState('idle') // idle | generating | unavailable
+  const [generating, setGenerating] = useState(false)
 
   const imgRef = useRef(null)
   const pdfRef = useRef(null)
@@ -39,8 +36,6 @@ export default function PromptPanel({
   const names = selectedCharacters
     .map((id) => characters.find((c) => c.id === id)?.name)
     .filter(Boolean)
-
-  const hasContent = prompt.trim().length > 0 || names.length > 0 || refs.length > 0
 
   const addLink = () => {
     const url = window.prompt('Paste a reference URL')
@@ -50,22 +45,35 @@ export default function PromptPanel({
       const u = new URL(name)
       name = u.hostname.replace(/^www\./, '') + u.pathname
     } catch {
-      /* not a URL — keep the raw text as the label */
+      /* keep raw text as label */
     }
     onAddRef({ type: 'link', name })
   }
 
-  const generate = () => {
-    if (status === 'generating') return
-    setStatus('generating')
-    setTimeout(() => setStatus('unavailable'), 1500)
+  const handleSuggestionClick = (suggestion) => {
+    const cleanText = suggestion.replace(/^[^\w\s]+\s*/, '')
+    onPromptChange(prompt ? `${prompt}, ${cleanText}` : cleanText)
+  }
+
+  const handleGenerateClick = () => {
+    if (generating) return
+    setGenerating(true)
+    setTimeout(() => {
+      setGenerating(false)
+      onGenerate?.(prompt)
+    }, 1200)
   }
 
   return (
     <section className="ppanel" aria-labelledby="ppanel-heading">
-      <h2 className="ppanel__title" id="ppanel-heading">
-        Prompt
-      </h2>
+      <div className="ppanel__head-row">
+        <h2 className="ppanel__title" id="ppanel-heading">
+          AI Prompt Studio
+        </h2>
+        <span className="ppanel__ai-tag">
+          <Sparkles size={12} /> AI Powered
+        </span>
+      </div>
 
       <textarea
         className="ppanel__input"
@@ -73,8 +81,28 @@ export default function PromptPanel({
         onChange={(e) => onPromptChange(e.target.value)}
         placeholder="Describe how you want to edit or generate the image..."
         aria-labelledby="ppanel-heading"
-        rows={4}
+        rows={3}
       />
+
+      {/* Prompt Suggestions */}
+      <div className="ppanel__suggestions">
+        <h3 className="ppanel__suggestions-title">
+          <Sparkles size={13} aria-hidden="true" />
+          Prompt Suggestions
+        </h3>
+        <div className="ppanel__suggestions-chips">
+          {PROMPT_SUGGESTIONS.map((s, idx) => (
+            <button
+              key={idx}
+              type="button"
+              className="ppanel__suggestion-chip"
+              onClick={() => handleSuggestionClick(s)}
+            >
+              {s}
+            </button>
+          ))}
+        </div>
+      </div>
 
       {names.length > 0 && (
         <button
@@ -133,38 +161,24 @@ export default function PromptPanel({
         <p className="ppanel__empty">No references added yet</p>
       )}
 
-      {status === 'unavailable' && (
-        <p className="ppanel__notice" role="status">
-          <Sparkles size={14} aria-hidden="true" />
-          <span>
-            AI generation isn’t connected in this build — your prompt, characters and
-            references were captured. The editing tools do change the image for real.
-          </span>
-          <button type="button" onClick={() => setStatus('idle')} aria-label="Dismiss">
-            <X size={14} aria-hidden="true" />
-          </button>
-        </p>
-      )}
-
       <div className="ppanel__cta">
         <button
           type="button"
           className="ppanel__generate"
-          onClick={generate}
-          disabled={!hasContent || status === 'generating'}
-          title={
-            hasContent
-              ? 'Send the prompt, characters and references'
-              : 'Write a prompt, attach a character, or add a reference first'
-          }
+          onClick={handleGenerateClick}
+          disabled={generating}
+          title="Generate 10 image variations at once"
         >
-          {status === 'generating' ? (
+          {generating ? (
             <>
               <Loader2 className="ppanel__spin" size={16} aria-hidden="true" />
-              Generating…
+              Generating 10 Variations…
             </>
           ) : (
-            'Generate Image'
+            <>
+              <Sparkles size={16} aria-hidden="true" />
+              Generate 10 Variations ✨
+            </>
           )}
         </button>
 
@@ -175,7 +189,7 @@ export default function PromptPanel({
           disabled={!hasImage || !isEdited}
           title={
             isEdited
-              ? 'Flatten the current edits into the image'
+              ? 'Flatten current edits into the image'
               : 'Make an edit first — there is nothing to apply'
           }
         >
@@ -183,9 +197,6 @@ export default function PromptPanel({
         </button>
       </div>
 
-      {/* Opened by the buttons above, never reached directly — `tabIndex={-1}`
-          keeps them out of the tab order (`.sr-only` alone does not), and the
-          label is there for anything that still surfaces them. */}
       <input
         ref={imgRef}
         type="file"

@@ -1,57 +1,52 @@
 /**
- * The strip, and the popover that floats over it.
- *
- * `position: relative` here is what the popover's anchoring is measured
- * against — it is deliberately the same box the buttons live in, so an offset
- * read from a button is directly usable as a popover offset.
+ * Floating Pro Tool Dock (Light Theme Edition).
  */
 .etools {
   position: relative;
   flex-shrink: 0;
+  margin-top: var(--space-2);
 }
 
-/**
- * Eight equal columns, always one row.
- *
- * A wrapping flex row was the obvious first choice and the wrong one: at
- * 1280px the eight buttons want 664px and the card gives 602, so "Sharpen"
- * dropped to a second line and the strip grew by 66px — the picture paying for
- * the toolbar. Equal columns share whatever there is instead, and the labels
- * truncate before the row ever breaks.
- */
 .etools__strip {
   display: grid;
   grid-template-columns: repeat(8, minmax(0, 1fr));
-  gap: var(--space-2);
+  gap: 8px;
+  padding: 6px;
+  background: var(--color-white);
+  border: 1px solid var(--studio-border);
+  border-radius: var(--radius-xl);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
 }
 
 .etools__tool {
   display: grid;
   justify-items: center;
   align-content: center;
-  gap: 5px;
+  gap: 4px;
   min-width: 0;
-  min-height: 58px;
+  min-height: 56px;
   padding: var(--space-2) var(--space-1);
-  border: 1px solid var(--studio-border);
+  border: 1px solid transparent;
   border-radius: var(--radius-lg);
-  background: var(--color-white);
+  background: transparent;
   font-family: inherit;
   color: var(--color-text-primary);
   cursor: pointer;
-  transition: background-color var(--dur-fast) var(--ease),
-    border-color var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
+  transition: transform 0.15s ease, background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .etools__tool:hover:not(:disabled):not(.is-active) {
-  border-color: var(--studio-border-strong);
+  border-color: var(--studio-border);
   background: var(--studio-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.04);
 }
 
 .etools__tool.is-active {
   border-color: var(--color-accent);
   background: var(--color-accent);
   color: var(--color-white);
+  box-shadow: 0 4px 14px rgba(224, 30, 90, 0.3);
 }
 
 .etools__tool:disabled {
@@ -65,11 +60,8 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   font-size: 11px;
-  font-weight: 500;
+  font-weight: 600;
   line-height: 1.2;
-  /* Secondary weight against the icon, but still past 4.5:1 on white — the
-     lighter `--color-text-muted` is not. Truncation here is visual only: the
-     button's accessible name is the full text either way. */
   color: var(--color-text-secondary);
 }
 
@@ -82,7 +74,6 @@
 }
 
 @media (max-width: 767px) {
-  /* Eight across is unreadable on a phone; four and four is not. */
   .etools__strip {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
@@ -90,6 +81,6 @@
 
 @media (pointer: coarse) {
   .etools__tool {
-    min-height: 62px;
+    min-height: 60px;
   }
 }

@@ -2,45 +2,22 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import Header from '../components/Header'
 import MobileMenu from '../components/MobileMenu'
 import SearchBar from '../components/SearchBar'
+import CollectionCard from '../components/CollectionCard'
 import ImageSearchModal from '../components/ImageSearchModal'
-import HeroBanner from '../components/HeroBanner'
-import CollectionGrid from '../components/CollectionGrid'
-import AboutSection from '../components/AboutSection'
-import PopularSearches from '../components/PopularSearches'
 import Footer from '../components/Footer'
 import SupportButton from '../components/SupportButton'
-import CreativeStudio from '../studio/CreativeStudio'
 import { useStudioActions } from '../studio/StudioProvider'
 import { useSearch } from '../hooks/useSearch'
 import './Home.css'
 
-export default function Home() {
+export default function Home({ onNavigateStudio }) {
   const search = useSearch()
   const studio = useStudioActions()
   const [menuOpen, setMenuOpen] = useState(false)
   const [imageSearchOpen, setImageSearchOpen] = useState(false)
-  const [studioInView, setStudioInView] = useState(false)
 
   const inputRef = useRef(null)
-  const studioRef = useRef(null)
 
-  /**
-   * The studio's prompt dock is sticky to the bottom of the viewport, and the
-   * support button is fixed there too — on a phone they would sit on top of one
-   * another. The support button stands down while the studio is on screen.
-   */
-  useEffect(() => {
-    const node = studioRef.current
-    if (!node) return
-    const io = new IntersectionObserver(
-      ([entry]) => setStudioInView(entry.isIntersecting),
-      { rootMargin: '-25% 0px -25% 0px' }
-    )
-    io.observe(node)
-    return () => io.disconnect()
-  }, [])
-
-  /** Chips, menu items: fill the search field so image results surface. */
   const runSearch = useCallback(
     (query) => {
       setMenuOpen(false)
@@ -55,9 +32,8 @@ export default function Home() {
   )
 
   /**
-   * The single entry point for "select an image" — used by both search results
-   * and collection cards. Loads the high-resolution variant and brings the
-   * studio into view.
+   * Selection flow: Loads the selected image into studio state and immediately
+   * navigates to the dedicated Creative Studio page.
    */
   const selectImage = useCallback(
     (collection) => {
@@ -68,20 +44,16 @@ export default function Home() {
         title: collection.title,
         alt: collection.alt,
       })
-      requestAnimationFrame(() => {
-        studioRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-      })
+      onNavigateStudio?.()
     },
-    [studio]
+    [studio, onNavigateStudio]
   )
 
-  const focusSearch = useCallback(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' })
-    inputRef.current?.focus({ preventScroll: true })
-  }, [])
+  const hasSearchActive = Boolean(search.query.trim())
+  const generatedResults = search.results.slice(0, 10)
 
   return (
-    <>
+    <div className="home-page">
       <a className="skip-link" href="#main">
         Skip to content
       </a>
@@ -94,9 +66,9 @@ export default function Home() {
         onSelectCategory={runSearch}
       />
 
-      <main id="main">
+      <main id="main" className="home-page__main">
         <h1 className="sr-only">
-          ImagesBazaar — search the largest collection of authentic Indian images
+          ImagesBazaar — Explain what kind of image you are looking for
         </h1>
 
         <div className="home__search container">
@@ -108,21 +80,96 @@ export default function Home() {
           />
         </div>
 
-        <CreativeStudio ref={studioRef} onFocusSearch={focusSearch} />
+        {/* Dynamic 10-Image Generation 5x2 Grid */}
+        {hasSearchActive && (
+          <section className="search-results container" aria-label="Generated Images">
+            {search.status === 'loading' && (
+              <GenerationLoadingState query={search.query} />
+            )}
 
-        <HeroBanner />
-        <CollectionGrid onSelect={selectImage} />
-        <AboutSection />
-        <PopularSearches onSelect={runSearch} />
+            {search.status === 'empty' && (
+              <div className="search-results__empty">
+                <h3>No matching images generated</h3>
+                <p>
+                  Try describing your requirement like <em>family celebrating Diwali</em> or{' '}
+                  <em>corporate office meeting in Mumbai</em>.
+                </p>
+              </div>
+            )}
+
+            {search.status === 'results' && generatedResults.length > 0 && (
+              <div className="search-results__content">
+                <div className="search-results__head-wrap">
+                  <h2 className="search-results__heading">
+                    10 Generated Variations for “{search.query}”
+                  </h2>
+                  <p className="search-results__sub">
+                    5 × 2 Grid — Click any image to open in Creative Studio for editing & customization
+                  </p>
+                </div>
+
+                <ul className="search-results__grid-5x2">
+                  {generatedResults.map((item, i) => (
+                    <CollectionCard
+                      key={item.id}
+                      collection={item.collection}
+                      onSelect={selectImage}
+                      priority={i < 5}
+                    />
+                  ))}
+                </ul>
+              </div>
+            )}
+          </section>
+        )}
       </main>
 
       <Footer />
-      <SupportButton hidden={studioInView} />
+      <SupportButton />
 
       <ImageSearchModal
         open={imageSearchOpen}
         onClose={() => setImageSearchOpen(false)}
       />
-    </>
+    </div>
+  )
+}
+
+function GenerationLoadingState({ query }) {
+  const [textIndex, setTextIndex] = useState(0)
+  const loadingTexts = [
+    `Analyzing requirement: "${query}"...`,
+    'Applying AI lighting models...',
+    'Rendering high-resolution details...',
+    'Finalizing 10 variations...',
+  ]
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTextIndex((prev) => (prev + 1) % loadingTexts.length)
+    }, 600)
+    return () => clearInterval(interval)
+  }, [loadingTexts.length])
+
+  return (
+    <div className="generation-loading">
+      <div className="generation-loading__header">
+        <h2 className="generation-loading__title">
+          <span className="generation-loading__spinner"></span>
+          Generating Images
+        </h2>
+        <p className="generation-loading__status">
+          {loadingTexts[textIndex]}
+        </p>
+      </div>
+      <ul className="search-results__grid-5x2">
+        {Array.from({ length: 10 }).map((_, i) => (
+          <li key={i} className="skeleton-card">
+            <div className="skeleton-card__image"></div>
+            <div className="skeleton-card__text"></div>
+          </li>
+        ))}
+      </ul>
+    </div>
   )
 }

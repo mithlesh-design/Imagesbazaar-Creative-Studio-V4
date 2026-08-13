@@ -1,90 +1,49 @@
-import { forwardRef, useEffect, useId, useRef, useState } from 'react'
-import { AlertCircle, ImageUp, Loader2, Search, X } from 'lucide-react'
-import { useMediaQuery } from '../hooks/useMediaQuery'
+import { forwardRef, useRef, useState } from 'react'
+import { FileText, ImagePlus, Link2, Loader2, Sparkles, X } from 'lucide-react'
 import './SearchBar.css'
 
-/**
- * The page's primary interaction.
- *
- * A combobox whose options are the images themselves — choosing one opens it
- * in the Creative Editor below. Arrow keys move a virtual cursor over the
- * results without taking DOM focus off the input.
- */
 const SearchBar = forwardRef(function SearchBar(
-  { search, onOpenImageSearch, onSelectImage },
+  { search, onSelectImage },
   ref
 ) {
-  const { query, setQuery, status, results, retry } = search
+  const { query, setQuery, status, generate } = search
+  const [references, setReferences] = useState([])
 
-  const [open, setOpen] = useState(false)
-  const [active, setActive] = useState(-1)
-  const rootRef = useRef(null)
-  const listId = useId()
+  const imgInputRef = useRef(null)
+  const pdfInputRef = useRef(null)
 
-  // The full sentence is clipped on narrow screens, so shorten it there.
-  // The accessible name stays constant either way.
-  const isNarrow = useMediaQuery('(max-width: 639px)')
-  const placeholder = isNarrow
-    ? 'Search Indian images'
-    : 'Search the world’s largest collection of Indian images'
+  const placeholder = 'Explain what kind of image you are looking for.'
 
-  const showPanel =
-    open &&
-    (status === 'loading' || status === 'results' || status === 'empty' || status === 'error')
-
-  // Reset the highlighted row whenever the result set changes.
-  useEffect(() => setActive(-1), [results, status])
-
-  // Close on outside click.
-  useEffect(() => {
-    if (!showPanel) return
-    const onDown = (e) => {
-      if (!rootRef.current?.contains(e.target)) setOpen(false)
+  const handleAddLink = () => {
+    const url = window.prompt('Enter reference link URL:')
+    if (!url?.trim()) return
+    let name = url.trim()
+    try {
+      const u = new URL(name)
+      name = u.hostname.replace(/^www\./, '') + u.pathname
+    } catch {
+      /* raw text */
     }
-    document.addEventListener('mousedown', onDown)
-    return () => document.removeEventListener('mousedown', onDown)
-  }, [showPanel])
-
-  const choose = (item) => {
-    if (!item) return
-    setOpen(false)
-    onSelectImage?.(item.collection)
+    setReferences((prev) => [...prev, { id: Date.now(), type: 'link', name }])
   }
 
-  const onKeyDown = (e) => {
-    if (e.key === 'Escape') {
-      setOpen(false)
-      return
-    }
+  const handleRemoveRef = (id) => {
+    setReferences((prev) => prev.filter((r) => r.id !== id))
+  }
+
+  const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
       e.preventDefault()
-      // No row highlighted? Take the top match — pressing Enter should do
-      // something useful rather than nothing.
-      choose(active >= 0 ? results[active] : results[0])
-      return
-    }
-    if (!results.length) return
-
-    if (e.key === 'ArrowDown') {
-      e.preventDefault()
-      setOpen(true)
-      setActive((i) => (i + 1) % results.length)
-    } else if (e.key === 'ArrowUp') {
-      e.preventDefault()
-      setOpen(true)
-      setActive((i) => (i <= 0 ? results.length - 1 : i - 1))
+      generate()
     }
   }
 
   return (
-    <div className="search" ref={rootRef}>
-      <div
-        className={`search__bar${showPanel ? ' search__bar--open' : ''}${
-          status === 'error' ? ' search__bar--error' : ''
-        }`}
-      >
+    <div className="search-bar-wrap">
+      <div className="search__bar">
         <div className="search__field">
-          <Search className="search__icon" size={26} strokeWidth={2} aria-hidden="true" />
+          {/* Generate Icon */}
+          <Sparkles className="search__icon search__icon--sparkle" size={24} strokeWidth={2} aria-hidden="true" />
 
           <input
             ref={ref}
@@ -92,21 +51,10 @@ const SearchBar = forwardRef(function SearchBar(
             type="text"
             value={query}
             placeholder={placeholder}
-            aria-label="Search Indian images"
-            role="combobox"
-            aria-expanded={showPanel}
-            aria-controls={listId}
-            aria-autocomplete="list"
-            aria-activedescendant={
-              active >= 0 && results[active] ? `${listId}-opt-${active}` : undefined
-            }
+            aria-label="Explain what kind of image you are looking for"
             autoComplete="off"
-            onChange={(e) => {
-              setQuery(e.target.value)
-              setOpen(true)
-            }}
-            onFocus={() => setOpen(true)}
-            onKeyDown={onKeyDown}
+            onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={handleKeyDown}
           />
 
           {status === 'loading' && (
@@ -114,99 +62,111 @@ const SearchBar = forwardRef(function SearchBar(
           )}
 
           {query && status !== 'loading' && (
-            <button
-              type="button"
-              className="search__clear"
-              onClick={() => {
-                setQuery('')
-                setOpen(false)
-                ref?.current?.focus()
-              }}
-              aria-label="Clear search"
-            >
-              <X size={18} aria-hidden="true" />
-            </button>
-          )}
-        </div>
-
-        <button
-          type="button"
-          className="search__image"
-          onClick={onOpenImageSearch}
-          aria-label="Search by image"
-          title="Upload an image to search with it"
-        >
-          <ImageUp size={22} strokeWidth={1.8} aria-hidden="true" />
-          <span className="search__image-label">Search By Image</span>
-        </button>
-      </div>
-
-      {showPanel && (
-        <div className="search__panel" role="presentation">
-          {status === 'loading' && (
-            <p className="search__note" role="status">
-              Searching…
-            </p>
-          )}
-
-          {status === 'error' && (
-            <div className="search__note search__note--error" role="alert">
-              <AlertCircle size={17} aria-hidden="true" />
-              <span>Something went wrong with that search.</span>
-              <button type="button" className="search__retry" onClick={retry}>
-                Try again
+            <div className="search__actions-right">
+              <button
+                type="button"
+                className="search__clear"
+                onClick={() => {
+                  setQuery('')
+                  ref?.current?.focus()
+                }}
+                aria-label="Clear prompt"
+              >
+                <X size={18} aria-hidden="true" />
+              </button>
+              <button
+                type="button"
+                className="search__generate-btn"
+                onClick={generate}
+              >
+                Generate
               </button>
             </div>
           )}
+        </div>
 
-          {status === 'empty' && (
-            <p className="search__note" role="status">
-              No images match “{query.trim()}”. Try a broader term such as{' '}
-              <em>family</em> or <em>festival</em>.
-            </p>
-          )}
+        {/* Three Reference Action Buttons */}
+        <div className="search__ref-actions">
+          <button
+            type="button"
+            className="search__ref-btn"
+            onClick={handleAddLink}
+            title="Add a reference website URL"
+          >
+            <Link2 size={16} strokeWidth={2} />
+            <span>Add Link</span>
+          </button>
 
-          {status === 'results' && (
-            <>
-              <p className="search__hint" id={`${listId}-hint`}>
-                Select an image to open it in the Creative Editor
-              </p>
-              <ul
-                className="search__results"
-                id={listId}
-                role="listbox"
-                aria-label="Matching images"
+          <button
+            type="button"
+            className="search__ref-btn"
+            onClick={() => imgInputRef.current?.click()}
+            title="Upload a reference photo"
+          >
+            <ImagePlus size={16} strokeWidth={2} />
+            <span>Upload Image</span>
+          </button>
+
+          <button
+            type="button"
+            className="search__ref-btn"
+            onClick={() => pdfInputRef.current?.click()}
+            title="Upload a reference PDF document"
+          >
+            <FileText size={16} strokeWidth={2} />
+            <span>Upload PDF</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Hidden File Inputs */}
+      <input
+        ref={imgInputRef}
+        type="file"
+        accept="image/*"
+        className="sr-only"
+        onChange={(e) => {
+          const file = e.target.files?.[0]
+          if (file) {
+            setReferences((prev) => [...prev, { id: Date.now(), type: 'image', name: file.name }])
+          }
+          e.target.value = ''
+        }}
+      />
+      <input
+        ref={pdfInputRef}
+        type="file"
+        accept="application/pdf"
+        className="sr-only"
+        onChange={(e) => {
+          const file = e.target.files?.[0]
+          if (file) {
+            setReferences((prev) => [...prev, { id: Date.now(), type: 'pdf', name: file.name }])
+          }
+          e.target.value = ''
+        }}
+      />
+
+      {/* Attached Reference Tags */}
+      {references.length > 0 && (
+        <div className="search__ref-tags">
+          <span className="search__ref-title">References attached:</span>
+          {references.map((r) => (
+            <span key={r.id} className="search__ref-tag">
+              {r.type === 'image' && <ImagePlus size={13} />}
+              {r.type === 'link' && <Link2 size={13} />}
+              {r.type === 'pdf' && <FileText size={13} />}
+              <span className="search__ref-name">{r.name}</span>
+              <button
+                type="button"
+                className="search__ref-remove"
+                onClick={() => handleRemoveRef(r.id)}
+                aria-label={`Remove reference ${r.name}`}
               >
-                {results.map((item, i) => (
-                  <li key={item.id} role="presentation">
-                    <button
-                      type="button"
-                      id={`${listId}-opt-${i}`}
-                      role="option"
-                      aria-selected={i === active}
-                      className={`search__result${i === active ? ' is-active' : ''}`}
-                      onMouseEnter={() => setActive(i)}
-                      onClick={() => choose(item)}
-                    >
-                      <img
-                        className="search__thumb"
-                        src={item.image}
-                        alt=""
-                        width={64}
-                        height={48}
-                        loading="lazy"
-                        decoding="async"
-                      />
-                      <span className="search__result-text">
-                        <span className="search__result-label">{item.label}</span>
-                        <span className="search__result-alt">{item.alt}</span>
-                      </span>
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </>
-          )}
+                <X size={12} />
+              </button>
+            </span>
+          ))}
         </div>
       )}
     </div>

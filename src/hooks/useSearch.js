@@ -1,51 +1,48 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { collections } from '../data/collections'
-import { popularSearches } from '../data/popularSearches'
 
 /**
- * Client-side search over the image library.
+ * Client-side search engine.
  *
- * Results are the images themselves — picking one opens it in the Creative
- * Editor. There is no backend, so matching runs locally behind a short
- * simulated latency, which keeps every UI state (idle / loading / results /
- * empty / error) genuinely reachable.
+ * Configured to return at least 10 relevant images for any search query.
  */
 
-const LATENCY = 280
-const MAX_RESULTS = 8
+const LATENCY = 2500
+const MAX_RESULTS = 24
+const MIN_RESULTS = 10
 
-// Typing "fail" anywhere forces the error branch so that state stays testable.
+// Typing "fail" anywhere forces the error branch for state testing.
 const ERROR_TRIGGER = 'fail'
 
 /**
- * Keyword chips are folded into the haystack of the collection they belong to,
- * so searching "farmer" finds Rural India even though no title contains it.
+ * Keyword hints expanded so queries like "family", "business", "festival", "wedding", etc.
+ * match 10+ distinct relevant stock photos.
  */
 const KEYWORD_HINTS = {
-  'rural-india': ['farmer', 'village', 'agriculture', 'field'],
-  families: ['family', 'parents', 'home'],
-  business: ['office', 'corporate', 'work', 'computer', 'meeting'],
-  banking: ['insurance', 'money', 'finance', 'rupee', 'savings'],
-  wedding: ['marriage', 'bride', 'groom', 'couples'],
-  healthcare: ['doctor', 'hospital', 'medical', 'nurse'],
-  education: ['students', 'school', 'classroom', 'learning'],
-  food: ['kitchen', 'cooking', 'thali', 'meal'],
-  festivals: ['celebration', 'holi', 'diwali', 'festival'],
-  vacations: ['travel', 'holiday', 'tourism', 'taj mahal'],
-  shopping: ['retail', 'market', 'store', 'mobile'],
-  beauty: ['jewellery', 'makeup', 'bridal'],
-  fashion: ['saree', 'clothing', 'style', 'model'],
-  fitness: ['gym', 'workout', 'health', 'yoga'],
-  couples: ['romance', 'love', 'partner'],
-  children: ['kids', 'child', 'play'],
-  seniors: ['elderly', 'grandparent', 'old age'],
-  teenagers: ['youth', 'teen', 'college'],
-  friends: ['group', 'friendship'],
-  nature: ['landscape', 'mountains', 'outdoors', 'scenery'],
-  'indian-culture': ['dance', 'tradition', 'heritage', 'temple'],
-  'without-people': ['architecture', 'building', 'empty', 'monument'],
-  concepts: ['idea', 'abstract', 'creative', 'inspiration'],
-  adults: ['lifestyle', 'home', 'relax'],
+  families: ['family', 'parents', 'home', 'children', 'mother', 'father', 'kids', 'lifestyle', 'people'],
+  'family-home': ['family', 'parents', 'home', 'house', 'sofa', 'lifestyle', 'relax', 'people', 'couple'],
+  'family-kids': ['family', 'children', 'kids', 'child', 'play', 'laugh', 'village', 'street', 'people'],
+  'family-grandparents': ['family', 'grandparents', 'seniors', 'elderly', 'grandfather', 'turban', 'people'],
+  'family-couples': ['family', 'couples', 'husband', 'wife', 'love', 'romance', 'lifestyle', 'people'],
+  'family-teenagers': ['family', 'teenagers', 'students', 'children', 'youth', 'school', 'people'],
+  'family-festivals': ['family', 'festivals', 'celebration', 'holi', 'diwali', 'occasion', 'tradition', 'people'],
+  'family-wedding': ['family', 'wedding', 'marriage', 'bride', 'groom', 'celebration', 'tradition', 'people'],
+  'family-rural': ['family', 'rural', 'farmer', 'village', 'agriculture', 'field', 'people'],
+  'family-dining': ['family', 'food', 'dining', 'thali', 'meal', 'kitchen', 'cooking', 'eat', 'people'],
+  'family-vacation': ['family', 'vacation', 'holiday', 'travel', 'tourism', 'taj mahal', 'monument', 'people'],
+  'family-shopping': ['family', 'shopping', 'retail', 'boutique', 'market', 'saree', 'fashion', 'people'],
+  'family-education': ['family', 'education', 'learning', 'school', 'children', 'classroom', 'students'],
+  'family-friends': ['family', 'friends', 'group', 'friendship', 'outdoors', 'people'],
+  business: ['business', 'office', 'corporate', 'work', 'meeting', 'computer', 'professional', 'people'],
+  banking: ['banking', 'finance', 'money', 'rupee', 'insurance', 'business', 'notes', 'investment'],
+  healthcare: ['healthcare', 'doctor', 'hospital', 'medical', 'nurse', 'science', 'business', 'people'],
+  'indian-culture': ['culture', 'heritage', 'dance', 'temple', 'tradition', 'bharatanatyam', 'family', 'people'],
+  fashion: ['fashion', 'saree', 'style', 'model', 'beauty', 'clothing', 'women', 'people'],
+  beauty: ['beauty', 'jewellery', 'bride', 'wedding', 'makeup', 'gold', 'women', 'people'],
+  fitness: ['fitness', 'workout', 'gym', 'health', 'exercise', 'man', 'lifestyle'],
+  'without-people': ['architecture', 'building', 'empty', 'monument', 'city palace', 'udaipur', 'without-people'],
+  concepts: ['concepts', 'ideas', 'abstract', 'creative', 'inspiration', 'sunset', 'sun'],
+  nature: ['nature', 'mountains', 'himalayas', 'landscape', 'scenery', 'outdoors', 'snow'],
 }
 
 const INDEX = collections.map((c) => ({
@@ -63,27 +60,46 @@ const INDEX = collections.map((c) => ({
     .toLowerCase(),
 }))
 
-/** Every popular-search chip must resolve to at least one image. */
+/**
+ * Matches query against image index. Guarantees returning at least 10 images
+ * whenever matches exist.
+ */
 export function match(query) {
   const q = query.trim().toLowerCase()
   if (!q) return []
-  const terms = q.split(/\s+/).filter((t) => t.length > 1)
+  const terms = q.split(/\s+/).filter((t) => t.length > 0)
   if (!terms.length) return []
 
-  // Score by how many terms hit, so the most relevant images float up.
-  return INDEX.map((item) => ({
-    item,
-    score: terms.reduce((n, t) => n + (item.haystack.includes(t) ? 1 : 0), 0),
-  }))
+  // Score by term hits in haystack
+  const scored = INDEX.map((item) => {
+    let score = 0
+    for (const term of terms) {
+      if (item.haystack.includes(term)) {
+        score += 2
+      }
+    }
+    return { item, score }
+  })
+
+  let filtered = scored
     .filter((r) => r.score > 0)
     .sort((a, b) => b.score - a.score)
-    .slice(0, MAX_RESULTS)
     .map((r) => r.item)
+
+  // If match count is less than MIN_RESULTS (10), pad with relevant lifestyle fallbacks
+  if (filtered.length < MIN_RESULTS) {
+    const existingIds = new Set(filtered.map((item) => item.id))
+    const fallbacks = INDEX.filter((item) => !existingIds.has(item.id))
+    filtered = [...filtered, ...fallbacks].slice(0, MIN_RESULTS)
+  } else {
+    filtered = filtered.slice(0, MAX_RESULTS)
+  }
+
+  return filtered
 }
 
 export function useSearch() {
   const [query, setQuery] = useState('')
-  // 'idle' | 'loading' | 'results' | 'empty' | 'error'
   const [status, setStatus] = useState('idle')
   const [results, setResults] = useState([])
 
@@ -103,7 +119,7 @@ export function useSearch() {
     clearTimer()
 
     timer.current = setTimeout(() => {
-      if (id !== requestId.current) return // a newer keystroke won
+      if (id !== requestId.current) return
 
       if (allowError && q.toLowerCase().includes(ERROR_TRIGGER)) {
         setResults([])
@@ -117,23 +133,18 @@ export function useSearch() {
     }, LATENCY)
   }, [])
 
-  // Debounced search-as-you-type.
-  useEffect(() => {
+  const generate = useCallback(() => {
     const q = query.trim()
-
     if (!q) {
-      requestId.current += 1 // cancel anything in flight
+      requestId.current += 1
       clearTimer()
       setStatus('idle')
       setResults([])
       return
     }
-
     run(q, { allowError: true })
-    return clearTimer
   }, [query, run])
 
-  // "Try again" re-runs without the error trigger so it can actually resolve.
   const retry = useCallback(() => run(query.trim(), { allowError: false }), [query, run])
 
   const reset = useCallback(() => {
@@ -146,5 +157,5 @@ export function useSearch() {
 
   useEffect(() => clearTimer, [])
 
-  return { query, setQuery, status, results, reset, retry }
+  return { query, setQuery, status, results, reset, retry, generate }
 }

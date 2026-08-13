@@ -92,7 +92,7 @@ export default function CharacterBrowser({ open, onClose, selected, onToggle, on
         <header className="cbrowse__head">
           <div>
             <h2 className="cbrowse__title" id="cbrowse-title">
-              All characters
+              ImagesBazaar Characters
             </h2>
             <p className="cbrowse__sub">
               Attached characters are sent with your prompt.

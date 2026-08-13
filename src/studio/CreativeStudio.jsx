@@ -10,42 +10,23 @@ import { useLockBodyScroll } from '../hooks/useLockBodyScroll'
 import { useSubscription } from '../hooks/useSubscription'
 import { useStudioActions } from './StudioProvider'
 import { useKeyboard } from './useKeyboard'
-import CharactersPanel from './components/CharactersPanel'
 import CharacterBrowser from './components/CharacterBrowser'
 import CanvasPanel from './components/CanvasPanel'
 import PromptPanel from './components/PromptPanel'
 import DownloadDialog from './components/DownloadDialog'
+import GenerationModal from './components/GenerationModal'
 import './CreativeStudio.css'
 
-/**
- * The editor, inline on the page and exactly one viewport tall.
- *
- *   ├ characters   who appears in the image
- *   ├ canvas       ratios and session actions, the picture, the tool strip
- *   └ prompt       what to make, what to make it from, and the two actions
- *
- * Nothing here scrolls. The frame is a fixed height and each card manages its
- * own overflow, which is what lets the whole editor sit in a single viewport
- * however tall the window is.
- *
- * Full screen is the *same DOM* with a class on it, not a second component —
- * so expanding preserves the image, crop, adjustments, undo stack and zoom
- * without anything being lifted, serialised or restored.
- *
- * Prompt and references live here rather than in `PromptPanel` because they
- * outlive it: the panel unmounts on a narrow layout, and losing what someone
- * typed because the window got smaller is not a defensible way to behave.
- */
 const CreativeStudio = forwardRef(function CreativeStudio({ onFocusSearch }, ref) {
   const { setComparing } = useStudioActions()
   const subscription = useSubscription()
 
   const [activeTool, setActiveTool] = useState(null)
-  const [gender, setGender] = useState('male')
   const [selectedCharacters, setSelectedCharacters] = useState([])
   const [browserOpen, setBrowserOpen] = useState(false)
   const [fullscreen, setFullscreen] = useState(false)
   const [downloadOpen, setDownloadOpen] = useState(false)
+  const [genModalOpen, setGenModalOpen] = useState(false)
   const [fitScale, setFitScale] = useState(1)
 
   const [prompt, setPrompt] = useState('')
@@ -84,24 +65,23 @@ const CreativeStudio = forwardRef(function CreativeStudio({ onFocusSearch }, ref
 
   const toggleFullscreen = useCallback(() => setFullscreen((f) => !f), [])
 
-  /** Innermost thing first: dialog, browser, popover, then full screen. */
   const handleEscape = useCallback(() => {
     if (downloadOpen) setDownloadOpen(false)
+    else if (genModalOpen) setGenModalOpen(false)
     else if (browserOpen) setBrowserOpen(false)
     else if (activeTool) setActiveTool(null)
     else if (fullscreen) setFullscreen(false)
-  }, [downloadOpen, browserOpen, activeTool, fullscreen])
+  }, [downloadOpen, genModalOpen, browserOpen, activeTool, fullscreen])
 
   useKeyboard({
     containerRef: sectionRef,
     fullscreen,
-    paused: downloadOpen || browserOpen,
+    paused: downloadOpen || browserOpen || genModalOpen,
     onEscape: handleEscape,
     onDownload: () => setDownloadOpen(true),
     onSelectTool: selectTool,
   })
 
-  // Leaving full screen should not strand the page somewhere else.
   useEffect(() => {
     if (fullscreen) return
     sectionRef.current?.scrollIntoView({ block: 'start' })
@@ -114,16 +94,6 @@ const CreativeStudio = forwardRef(function CreativeStudio({ onFocusSearch }, ref
       ref={sectionRef}
     >
       <div className="studio__grid">
-        <div className="studio__card studio__card--left">
-          <CharactersPanel
-            gender={gender}
-            onGenderChange={setGender}
-            selected={selectedCharacters}
-            onToggle={toggleCharacter}
-            onOpenBrowser={() => setBrowserOpen(true)}
-          />
-        </div>
-
         <div className="studio__card studio__card--canvas">
           <CanvasPanel
             activeTool={activeTool}
@@ -134,6 +104,8 @@ const CreativeStudio = forwardRef(function CreativeStudio({ onFocusSearch }, ref
             fitScale={fitScale}
             onFitScale={setFitScale}
             onFocusSearch={onFocusSearch}
+            onOpenCharacters={() => setBrowserOpen(true)}
+            selectedCharactersCount={selectedCharacters.length}
           />
         </div>
 
@@ -146,16 +118,26 @@ const CreativeStudio = forwardRef(function CreativeStudio({ onFocusSearch }, ref
             onRemoveRef={removeRef}
             selectedCharacters={selectedCharacters}
             onClearCharacters={clearCharacters}
+            onGenerate={() => setGenModalOpen(true)}
           />
         </div>
       </div>
 
+      {/* Character Selector Popup Modal */}
       <CharacterBrowser
         open={browserOpen}
         onClose={() => setBrowserOpen(false)}
         selected={selectedCharacters}
         onToggle={toggleCharacter}
         onClear={clearCharacters}
+      />
+
+      {/* 10-Image AI Generation Gallery Modal */}
+      <GenerationModal
+        open={genModalOpen}
+        onClose={() => setGenModalOpen(false)}
+        prompt={prompt}
+        selectedCharacters={selectedCharacters}
       />
 
       <DownloadDialog

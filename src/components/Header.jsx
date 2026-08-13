@@ -1,7 +1,14 @@
 import { Menu } from 'lucide-react'
 import './Header.css'
 
-export default function Header({ onOpenMenu }) {
+export default function Header({ onOpenMenu, onNavigateHome }) {
+  const handleBrandClick = (e) => {
+    if (onNavigateHome) {
+      e.preventDefault()
+      onNavigateHome()
+    }
+  }
+
   return (
     <header className="header">
       <div className="header__inner container">
@@ -18,7 +25,12 @@ export default function Header({ onOpenMenu }) {
           </button>
         </div>
 
-        <a className="header__brand" href="#" aria-label="ImagesBazaar home">
+        <a
+          className="header__brand"
+          href="#"
+          onClick={handleBrandClick}
+          aria-label="ImagesBazaar home"
+        >
           <img
             src="/brand/imagesbazaar-logo.svg"
             alt="ImagesBazaar"

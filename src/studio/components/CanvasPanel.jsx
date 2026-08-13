@@ -8,6 +8,7 @@ import {
   RotateCcw,
   SplitSquareHorizontal,
   Undo2,
+  Users,
 } from 'lucide-react'
 import { useStudio, useStudioActions } from '../StudioProvider'
 import RatioPills from './controls/RatioPills'
@@ -15,19 +16,6 @@ import EditToolbar from './EditToolbar'
 import Stage from './Stage'
 import './CanvasPanel.css'
 
-/**
- * The centre card: ratios and session actions on top, the picture in the
- * middle, the tool strip beneath.
- *
- * Three siblings rather than three grid rows inside the stage — the stage then
- * measures only the space the image may occupy, so the fit calculation needs no
- * awareness of what is above or below it.
- *
- * The action cluster is deliberately dense. Undo, redo, reset, compare, zoom
- * and full screen are things you reach for constantly but never read, so they
- * are icons at the end of a row you are already looking at, rather than a
- * second toolbar competing with the eight tools that do have labels.
- */
 export default function CanvasPanel({
   activeTool,
   onSelectTool,
@@ -37,16 +25,14 @@ export default function CanvasPanel({
   fitScale,
   onFitScale,
   onFocusSearch,
+  onOpenCharacters,
+  selectedCharactersCount = 0,
 }) {
   const { hasImage, canUndo, canRedo, isEdited, comparing, view, edit, meta } = useStudio()
   const a = useStudioActions()
 
-  // "Fit" is a measured scale, not a stored one — it depends on the size of the
-  // stage, which only the stage knows. It reports it up; we display it.
   const shownZoom = Math.round((view.fit ? fitScale : view.zoom) * 100)
 
-  // Compare is press-and-hold, not a toggle — you want the original in view
-  // only while you are actually looking at it.
   const holdCompare = {
     onPointerDown: (e) => {
       e.currentTarget.setPointerCapture?.(e.pointerId)
@@ -67,6 +53,21 @@ export default function CanvasPanel({
         <RatioPills />
 
         <div className="cvpanel__actions">
+          {/* Character Popup Tool Button */}
+          <button
+            type="button"
+            className="cvpanel__character-btn"
+            onClick={onOpenCharacters}
+            aria-label="Select Characters"
+            title="Open ImagesBazaar Character Selector"
+          >
+            <Users size={16} aria-hidden="true" />
+            <span>Character</span>
+            {selectedCharactersCount > 0 && (
+              <span className="cvpanel__character-badge">{selectedCharactersCount}</span>
+            )}
+          </button>
+
           <button
             type="button"
             className={`cvpanel__fit${view.fit ? ' is-active' : ''}`}

@@ -1,22 +1,14 @@
 .studio {
   padding: var(--space-5) var(--page-pad);
-  /* So `scrollIntoView` leaves the gutter visible rather than butting the
-     editor against the top of the window. */
   scroll-margin-top: var(--space-5);
 }
 
 /**
- * Three cards, one viewport tall.
- *
- * The outer columns are fixed and the canvas takes the rest, so widening the
- * window gives every extra pixel to the picture — which is the only thing here
- * that benefits from more room. `minmax(0, 1fr)` rather than `1fr`: a plain
- * `1fr` track is floored at its content's min-content width, and the canvas
- * would then refuse to shrink below whatever the tool strip needs.
+ * Clean 2-card layout: Canvas Panel (max width) + Prompt Panel dock.
  */
 .studio__grid {
   display: grid;
-  grid-template-columns: var(--studio-left-w) minmax(0, 1fr) var(--studio-right-w);
+  grid-template-columns: minmax(0, 1fr) var(--studio-right-w);
   gap: var(--studio-gap);
   height: var(--studio-h);
   min-height: 560px;
@@ -37,7 +29,7 @@
   min-height: 0;
 }
 
-/* ---------- Full screen: same DOM, different box ---------- */
+/* Fullscreen mode */
 .studio.is-fullscreen {
   position: fixed;
   inset: 0;
@@ -51,37 +43,15 @@
   min-height: 0;
 }
 
-/* ---------- Narrower desktops ---------- */
-@media (max-width: 1279px) {
-  /* Two columns. Characters becomes a band across the top: it is a short,
-     wide thing by nature — six faces in a row — so it loses nothing by
-     lying down, and the canvas keeps the height it actually needs. */
-  .studio__grid {
-    grid-template-columns: minmax(0, 1fr) var(--studio-right-w);
-    grid-template-rows: auto minmax(0, 1fr);
-  }
-
-  .studio__card--left {
-    grid-column: 1 / -1;
-  }
-}
-
-/* ---------- Stacked ---------- */
+/* Stacked view on mobile */
 @media (max-width: 1023px) {
   .studio__grid {
     grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: none;
-    /* Stacked columns need more room than a single viewport can give, so this
-       layout is allowed its own height rather than being crushed. */
+    grid-template-rows: auto;
     height: auto;
     min-height: 0;
   }
 
-  .studio__card {
-    grid-column: auto;
-  }
-
-  /* The picture first, then what you say about it, then who is in it. */
   .studio__card--canvas {
     order: 1;
   }
@@ -90,12 +60,8 @@
     order: 2;
   }
 
-  .studio__card--left {
-    order: 3;
-  }
-
   .studio__card--canvas > .cvpanel {
-    min-height: 62dvh;
+    min-height: 60dvh;
   }
 
   .studio.is-fullscreen {
