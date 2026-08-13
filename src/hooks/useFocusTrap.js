@@ -48,7 +48,14 @@ export function useFocusTrap(ref, active, onClose) {
     document.addEventListener('keydown', onKeyDown)
     return () => {
       document.removeEventListener('keydown', onKeyDown)
-      previouslyFocused?.focus?.()
+
+      // Restore focus only if nothing else has claimed it. A caller that closes
+      // the overlay and deliberately focuses something else — picking a category
+      // and landing in the search field, say — would otherwise be overruled by
+      // this cleanup, which runs after their .focus() call.
+      const active = document.activeElement
+      const focusEscaped = active && active !== document.body && !node.contains(active)
+      if (!focusEscaped) previouslyFocused?.focus?.()
     }
   }, [ref, active, onClose])
 }
