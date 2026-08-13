@@ -14,3 +14,6 @@ dist-ssr/
 .DS_Store
 *.log
 npm-debug.log*
+
+# Verification screenshots
+docs/superpowers/shots/
