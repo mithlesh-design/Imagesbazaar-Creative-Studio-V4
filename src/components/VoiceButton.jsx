@@ -55,12 +55,25 @@ export default function VoiceButton({ onTranscript }) {
   const toggle = () => {
     const recognition = recognitionRef.current
     if (!recognition) return
+
     if (listening) {
-      recognition.stop()
-      setListening(false)
-    } else {
+      // `onend` flips `listening` back to false — don't pre-empt it here, or a
+      // fast stop→start lands on an instance that has not finished tearing down.
+      try {
+        recognition.stop()
+      } catch {
+        setListening(false)
+      }
+      return
+    }
+
+    try {
       recognition.start()
       setListening(true)
+    } catch {
+      // Already starting or still stopping. The existing session stays live and
+      // `onend` will settle the state; swallow rather than break the button.
+      setListening(false)
     }
   }
 
