@@ -1,4 +1,4 @@
-import { Mail, Phone, MessageCircle, Facebook, Linkedin, Twitter, MessageSquare } from 'lucide-react'
+import { Mail, Phone, MessageCircle, Facebook, Linkedin, Twitter } from 'lucide-react'
 import './Footer.css'
 
 export default function Footer() {
@@ -34,13 +34,13 @@ export default function Footer() {
               <h4 className="footer-v2__social-title">Follow Us</h4>
               <div className="footer-v2__social-btns">
                 <a href="#" className="footer-v2__social-btn" aria-label="Facebook">
-                  <Facebook size={18} fill="#0a53be" stroke="none" />
+                  <Facebook size={18} fill="currentColor" stroke="none" />
                 </a>
                 <a href="#" className="footer-v2__social-btn" aria-label="LinkedIn">
-                  <Linkedin size={18} fill="#0a53be" stroke="none" />
+                  <Linkedin size={18} fill="currentColor" stroke="none" />
                 </a>
                 <a href="#" className="footer-v2__social-btn" aria-label="Twitter">
-                  <Twitter size={18} fill="#0a53be" stroke="none" />
+                  <Twitter size={18} fill="currentColor" stroke="none" />
                 </a>
               </div>
             </div>
@@ -115,11 +115,6 @@ export default function Footer() {
           </div>
         </div>
       </div>
-
-      {/* Floating Chat FAB */}
-      <button type="button" className="footer-v2__chat-fab" aria-label="Live Chat Support">
-        <MessageSquare size={22} fill="white" stroke="none" />
-      </button>
     </footer>
   )
 }

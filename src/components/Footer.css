@@ -97,6 +97,7 @@
   border-radius: 8px;
   transition: transform 0.2s ease, opacity 0.2s ease;
   text-decoration: none;
+  color: var(--color-text-primary);
 }
 
 .footer-v2__social-btn:hover {
@@ -280,29 +281,4 @@
   font-weight: 700;
   gap: 4px;
   padding: 0 8px;
-}
-
-/* Floating Chat FAB */
-.footer-v2__chat-fab {
-  position: fixed;
-  bottom: 24px;
-  right: 24px;
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
-  background-color: #0052ff;
-  color: #ffffff;
-  border: none;
-  box-shadow: 0 4px 14px rgba(0, 82, 255, 0.4);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  z-index: 999;
-  transition: transform 0.2s ease, background-color 0.2s ease;
-}
-
-.footer-v2__chat-fab:hover {
-  transform: scale(1.08);
-  background-color: #0040e0;
 }
