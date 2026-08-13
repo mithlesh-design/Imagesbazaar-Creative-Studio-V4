@@ -1,0 +1,145 @@
+/* The box. In a light theme the focus lift does the work the reference
+   pattern's glow does in a dark one. */
+.heroprompt {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: var(--search-max);
+  min-height: 230px;
+  padding: var(--space-5);
+  text-align: left;
+  background: var(--color-white);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-md);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.heroprompt:focus-within {
+  border-color: var(--color-border-strong);
+  box-shadow: var(--shadow-lg);
+}
+
+.heroprompt__input {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  border: none;
+  outline: none;
+  resize: none;
+  background: none;
+  font-size: var(--text-lg);
+  line-height: 1.5;
+  color: var(--color-text-primary);
+}
+
+.heroprompt__input::placeholder {
+  color: var(--color-text-muted);
+}
+
+.heroprompt__controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: auto;
+  padding-top: var(--space-4);
+}
+
+.heroprompt__pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: 40px;
+  padding: 0 var(--space-4);
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  background: var(--color-chip-bg);
+  border: 1px solid var(--color-chip-border);
+  border-radius: var(--radius-pill);
+  white-space: nowrap;
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.heroprompt__pill:hover {
+  background: var(--color-hover);
+  color: var(--color-text-primary);
+}
+
+.heroprompt__submit {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: 40px;
+  margin-left: auto;
+  padding: 0 var(--space-5);
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: var(--color-white);
+  background: var(--color-accent);
+  border-radius: var(--radius-pill);
+  transition: background-color var(--transition-fast);
+}
+
+.heroprompt__submit:hover:not(:disabled) {
+  background: var(--color-accent-hover);
+}
+
+.heroprompt__submit:disabled {
+  color: var(--color-text-muted);
+  background: var(--color-surface-secondary);
+  cursor: not-allowed;
+}
+
+/* Attached references */
+.heroprompt__refs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  padding-top: var(--space-3);
+}
+
+.heroprompt__ref {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  max-width: 240px;
+  padding: 4px var(--space-3);
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+  background: var(--color-chip-bg);
+  border: 1px solid var(--color-chip-border);
+  border-radius: var(--radius-pill);
+}
+
+.heroprompt__ref-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Below 480px the four controls cannot hold their labels without wrapping the
+   row. Icons only, but the 40px target is kept. */
+@media (max-width: 479px) {
+  .heroprompt {
+    min-height: 140px;
+    padding: var(--space-4);
+  }
+
+  .heroprompt__input {
+    font-size: var(--text-md);
+  }
+
+  .heroprompt__pill {
+    width: 40px;
+    padding: 0;
+    justify-content: center;
+  }
+
+  .heroprompt__pill span {
+    display: none;
+  }
+
+  .heroprompt__submit {
+    padding: 0 var(--space-4);
+  }
+}
