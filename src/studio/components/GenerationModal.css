@@ -41,17 +41,17 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  font-size: 20px;
+  font-size: var(--text-lg);
   font-weight: 700;
   color: var(--color-text-primary);
 }
 
 .gen-modal__sparkle {
-  color: var(--color-primary);
+  color: var(--color-accent);
 }
 
 .gen-modal__sub {
-  font-size: 14px;
+  font-size: var(--text-base);
   color: var(--color-text-secondary);
   margin-top: var(--space-1);
 }
@@ -96,7 +96,7 @@
 .gen-card {
   display: flex;
   flex-direction: column;
-  background: var(--color-bg);
+  background: var(--color-background);
   border: 2px solid var(--color-border);
   border-radius: var(--radius-lg);
   overflow: hidden;
@@ -107,13 +107,13 @@
 }
 
 .gen-card:hover {
-  border-color: var(--color-primary);
+  border-color: var(--color-accent);
   transform: translateY(-3px);
   box-shadow: var(--shadow-lg);
 }
 
 .gen-card.is-selected {
-  border-color: var(--color-primary);
+  border-color: var(--color-accent);
   box-shadow: 0 0 0 3px rgba(224, 30, 90, 0.25);
 }
 
@@ -142,7 +142,7 @@
   left: 8px;
   background: rgba(0, 0, 0, 0.7);
   color: #fff;
-  font-size: 11px;
+  font-size: var(--text-2xs);
   font-weight: 700;
   padding: 2px 6px;
   border-radius: 4px;
@@ -152,9 +152,9 @@
   position: absolute;
   bottom: 8px;
   right: 8px;
-  background: var(--color-primary);
+  background: var(--color-accent);
   color: #fff;
-  font-size: 11px;
+  font-size: var(--text-2xs);
   font-weight: 600;
   padding: 3px 8px;
   border-radius: 999px;
@@ -165,7 +165,7 @@
 
 .gen-card__label {
   padding: var(--space-3);
-  font-size: 13px;
+  font-size: var(--text-sm);
   font-weight: 600;
   color: var(--color-text-primary);
   white-space: nowrap;
@@ -183,15 +183,15 @@
 }
 
 .gen-modal__hint {
-  font-size: 13px;
+  font-size: var(--text-sm);
   color: var(--color-text-secondary);
 }
 
 .gen-modal__done {
-  background-color: var(--color-primary);
+  background-color: var(--color-accent);
   color: #fff;
   border: none;
-  font-size: 14px;
+  font-size: var(--text-base);
   font-weight: 600;
   padding: 8px 20px;
   border-radius: var(--radius-md);

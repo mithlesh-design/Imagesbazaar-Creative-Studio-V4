@@ -24,7 +24,7 @@ body {
   background: var(--color-background);
   color: var(--color-text-primary);
   font-family: var(--font-sans);
-  font-size: 16px;
+  font-size: var(--text-md);
   line-height: 1.55;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -120,22 +120,10 @@ input {
 
 /* ---------- Section rhythm ---------- */
 .section-heading {
-  font-size: 22px;
+  font-size: var(--text-xl);
   font-weight: 600;
   letter-spacing: -0.01em;
   text-align: center;
-}
-
-@media (min-width: 640px) {
-  .section-heading {
-    font-size: 26px;
-  }
-}
-
-@media (min-width: 1024px) {
-  .section-heading {
-    font-size: 28px;
-  }
 }
 
 /* ---------- Motion preferences ---------- */

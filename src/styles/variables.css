@@ -20,6 +20,7 @@
 
   --color-accent: #111111;
   --color-accent-hover: #2a2a2a;
+  --color-hover: #f1f3f5;
 
   --color-chip-bg: #f5f5f5;
   --color-chip-border: #e5e5e5;
@@ -45,6 +46,25 @@
   /* ---- Typography ---- */
   --font-sans: 'Manrope', 'Inter', Arial, sans-serif;
 
+  /* ---- Type scale ----
+     Eight steps replacing 24 ad-hoc sizes. Every prior value maps cleanly:
+     12.5 and 13.5 -> 13, 14.5 -> 14, 11.5 -> 12. No component may declare a
+     raw px font-size. */
+  --text-2xs: 11px;   /* badges, counters */
+  --text-xs: 12px;    /* overline labels, meta */
+  --text-sm: 13px;    /* dense controls */
+  --text-base: 14px;  /* default UI text, buttons, links */
+  --text-md: 16px;    /* body copy, inputs */
+  --text-lg: 20px;    /* panel and section headings */
+  --text-xl: 26px;    /* page headings */
+  --text-2xl: 34px;   /* home headline base; clamps up to 52px */
+
+  /* Fluid display type. The fixed scale cannot express these, and a later
+     task needs them for the hero headline — without tokens it would write
+     raw px into a component stylesheet. */
+  --text-display: clamp(28px, 5.2vw, 52px);
+  --text-display-sm: clamp(26px, 4vw, 34px);
+
   /* ---- Radius: restrained, editorial — not SaaS-rounded ----
      The page keeps the tight scale. The studio is the one place that goes
      rounder: it is a panel of soft controls sitting on the page rather than
@@ -55,17 +75,21 @@
   --radius-lg: 10px;
   --radius-card: 14px;
   --radius-pill: 999px;
+  --radius-xl: 16px;
+  --radius-2xl: 24px;  /* the hero prompt box */
 
   /* ---- Elevation ---- */
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.06);
   --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.1);
   --shadow-lg: 0 10px 32px rgba(0, 0, 0, 0.16);
+  --shadow-2xl: 0 18px 48px rgba(0, 0, 0, 0.2);
 
   /* ---- Motion (DESIGN.md §17: 150–350ms, ease-out) ---- */
   --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
   --dur-fast: 150ms;
   --dur-base: 200ms;
   --dur-slow: 300ms;
+  --transition-fast: 150ms var(--ease);
 
   /* ---- Layout ---- */
   /* Full-bleed: the page runs edge to edge with a fixed 24px gutter rather

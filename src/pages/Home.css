@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background-color: var(--color-bg);
+  background-color: var(--color-background);
 }
 
 .home-page__main {
@@ -40,7 +40,7 @@
 }
 
 .search-results__heading {
-  font-size: 22px;
+  font-size: var(--text-xl);
   font-weight: 700;
   color: var(--color-text-primary);
   display: flex;
@@ -50,7 +50,7 @@
 }
 
 .search-results__sub {
-  font-size: 14px;
+  font-size: var(--text-base);
   color: var(--color-text-secondary);
   margin-top: 4px;
 }
@@ -90,14 +90,14 @@
   color: var(--color-text-secondary);
 
   h3 {
-    font-size: 18px;
+    font-size: var(--text-lg);
     font-weight: 600;
     color: var(--color-text-primary);
     margin-bottom: var(--space-2);
   }
 
   p {
-    font-size: 14px;
+    font-size: var(--text-base);
     line-height: 1.5;
   }
 }
@@ -115,7 +115,7 @@
 }
 
 .generation-loading__title {
-  font-size: 22px;
+  font-size: var(--text-xl);
   font-weight: 700;
   color: var(--color-text-primary);
   display: flex;
@@ -134,7 +134,7 @@
 }
 
 .generation-loading__status {
-  font-size: 15px;
+  font-size: var(--text-md);
   color: var(--color-text-secondary);
   font-weight: 500;
   min-height: 22px;

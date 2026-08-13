@@ -7,14 +7,14 @@
 }
 
 .cpanel__title {
-  font-size: 19px;
+  font-size: var(--text-lg);
   font-weight: 700;
   letter-spacing: -0.01em;
 }
 
 .cpanel__sub {
   margin-top: 2px;
-  font-size: 13px;
+  font-size: var(--text-sm);
   color: var(--color-text-secondary);
 }
 
@@ -31,7 +31,7 @@
   border-radius: var(--radius-pill);
   background: var(--color-white);
   font-family: inherit;
-  font-size: 14px;
+  font-size: var(--text-base);
   font-weight: 600;
   color: var(--color-text-primary);
   cursor: pointer;
@@ -90,7 +90,7 @@
   border-radius: var(--radius-pill);
   background: var(--character-avatar);
   color: var(--character-avatar-text);
-  font-size: 21px;
+  font-size: var(--text-lg);
   font-weight: 700;
   transition: background-color var(--dur-base) var(--ease), color var(--dur-base) var(--ease);
 }
@@ -121,7 +121,7 @@
 }
 
 .cpanel__name {
-  font-size: 12.5px;
+  font-size: var(--text-sm);
   font-weight: 500;
   line-height: 1.3;
   color: var(--color-text-secondary);
@@ -147,7 +147,7 @@
 }
 
 .cpanel__note {
-  font-size: 12px;
+  font-size: var(--text-xs);
   color: var(--color-text-secondary);
 }
 
@@ -161,7 +161,7 @@
   border-radius: var(--radius-lg);
   background: var(--color-white);
   font-family: inherit;
-  font-size: 13.5px;
+  font-size: var(--text-sm);
   font-weight: 600;
   color: var(--color-text-primary);
   cursor: pointer;
