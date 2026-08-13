@@ -222,12 +222,3 @@ export const collections = [
     searchQuery: 'Indian nature mountains himalayas landscape scenery',
   },
 ]
-
-export const hero = {
-  src: '/images/hero/hero-1600.webp',
-  srcSet:
-    '/images/hero/hero-960.webp 960w, /images/hero/hero-1600.webp 1600w, /images/hero/hero-2400.webp 2400w',
-  width: 2400,
-  height: 800,
-  alt: 'Indian father holding his young child outdoors among green trees',
-}
