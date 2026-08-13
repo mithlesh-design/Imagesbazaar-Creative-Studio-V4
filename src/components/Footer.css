@@ -1,8 +1,10 @@
 .footer-v2 {
   background-color: #000000;
   color: #ffffff;
-  padding-top: 48px;
-  padding-bottom: 32px;
+  /* One step down the 8px scale from --space-8/--space-6 (48px/32px):
+     the desktop vertical rhythm was heavier than the content needs. */
+  padding-top: var(--space-7);
+  padding-bottom: var(--space-5);
   font-family: inherit;
   position: relative;
 }
@@ -112,10 +114,17 @@
   gap: 32px;
 }
 
+/* Three stacked columns run to ~1400px on a phone. Two-up halves that
+   without shrinking any touch target. */
 @media (max-width: 639px) {
   .footer-v2__nav {
-    grid-template-columns: 1fr;
-    gap: 28px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-6) var(--space-4);
+  }
+
+  .footer-v2__top {
+    gap: var(--space-7);
   }
 }
 
@@ -196,13 +205,19 @@
   color: #4b5563;
 }
 
-/* Payment & Security Badges */
+/* Payment & Security Badges — one muted row, not a badge wall. */
 .footer-v2__badges {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-2);
   flex-wrap: wrap;
   justify-content: center;
+  opacity: 0.75;
+}
+
+.footer-v2__badges .badge {
+  transform: scale(0.85);
+  transform-origin: left center;
 }
 
 .badge {
