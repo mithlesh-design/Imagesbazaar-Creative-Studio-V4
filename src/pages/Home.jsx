@@ -4,7 +4,6 @@ import MobileMenu from '../components/MobileMenu'
 import HeroPrompt from '../components/HeroPrompt'
 import VoiceButton from '../components/VoiceButton'
 import CollectionCard from '../components/CollectionCard'
-import ImageSearchModal from '../components/ImageSearchModal'
 import Footer from '../components/Footer'
 import SupportButton from '../components/SupportButton'
 import { useStudioActions } from '../studio/StudioProvider'
@@ -16,7 +15,6 @@ export default function Home({ onNavigateStudio }) {
   const search = useSearch()
   const studio = useStudioActions()
   const [menuOpen, setMenuOpen] = useState(false)
-  const [imageSearchOpen, setImageSearchOpen] = useState(false)
 
   const inputRef = useRef(null)
   const resultsRef = useRef(null)
@@ -27,6 +25,7 @@ export default function Home({ onNavigateStudio }) {
 
   const useSuggestion = useCallback(
     (text) => {
+      setMenuOpen(false)
       search.setQuery(text)
       inputRef.current?.focus()
     },
@@ -123,6 +122,20 @@ export default function Home({ onNavigateStudio }) {
                 </div>
               )}
 
+              {search.status === 'error' && (
+                <div className="search-results__empty" role="alert">
+                  <h2>Generation didn’t complete</h2>
+                  <p>Something went wrong on our side. Your prompt is still here — try again.</p>
+                  <button
+                    type="button"
+                    className="search-results__retry"
+                    onClick={search.retry}
+                  >
+                    Try again
+                  </button>
+                </div>
+              )}
+
               {search.status === 'results' && generatedResults.length > 0 && (
                 <div className="search-results__content">
                   <div className="search-results__head-wrap">
@@ -153,8 +166,6 @@ export default function Home({ onNavigateStudio }) {
 
       <Footer />
       <SupportButton />
-
-      <ImageSearchModal open={imageSearchOpen} onClose={() => setImageSearchOpen(false)} />
     </div>
   )
 }
