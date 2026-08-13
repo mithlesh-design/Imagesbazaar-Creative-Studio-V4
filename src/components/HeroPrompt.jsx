@@ -95,7 +95,7 @@ const HeroPrompt = forwardRef(function HeroPrompt(
           type="button"
           className="heroprompt__pill"
           onClick={addLink}
-          aria-label="Add a reference link"
+          aria-label="Add link reference"
         >
           <Link2 size={15} aria-hidden="true" />
           <span>Add link</span>
@@ -105,7 +105,7 @@ const HeroPrompt = forwardRef(function HeroPrompt(
           type="button"
           className="heroprompt__pill"
           onClick={() => imgInputRef.current?.click()}
-          aria-label="Upload a reference image"
+          aria-label="Upload image reference"
         >
           <ImagePlus size={15} aria-hidden="true" />
           <span>Upload image</span>
@@ -115,7 +115,7 @@ const HeroPrompt = forwardRef(function HeroPrompt(
           type="button"
           className="heroprompt__pill"
           onClick={() => pdfInputRef.current?.click()}
-          aria-label="Upload a reference PDF"
+          aria-label="Upload PDF reference"
         >
           <FileText size={15} aria-hidden="true" />
           <span>Upload PDF</span>
