@@ -1,0 +1,38 @@
+/* Scoped as `.heroprompt__pill.voice` (0-2-0), not `.voice` alone, so these
+   overrides beat `.heroprompt__pill` (also 0-1-0) regardless of CSS import
+   order between HeroPrompt.css and this file. */
+.heroprompt__pill.voice {
+  position: relative;
+  width: 44px;
+  padding: 0;
+  justify-content: center;
+}
+
+.heroprompt__pill.voice.is-listening {
+  color: var(--color-white);
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+/* New property, not an override of `.heroprompt__pill` — the bare class is
+   enough here. */
+.voice__dot {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 6px;
+  height: 6px;
+  background: var(--color-white);
+  border-radius: 50%;
+  animation: voice-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes voice-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.25;
+  }
+}
