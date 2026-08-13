@@ -14,6 +14,18 @@
 .card__media {
   display: block;
   overflow: hidden;
+  position: relative;
+}
+
+/* Guarantees the title's contrast regardless of what is in the frame.
+   The photographs vary too much for a text shadow to be reliable. */
+.card__media::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 55%;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.68), rgba(0, 0, 0, 0));
+  pointer-events: none;
 }
 
 .card__img {
@@ -31,6 +43,7 @@
   position: absolute;
   inset-inline: 0;
   bottom: 0;
+  z-index: 1;
   padding: var(--space-6) var(--space-3) var(--space-3);
   background: linear-gradient(to top, rgba(0, 0, 0, 0.72), rgba(0, 0, 0, 0));
   color: var(--color-white);
