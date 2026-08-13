@@ -49,7 +49,7 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
-  height: 40px;
+  height: 44px;
   padding: 0 var(--space-4);
   font-size: var(--text-sm);
   color: var(--color-text-secondary);
@@ -69,7 +69,7 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
-  height: 40px;
+  height: 44px;
   margin-left: auto;
   padding: 0 var(--space-5);
   font-size: var(--text-base);
@@ -117,8 +117,38 @@
   white-space: nowrap;
 }
 
+.heroprompt__ref-remove {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  margin-right: -6px;
+  color: var(--color-text-muted);
+  border-radius: var(--radius-pill);
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.heroprompt__ref-remove:hover {
+  color: var(--color-text-primary);
+  background: var(--color-border-light);
+}
+
+/* The chip is 24px tall by design; extend the pressable area to 44px without
+   changing the layout box. */
+.heroprompt__ref-remove::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 44px;
+  height: 44px;
+  transform: translate(-50%, -50%);
+}
+
 /* Below 480px the four controls cannot hold their labels without wrapping the
-   row. Icons only, but the 40px target is kept. */
+   row. Icons only, but the 44px target is kept. */
 @media (max-width: 479px) {
   .heroprompt {
     min-height: 140px;
@@ -130,7 +160,7 @@
   }
 
   .heroprompt__pill {
-    width: 40px;
+    width: 44px;
     padding: 0;
     justify-content: center;
   }

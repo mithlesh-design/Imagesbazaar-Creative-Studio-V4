@@ -17,6 +17,7 @@ const HeroPrompt = forwardRef(function HeroPrompt(
 ) {
   const imgInputRef = useRef(null)
   const pdfInputRef = useRef(null)
+  const nextRefId = useRef(0)
   const [references, setReferences] = useState([])
 
   const addLink = () => {
@@ -29,7 +30,7 @@ const HeroPrompt = forwardRef(function HeroPrompt(
     } catch {
       /* keep the raw text as the label */
     }
-    setReferences((r) => [...r, { id: `link-${r.length}-${name}`, type: 'link', name }])
+    setReferences((r) => [...r, { id: `link-${nextRefId.current++}-${name}`, type: 'link', name }])
   }
 
   const addFile = (type) => (e) => {
@@ -37,7 +38,7 @@ const HeroPrompt = forwardRef(function HeroPrompt(
     if (file) {
       setReferences((r) => [
         ...r,
-        { id: `${type}-${r.length}-${file.name}`, type, name: file.name },
+        { id: `${type}-${nextRefId.current++}-${file.name}`, type, name: file.name },
       ])
     }
     e.target.value = ''
@@ -75,6 +76,7 @@ const HeroPrompt = forwardRef(function HeroPrompt(
                 <span className="heroprompt__ref-name">{r.name}</span>
                 <button
                   type="button"
+                  className="heroprompt__ref-remove"
                   onClick={() => setReferences((list) => list.filter((x) => x.id !== r.id))}
                   aria-label={`Remove reference ${r.name}`}
                 >
@@ -89,7 +91,12 @@ const HeroPrompt = forwardRef(function HeroPrompt(
       <div className="heroprompt__controls">
         {voiceSlot}
 
-        <button type="button" className="heroprompt__pill" onClick={addLink}>
+        <button
+          type="button"
+          className="heroprompt__pill"
+          onClick={addLink}
+          aria-label="Add a reference link"
+        >
           <Link2 size={15} aria-hidden="true" />
           <span>Add link</span>
         </button>
@@ -98,6 +105,7 @@ const HeroPrompt = forwardRef(function HeroPrompt(
           type="button"
           className="heroprompt__pill"
           onClick={() => imgInputRef.current?.click()}
+          aria-label="Upload a reference image"
         >
           <ImagePlus size={15} aria-hidden="true" />
           <span>Upload image</span>
@@ -107,6 +115,7 @@ const HeroPrompt = forwardRef(function HeroPrompt(
           type="button"
           className="heroprompt__pill"
           onClick={() => pdfInputRef.current?.click()}
+          aria-label="Upload a reference PDF"
         >
           <FileText size={15} aria-hidden="true" />
           <span>Upload PDF</span>
