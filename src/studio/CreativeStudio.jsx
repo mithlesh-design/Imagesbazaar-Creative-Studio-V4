@@ -98,8 +98,6 @@ const CreativeStudio = forwardRef(function CreativeStudio({ onFocusSearch }, ref
             fitScale={fitScale}
             onFitScale={setFitScale}
             onFocusSearch={onFocusSearch}
-            onOpenCharacters={() => setBrowserOpen(true)}
-            selectedCharactersCount={selectedCharacters.length}
           />
         </div>
 
@@ -112,6 +110,7 @@ const CreativeStudio = forwardRef(function CreativeStudio({ onFocusSearch }, ref
             onRemoveRef={removeRef}
             selectedCharacters={selectedCharacters}
             onClearCharacters={clearCharacters}
+            onOpenCharacters={() => setBrowserOpen(true)}
             onGenerate={() => setGenModalOpen(true)}
           />
         </div>

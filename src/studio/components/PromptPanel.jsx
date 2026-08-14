@@ -1,19 +1,11 @@
 import { useRef, useState } from 'react'
-import { FileText, ImagePlus, Link2, Loader2, Sparkles, X } from 'lucide-react'
+import { FileText, ImagePlus, Link2, Loader2, Plus, Sparkles, Users, X } from 'lucide-react'
 import { characters } from '../../data/characters'
+import { studioSuggestions } from '../../data/promptSuggestions'
 import { useStudio, useStudioActions } from '../StudioProvider'
 import './PromptPanel.css'
 
 const REF_ICON = { image: ImagePlus, pdf: FileText, link: Link2 }
-
-const PROMPT_SUGGESTIONS = [
-  '🪔 Add vibrant Diwali diyas & warm festive lighting',
-  '🏢 Transform background to modern corporate office',
-  '🌸 Decorate with traditional Indian marigold flowers',
-  '🌆 Set cinematic Golden Hour Indian sunset lighting',
-  '🎨 Apply rich Indian traditional heritage oil-painting style',
-  '✨ Add celebratory color powder and festival mood',
-]
 
 export default function PromptPanel({
   prompt,
@@ -23,6 +15,7 @@ export default function PromptPanel({
   onRemoveRef,
   selectedCharacters,
   onClearCharacters,
+  onOpenCharacters,
   onGenerate,
 }) {
   const { hasImage, isEdited } = useStudio()
@@ -50,11 +43,6 @@ export default function PromptPanel({
     onAddRef({ type: 'link', name })
   }
 
-  const handleSuggestionClick = (suggestion) => {
-    const cleanText = suggestion.replace(/^[^\w\s]+\s*/, '')
-    onPromptChange(prompt ? `${prompt}, ${cleanText}` : cleanText)
-  }
-
   const handleGenerateClick = () => {
     if (generating) return
     setGenerating(true)
@@ -66,100 +54,103 @@ export default function PromptPanel({
 
   return (
     <section className="ppanel" aria-labelledby="ppanel-heading">
-      <div className="ppanel__head-row">
-        <h2 className="ppanel__title" id="ppanel-heading">
-          AI Prompt Studio
-        </h2>
-        <span className="ppanel__ai-tag">
-          <Sparkles size={12} /> AI Powered
-        </span>
-      </div>
+      <h2 className="sr-only" id="ppanel-heading">
+        Prompt and references
+      </h2>
 
-      <textarea
-        className="ppanel__input"
-        value={prompt}
-        onChange={(e) => onPromptChange(e.target.value)}
-        placeholder="Describe how you want to edit or generate the image..."
-        aria-labelledby="ppanel-heading"
-        rows={3}
-      />
+      <div className="ppanel__scroll">
+        <h3 className="ppanel__legend">Prompt</h3>
+        <textarea
+          className="ppanel__input"
+          value={prompt}
+          onChange={(e) => onPromptChange(e.target.value)}
+          placeholder="Describe how you want to edit or generate the image…"
+          aria-label="Prompt"
+          rows={4}
+        />
 
-      {/* Prompt Suggestions */}
-      <div className="ppanel__suggestions">
-        <h3 className="ppanel__suggestions-title">
-          <Sparkles size={13} aria-hidden="true" />
-          Prompt Suggestions
-        </h3>
-        <div className="ppanel__suggestions-chips">
-          {PROMPT_SUGGESTIONS.map((s, idx) => (
+        <h3 className="ppanel__legend">Suggestions</h3>
+        <div className="ppanel__chips">
+          {studioSuggestions.map((s) => (
             <button
-              key={idx}
+              key={s.id}
               type="button"
-              className="ppanel__suggestion-chip"
-              onClick={() => handleSuggestionClick(s)}
+              className="ppanel__chip"
+              onClick={() => onPromptChange(prompt ? `${prompt}, ${s.text}` : s.text)}
             >
-              {s}
+              {s.text}
             </button>
           ))}
         </div>
+
+        <h3 className="ppanel__legend">
+          Characters
+          <button
+            type="button"
+            className="ppanel__add"
+            onClick={onOpenCharacters}
+            aria-label="Choose characters"
+          >
+            <Plus size={15} aria-hidden="true" />
+          </button>
+        </h3>
+        {names.length > 0 ? (
+          <div className="ppanel__chips">
+            {names.map((name) => (
+              <span className="ppanel__token" key={name}>
+                <Users size={13} aria-hidden="true" />
+                {name}
+              </span>
+            ))}
+            <button type="button" className="ppanel__clear" onClick={onClearCharacters}>
+              Clear
+            </button>
+          </div>
+        ) : (
+          <p className="ppanel__empty">None attached</p>
+        )}
+
+        <h3 className="ppanel__legend" id="ppanel-refs">
+          References
+        </h3>
+        <div className="ppanel__adders" role="group" aria-labelledby="ppanel-refs">
+          <button type="button" className="ppanel__adder" onClick={() => imgRef.current?.click()}>
+            <ImagePlus size={16} strokeWidth={1.7} aria-hidden="true" />
+            Image
+          </button>
+          <button type="button" className="ppanel__adder" onClick={addLink}>
+            <Link2 size={16} strokeWidth={1.7} aria-hidden="true" />
+            Link
+          </button>
+          <button type="button" className="ppanel__adder" onClick={() => pdfRef.current?.click()}>
+            <FileText size={16} strokeWidth={1.7} aria-hidden="true" />
+            PDF
+          </button>
+        </div>
+
+        {refs.length > 0 ? (
+          <ul className="ppanel__refs">
+            {refs.map((r) => {
+              const Icon = REF_ICON[r.type] ?? Link2
+              return (
+                <li className="ppanel__ref" key={r.key}>
+                  <Icon size={14} aria-hidden="true" />
+                  <span className="ppanel__ref-name">{r.name}</span>
+                  <button
+                    type="button"
+                    onClick={() => onRemoveRef(r.key)}
+                    aria-label={`Remove reference ${r.name}`}
+                  >
+                    <X size={13} aria-hidden="true" />
+                  </button>
+                </li>
+              )
+            })}
+          </ul>
+        ) : (
+          <p className="ppanel__empty">None added</p>
+        )}
       </div>
-
-      {names.length > 0 && (
-        <button
-          type="button"
-          className="ppanel__chars"
-          onClick={onClearCharacters}
-          title={`${names.join(', ')} — click to clear`}
-          aria-label={`${names.length} characters attached: ${names.join(
-            ', '
-          )}. Clear them.`}
-        >
-          <span>{names.length === 1 ? names[0] : `${names.length} characters`}</span>
-          <X size={13} aria-hidden="true" />
-        </button>
-      )}
-
-      <h3 className="ppanel__legend" id="ppanel-refs">
-        References
-      </h3>
-
-      <div className="ppanel__adders" role="group" aria-labelledby="ppanel-refs">
-        <button type="button" className="ppanel__adder" onClick={() => imgRef.current?.click()}>
-          <ImagePlus size={17} strokeWidth={1.7} aria-hidden="true" />
-          Upload Image
-        </button>
-        <button type="button" className="ppanel__adder" onClick={addLink}>
-          <Link2 size={17} strokeWidth={1.7} aria-hidden="true" />
-          Add Link
-        </button>
-        <button type="button" className="ppanel__adder" onClick={() => pdfRef.current?.click()}>
-          <FileText size={17} strokeWidth={1.7} aria-hidden="true" />
-          Upload PDF
-        </button>
-      </div>
-
-      {refs.length > 0 ? (
-        <ul className="ppanel__refs">
-          {refs.map((r) => {
-            const Icon = REF_ICON[r.type] ?? Link2
-            return (
-              <li className="ppanel__ref" key={r.key}>
-                <Icon size={14} aria-hidden="true" />
-                <span className="ppanel__ref-name">{r.name}</span>
-                <button
-                  type="button"
-                  onClick={() => onRemoveRef(r.key)}
-                  aria-label={`Remove reference ${r.name}`}
-                >
-                  <X size={13} aria-hidden="true" />
-                </button>
-              </li>
-            )
-          })}
-        </ul>
-      ) : (
-        <p className="ppanel__empty">No references added yet</p>
-      )}
 
       <div className="ppanel__cta">
         <button
@@ -167,17 +158,16 @@ export default function PromptPanel({
           className="ppanel__generate"
           onClick={handleGenerateClick}
           disabled={generating}
-          title="Generate 10 image variations at once"
         >
           {generating ? (
             <>
               <Loader2 className="ppanel__spin" size={16} aria-hidden="true" />
-              Generating 10 Variations…
+              Generating…
             </>
           ) : (
             <>
               <Sparkles size={16} aria-hidden="true" />
-              Generate 10 Variations ✨
+              Generate 10 variations
             </>
           )}
         </button>
@@ -193,7 +183,7 @@ export default function PromptPanel({
               : 'Make an edit first — there is nothing to apply'
           }
         >
-          Apply Edits
+          Apply edits
         </button>
       </div>
 
