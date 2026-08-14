@@ -198,6 +198,9 @@
 }
 
 .footer-v2__legal a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
   color: #d1d5db;
   text-decoration: none;
   transition: color 0.2s ease;
