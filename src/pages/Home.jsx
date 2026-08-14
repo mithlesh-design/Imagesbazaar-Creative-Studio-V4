@@ -11,7 +11,11 @@ import Footer from '../components/Footer'
 import SupportButton from '../components/SupportButton'
 import { useStudioActions } from '../studio/StudioProvider'
 import { useSearch } from '../hooks/useSearch'
-import { heroSuggestions } from '../data/promptSuggestions'
+import {
+  followUpPrompts,
+  heroSuggestions,
+  searchSuggestions,
+} from '../data/promptSuggestions'
 import './Home.css'
 
 export default function Home({ onNavigateStudio }) {
@@ -24,9 +28,31 @@ export default function Home({ onNavigateStudio }) {
   const inputRef = useRef(null)
   const resultsRef = useRef(null)
 
+  // One button per mode, two different actions behind it: a library lookup and
+  // a generation. They differ in more than labelling, so they are not one call
+  // with a flag.
   const submit = useCallback(() => {
-    search.generate()
-  }, [search])
+    if (mode === 'search') search.search()
+    else search.generate()
+  }, [mode, search])
+
+  /** A search chip: fill the field and run it in one gesture. */
+  const runSearch = useCallback(
+    (text) => {
+      search.setQuery(text)
+      search.search(text)
+    },
+    [search]
+  )
+
+  /** A follow-up chip under the generated grid: swap the prompt and re-run. */
+  const regenerate = useCallback(
+    (text) => {
+      search.setQuery(text)
+      search.generate(text)
+    },
+    [search]
+  )
 
   const useSuggestion = useCallback(
     (text) => {
@@ -61,7 +87,11 @@ export default function Home({ onNavigateStudio }) {
     }
   }, [search.status])
 
-  const generatedResults = search.results.slice(0, 10)
+  // `source` rather than `mode`: flipping the toggle must not relabel results
+  // that are already on screen.
+  const isSearch = search.source === 'search'
+  const shownResults = isSearch ? search.results : search.results.slice(0, 10)
+  const followUps = isSearch ? [] : followUpPrompts(search.query)
 
   return (
     <div className="home-page">
@@ -92,6 +122,7 @@ export default function Home({ onNavigateStudio }) {
               without it React reuses the element and the motion plays once. */}
           <div className="hero__panel" key={mode} role="tabpanel" id={`panel-${mode}`} aria-labelledby={`mode-${mode}`}>
             {mode === 'search' ? (
+              <>
               <SearchPanel
                 ref={inputRef}
                 value={search.query}
@@ -100,6 +131,21 @@ export default function Home({ onNavigateStudio }) {
                 onSearchByImage={() => setImageSearchOpen(true)}
                 busy={search.status === 'loading'}
               />
+
+              <ul className="hero__suggestions">
+                {searchSuggestions.map((s) => (
+                  <li key={s.id}>
+                    <button
+                      type="button"
+                      className="hero__suggestion hero__suggestion--search"
+                      onClick={() => runSearch(s.text)}
+                    >
+                      {s.text}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+              </>
             ) : (
               <>
                 <HeroPrompt
@@ -134,15 +180,32 @@ export default function Home({ onNavigateStudio }) {
 
         <div ref={resultsRef}>
           {hasSearchActive && (
-            <section className="search-results container" aria-label="Generated images">
-              {search.status === 'loading' && <GenerationLoadingState query={search.query} />}
+            <section
+              className="search-results container"
+              aria-label={isSearch ? 'Search results' : 'Generated images'}
+            >
+              {/* Generation is the only flow with something to wait for. Search
+                  reads an in-memory library, so it has no loading state at all
+                  — not a faster one. */}
+              {search.status === 'loading' && !isSearch && (
+                <GenerationLoadingState query={search.query} />
+              )}
 
               {search.status === 'empty' && (
                 <div className="search-results__empty">
-                  <h2>No matching images generated</h2>
+                  <h2>{isSearch ? 'No images matched' : 'No matching images generated'}</h2>
                   <p>
-                    Try describing your requirement like <em>family celebrating Diwali</em> or{' '}
-                    <em>corporate office meeting in Mumbai</em>.
+                    {isSearch ? (
+                      <>
+                        Try a broader subject like <em>family</em>, <em>wedding</em> or{' '}
+                        <em>rural India</em>.
+                      </>
+                    ) : (
+                      <>
+                        Try describing your requirement like <em>family celebrating Diwali</em> or{' '}
+                        <em>corporate office meeting in Mumbai</em>.
+                      </>
+                    )}
                   </p>
                 </div>
               )}
@@ -161,23 +224,23 @@ export default function Home({ onNavigateStudio }) {
                 </div>
               )}
 
-              {search.status === 'results' && generatedResults.length > 0 && (
+              {search.status === 'results' && shownResults.length > 0 && (
                 <div className="search-results__content">
                   <div className="search-results__head-wrap">
                     <h2 className="search-results__heading">
-                      {mode === 'search'
-                        ? `${generatedResults.length} ${
-                            generatedResults.length === 1 ? 'image' : 'images'
-                          } for “${search.query}”`
-                        : `10 variations for “${search.query}”`}
+                      {isSearch ? 'Search results' : `10 variations for “${search.query}”`}
                     </h2>
                     <p className="search-results__sub">
-                      Pick one to open it in the Creative Studio.
+                      {isSearch
+                        ? `${shownResults.length} ${
+                            shownResults.length === 1 ? 'image' : 'images'
+                          } for “${search.query}” — pick one to open it in the Creative Studio.`
+                        : 'Pick one to open it in the Creative Studio.'}
                     </p>
                   </div>
 
                   <ul className="search-results__grid-5x2">
-                    {generatedResults.map((item, i) => (
+                    {shownResults.map((item, i) => (
                       <CollectionCard
                         key={item.id}
                         collection={item.collection}
@@ -186,6 +249,27 @@ export default function Home({ onNavigateStudio }) {
                       />
                     ))}
                   </ul>
+
+                  {/* Generate only: where next, having seen these ten. Search
+                      users already have a query box and chips above. */}
+                  {!isSearch && followUps.length > 0 && (
+                    <div className="followups">
+                      <h3 className="followups__title">Suggested prompts</h3>
+                      <ul className="followups__list">
+                        {followUps.map((s) => (
+                          <li key={s.id}>
+                            <button
+                              type="button"
+                              className="followups__chip"
+                              onClick={() => regenerate(s.text)}
+                            >
+                              {s.text}
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
                 </div>
               )}
             </section>

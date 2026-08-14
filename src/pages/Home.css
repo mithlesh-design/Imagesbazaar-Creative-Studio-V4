@@ -100,6 +100,18 @@
   border-color: var(--color-border);
 }
 
+/* Search chips carry no sparkle: the glyph reads as "AI" and these are library
+   lookups. Quieter than the generate chips for the same reason. */
+.hero__suggestion--search {
+  padding-inline: var(--space-5);
+  background: var(--color-surface);
+  border-color: transparent;
+}
+
+.hero__suggestion--search:hover {
+  border-color: var(--color-border-light);
+}
+
 .hero__suggestion-glyph {
   color: var(--color-text-muted);
 }
@@ -243,6 +255,49 @@
 
 .search-results__retry:hover {
   background: var(--color-accent-hover);
+}
+
+/* Suggested prompts, under the generated grid. A hairline above rather than a
+   card around: it is a continuation of the results, not a separate module. */
+.followups {
+  margin-top: var(--space-9);
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--color-border-light);
+}
+
+.followups__title {
+  margin-bottom: var(--space-4);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.followups__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.followups__chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 var(--space-5);
+  font-size: var(--text-base);
+  color: var(--color-text-secondary);
+  background: var(--color-white);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-pill);
+  transition: background-color var(--transition-fast), border-color var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.followups__chip:hover {
+  color: var(--color-text-primary);
+  background: var(--color-hover);
+  border-color: var(--color-border);
 }
 
 /* Premium Generation Loading State */

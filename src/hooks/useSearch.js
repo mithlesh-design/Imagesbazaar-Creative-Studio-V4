@@ -61,10 +61,17 @@ const INDEX = collections.map((c) => ({
 }))
 
 /**
- * Matches query against image index. Guarantees returning at least 10 images
- * whenever matches exist.
+ * Matches a query against the image index.
+ *
+ * `pad` is the difference between the two flows. Generation promises ten
+ * variations and must produce ten, so it tops up from the rest of the library.
+ * Search promises relevance and must not: nearly every item's haystack contains
+ * "indian", so a two-term query like "indian family" scores currency and
+ * healthcare on the strength of one word. Unpadded, only the best-scoring tier
+ * survives — better to return six right answers than twenty-four with eight
+ * wrong ones at the bottom.
  */
-export function match(query) {
+export function match(query, { pad = true } = {}) {
   const q = query.trim().toLowerCase()
   if (!q) return []
   const terms = q.split(/\s+/).filter((t) => t.length > 0)
@@ -81,10 +88,16 @@ export function match(query) {
     return { item, score }
   })
 
-  let filtered = scored
-    .filter((r) => r.score > 0)
-    .sort((a, b) => b.score - a.score)
-    .map((r) => r.item)
+  const hits = scored.filter((r) => r.score > 0).sort((a, b) => b.score - a.score)
+
+  if (!pad) {
+    // Only the tier that matched the most terms. An item scoring 2 on "indian"
+    // alone is not an answer to "indian family".
+    const best = hits.length ? hits[0].score : 0
+    return hits.filter((r) => r.score === best).map((r) => r.item).slice(0, MAX_RESULTS)
+  }
+
+  let filtered = hits.map((r) => r.item)
 
   // If match count is less than MIN_RESULTS (10), pad with relevant lifestyle fallbacks
   if (filtered.length < MIN_RESULTS) {
@@ -102,6 +115,10 @@ export function useSearch() {
   const [query, setQuery] = useState('')
   const [status, setStatus] = useState('idle')
   const [results, setResults] = useState([])
+  /** Which action produced `results`. The results section reads this rather
+   *  than the page's current toggle, so flipping the toggle after a search
+   *  cannot relabel results that are already on screen. */
+  const [source, setSource] = useState(null)
 
   const timer = useRef(null)
   const requestId = useRef(0)
@@ -114,6 +131,7 @@ export function useSearch() {
   }
 
   const run = useCallback((q, { allowError }) => {
+    setSource('generate')
     setStatus('loading')
     const id = ++requestId.current
     clearTimer()
@@ -133,8 +151,11 @@ export function useSearch() {
     }, LATENCY)
   }, [])
 
-  const generate = useCallback(() => {
-    const q = query.trim()
+  /** `override` lets a caller run a prompt in the same tick it sets it — a
+   *  follow-up chip would otherwise generate the previous query, because the
+   *  `setQuery` beside it has not committed yet. */
+  const generate = useCallback((override) => {
+    const q = (typeof override === 'string' ? override : query).trim()
     if (!q) {
       requestId.current += 1
       clearTimer()
@@ -145,9 +166,39 @@ export function useSearch() {
     run(q, { allowError: true })
   }, [query, run])
 
+  /**
+   * Looking something up in a library that is already in memory. No latency to
+   * simulate and nothing to animate — a spinner here would be theatre for work
+   * that has already happened. Any in-flight generate is cancelled so its
+   * delayed callback cannot land on top of these results.
+   */
+  const search = useCallback(
+    (override) => {
+      // Same string guard as `generate`: wired straight to an onClick, the
+      // argument would be a SyntheticEvent rather than a query.
+      const q = (typeof override === 'string' ? override : query).trim()
+      requestId.current += 1
+      clearTimer()
+      setSource('search')
+
+      if (!q) {
+        setStatus('idle')
+        setResults([])
+        return
+      }
+
+      // Unpadded: a search must not top up with items that merely share the
+      // word "indian" with the query.
+      const found = match(q, { pad: false })
+      setResults(found)
+      setStatus(found.length ? 'results' : 'empty')
+    },
+    [query]
+  )
+
   const retry = useCallback(() => run(query.trim(), { allowError: false }), [query, run])
 
   useEffect(() => clearTimer, [])
 
-  return { query, setQuery, status, results, retry, generate }
+  return { query, setQuery, status, results, source, retry, generate, search }
 }
