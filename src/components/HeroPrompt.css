@@ -45,6 +45,20 @@
   padding-top: var(--space-4);
 }
 
+/* The mic belongs with Generate at the right end, not with the reference pills,
+   so it takes the auto margin and the two travel together. Where the mic is
+   absent — browsers without SpeechRecognition, where VoiceButton renders
+   nothing — the submit keeps its own auto margin and nothing moves.
+   `~` rather than `+`: VoiceButton also emits an sr-only live region between
+   the two buttons. */
+.heroprompt__controls .voice {
+  margin-left: auto;
+}
+
+.heroprompt__controls .voice ~ .heroprompt__submit {
+  margin-left: 0;
+}
+
 .heroprompt__pill {
   display: inline-flex;
   align-items: center;

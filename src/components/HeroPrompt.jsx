@@ -7,9 +7,9 @@ const REF_ICON = { image: ImagePlus, pdf: FileText, link: Link2 }
 /**
  * The hero's prompt box. Structure follows the reference pattern: a tall field
  * with a control row pinned to its foot — references on the left, submit on the
- * right. `voiceSlot` is rendered first in that row; Task 5 fills it, and it is
- * a slot rather than a hardcoded child because the mic is absent entirely on
- * browsers without SpeechRecognition.
+ * right, with the mic immediately left of it. `voiceSlot` is a slot rather than
+ * a hardcoded child because the mic is absent entirely on browsers without
+ * SpeechRecognition.
  */
 const HeroPrompt = forwardRef(function HeroPrompt(
   { value, onChange, onSubmit, busy = false, voiceSlot = null },
@@ -89,8 +89,6 @@ const HeroPrompt = forwardRef(function HeroPrompt(
       )}
 
       <div className="heroprompt__controls">
-        {voiceSlot}
-
         <button
           type="button"
           className="heroprompt__pill"
@@ -120,6 +118,8 @@ const HeroPrompt = forwardRef(function HeroPrompt(
           <FileText size={15} aria-hidden="true" />
           <span>Upload PDF</span>
         </button>
+
+        {voiceSlot}
 
         <button
           type="button"
