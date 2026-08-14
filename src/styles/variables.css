@@ -83,6 +83,11 @@
   --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.1);
   --shadow-lg: 0 10px 32px rgba(0, 0, 0, 0.16);
   --shadow-2xl: 0 18px 48px rgba(0, 0, 0, 0.2);
+  /* Monochrome stand-ins for a stray rose-coloured ring/glow (selection and
+     active-state emphasis) — a hue with no place in an editorial mono system.
+     Same shape and weight as before, just black instead of rose. */
+  --shadow-ring: 0 0 0 3px rgba(17, 17, 17, 0.2);
+  --shadow-glow: 0 4px 14px rgba(17, 17, 17, 0.3);
 
   /* ---- Motion (DESIGN.md §17: 150–350ms, ease-out) ---- */
   --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
@@ -136,7 +141,10 @@
 
   /* The whole editor is one viewport tall, so nothing about using it requires
      scrolling. Everything below is measured against that budget. */
-  --studio-h: calc(100dvh - 48px);
+  --studio-bar-h: 44px;
+  /* The editor fits the space that is actually left after the page chrome.
+     Getting this wrong by ~73px is what forced the scrollIntoView hack. */
+  --studio-h: calc(100dvh - var(--header-h) - var(--studio-bar-h) - var(--space-5) * 2);
   --studio-gap: var(--space-5);
   --studio-left-w: 300px;   /* characters */
   --studio-right-w: 352px;  /* prompt + references */

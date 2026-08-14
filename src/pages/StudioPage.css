@@ -6,48 +6,78 @@
 }
 
 .studio-page__bar {
-  background-color: var(--color-surface);
-  border-bottom: 1px solid var(--color-border);
-  padding: 8px 0;
+  height: var(--studio-bar-h);
+  background-color: var(--color-background);
+  border-bottom: 1px solid var(--color-border-light);
 }
 
 .studio-page__bar-inner {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  height: 100%;
 }
 
 .studio-page__back {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  background: transparent;
-  border: none;
-  color: var(--color-text-secondary);
+  gap: var(--space-2);
+  min-height: 44px;
+  padding: 0 var(--space-3);
   font-size: var(--text-base);
   font-weight: 500;
-  cursor: pointer;
-  padding: 6px 12px;
+  color: var(--color-text-secondary);
   border-radius: var(--radius-md);
   transition: background-color var(--transition-fast), color var(--transition-fast);
 }
 
 .studio-page__back:hover {
-  background-color: var(--color-hover);
   color: var(--color-text-primary);
+  background-color: var(--color-hover);
 }
 
-.studio-page__badge {
-  font-size: var(--text-xs);
+/* Replaces the decorative pink badge with the one thing worth stating here:
+   which image is open, and whether it has been changed. */
+.studio-page__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+}
+
+.studio-page__file {
+  overflow: hidden;
   font-weight: 600;
-  letter-spacing: 0.05em;
+  color: var(--color-text-primary);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.studio-page__dims {
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.studio-page__edited {
+  padding: 2px var(--space-2);
+  font-size: var(--text-2xs);
+  font-weight: 600;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--color-accent);
-  background: rgba(224, 30, 90, 0.08);
-  padding: 4px 10px;
-  border-radius: 999px;
+  color: var(--color-text-secondary);
+  background: var(--color-chip-bg);
+  border: 1px solid var(--color-chip-border);
+  border-radius: var(--radius-pill);
 }
 
 .studio-page__main {
   flex: 1;
+}
+
+@media (max-width: 639px) {
+  .studio-page__meta {
+    display: none;
+  }
 }

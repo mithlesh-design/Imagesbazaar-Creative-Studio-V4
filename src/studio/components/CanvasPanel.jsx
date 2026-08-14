@@ -28,7 +28,7 @@ export default function CanvasPanel({
   onOpenCharacters,
   selectedCharactersCount = 0,
 }) {
-  const { hasImage, canUndo, canRedo, isEdited, comparing, view, edit, meta } = useStudio()
+  const { hasImage, canUndo, canRedo, isEdited, comparing, view } = useStudio()
   const a = useStudioActions()
 
   const shownZoom = Math.round((view.fit ? fitScale : view.zoom) * 100)
@@ -176,18 +176,6 @@ export default function CanvasPanel({
           </button>
         </div>
       </div>
-
-      {hasImage && (
-        <p className="cvpanel__meta">
-          <span className="cvpanel__file" title={meta?.title || meta?.name}>
-            {meta?.title || meta?.name}
-          </span>
-          <span className="cvpanel__dims">
-            {Math.round(edit.crop.w)} × {Math.round(edit.crop.h)}
-          </span>
-          {isEdited && <span className="cvpanel__edited">Edited</span>}
-        </p>
-      )}
 
       <Stage
         cropping={activeTool === 'crop'}

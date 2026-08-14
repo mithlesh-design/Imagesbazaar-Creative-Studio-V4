@@ -1,7 +1,6 @@
 import {
   forwardRef,
   useCallback,
-  useEffect,
   useImperativeHandle,
   useRef,
   useState,
@@ -81,11 +80,6 @@ const CreativeStudio = forwardRef(function CreativeStudio({ onFocusSearch }, ref
     onDownload: () => setDownloadOpen(true),
     onSelectTool: selectTool,
   })
-
-  useEffect(() => {
-    if (fullscreen) return
-    sectionRef.current?.scrollIntoView({ block: 'start' })
-  }, [fullscreen])
 
   return (
     <section

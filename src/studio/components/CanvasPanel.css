@@ -31,7 +31,7 @@
   padding-inline: var(--space-4);
   border: 1px solid var(--color-accent);
   border-radius: var(--radius-pill);
-  background: rgba(224, 30, 90, 0.08);
+  background: var(--studio-accent-soft);
   font-family: inherit;
   font-size: var(--text-sm);
   font-weight: 600;
@@ -43,7 +43,7 @@
 }
 
 .cvpanel__character-btn:hover {
-  background: rgba(224, 30, 90, 0.16);
+  background: var(--studio-mat);
 }
 
 .cvpanel__character-badge {
@@ -166,40 +166,6 @@
   background: var(--studio-surface);
   color: var(--studio-text-disabled);
   cursor: not-allowed;
-}
-
-/* ---------- What you are working on ---------- */
-.cvpanel__meta {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  flex-shrink: 0;
-  min-width: 0;
-  font-size: var(--text-sm);
-  color: var(--color-text-secondary);
-}
-
-.cvpanel__file {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-weight: 500;
-  color: var(--color-text-primary);
-}
-
-.cvpanel__dims {
-  flex-shrink: 0;
-  font-variant-numeric: tabular-nums;
-}
-
-.cvpanel__edited {
-  flex-shrink: 0;
-  padding: 2px 8px;
-  border-radius: var(--radius-pill);
-  background: var(--studio-accent-soft);
-  font-size: var(--text-2xs);
-  font-weight: 600;
-  color: var(--color-text-primary);
 }
 
 /* The stage takes whatever the bar and the strip leave. */

@@ -3,11 +3,12 @@ import { ArrowLeft } from 'lucide-react'
 import Header from '../components/Header'
 import MobileMenu from '../components/MobileMenu'
 import CreativeStudio from '../studio/CreativeStudio'
-import Footer from '../components/Footer'
+import { useStudio } from '../studio/StudioProvider'
 import './StudioPage.css'
 
 export default function StudioPage({ onNavigateHome }) {
   const [menuOpen, setMenuOpen] = useState(false)
+  const { hasImage, isEdited, edit, meta } = useStudio()
 
   return (
     <div className="studio-page">
@@ -38,9 +39,18 @@ export default function StudioPage({ onNavigateHome }) {
             aria-label="Return to image search"
           >
             <ArrowLeft size={18} aria-hidden="true" />
-            <span>Back to Search</span>
+            <span>Back to search</span>
           </button>
-          <span className="studio-page__badge">Creative Studio & Image Generation</span>
+
+          {hasImage && (
+            <p className="studio-page__meta">
+              <span className="studio-page__file">{meta?.title || meta?.name}</span>
+              <span className="studio-page__dims">
+                {Math.round(edit.crop.w)} × {Math.round(edit.crop.h)}
+              </span>
+              {isEdited && <span className="studio-page__edited">Edited</span>}
+            </p>
+          )}
         </div>
       </div>
 
@@ -48,8 +58,6 @@ export default function StudioPage({ onNavigateHome }) {
         <h1 className="sr-only">ImagesBazaar Creative Studio — Image Editor</h1>
         <CreativeStudio onFocusSearch={onNavigateHome} />
       </main>
-
-      <Footer />
     </div>
   )
 }

@@ -4,6 +4,10 @@
   gap: var(--space-3);
   min-height: 0;
   padding: var(--space-5);
+  /* The card's own height is the studio budget's to give, not this panel's to
+     exceed — at tighter viewports the panel scrolls internally rather than
+     pushing the page taller. */
+  overflow-y: auto;
 }
 
 .ppanel__head-row {
@@ -53,7 +57,7 @@
 
 .ppanel__input:focus {
   border-color: var(--color-accent);
-  box-shadow: 0 0 0 3px rgba(224, 30, 90, 0.12);
+  box-shadow: var(--shadow-ring);
 }
 
 /* ---------- Prompt Suggestions (Light Theme) ---------- */
@@ -173,7 +177,7 @@
 
 .ppanel__adder:hover {
   border-color: var(--color-accent);
-  background: rgba(224, 30, 90, 0.04);
+  background: var(--color-hover);
   color: var(--color-accent);
 }
 
