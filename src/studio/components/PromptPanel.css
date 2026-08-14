@@ -42,7 +42,7 @@
   line-height: 1.55;
   color: var(--color-text-primary);
   resize: vertical;
-  transition: border-color var(--dur-base) var(--ease), box-shadow var(--dur-base) var(--ease);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
 }
 
 .ppanel__input::placeholder {
@@ -55,6 +55,7 @@
 }
 
 .ppanel__add {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -63,6 +64,19 @@
   color: var(--color-text-secondary);
   border: 1px solid var(--studio-border);
   border-radius: var(--radius-sm);
+}
+
+/* The visual box stays 24px; the hit area grows to 40px, centred on the
+   icon rather than anchored at the content-box origin. Matches
+   .cvpanel__icon in CanvasPanel.css. */
+.ppanel__add::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 40px;
+  height: 40px;
+  transform: translate(-50%, -50%);
 }
 
 .ppanel__add:hover {
@@ -118,7 +132,7 @@
   gap: 6px;
   min-height: 56px;
   padding: var(--space-2);
-  border: 1px dashed #cbd5e1;
+  border: 1px dashed var(--studio-border-strong);
   border-radius: var(--radius-lg);
   background: var(--color-white);
   font-family: inherit;
@@ -128,8 +142,8 @@
   color: var(--color-text-secondary);
   text-align: center;
   cursor: pointer;
-  transition: border-color var(--dur-fast) var(--ease),
-    background-color var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
+  transition: border-color var(--transition-fast), background-color var(--transition-fast),
+    color var(--transition-fast);
 }
 
 .ppanel__adder:hover {
@@ -143,26 +157,23 @@
 }
 
 .ppanel__refs {
+  display: flex;
+  flex-direction: column;
   flex: 1;
   min-height: 54px;
+  gap: 4px;
+  overflow-y: auto;
+  padding: var(--space-2);
+  list-style: none;
   border-radius: var(--radius-lg);
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: var(--studio-surface);
+  border: 1px solid var(--studio-border);
 }
 
 /* One line, not a 300px box reserved to say nothing. */
 .ppanel__empty {
   font-size: var(--text-sm);
   color: var(--color-text-muted);
-}
-
-.ppanel__refs {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  overflow-y: auto;
-  padding: var(--space-2);
-  list-style: none;
 }
 
 .ppanel__ref {
@@ -173,7 +184,7 @@
   padding-inline: var(--space-2);
   border-radius: var(--radius-md);
   background: var(--color-white);
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--studio-border);
   font-size: var(--text-sm);
   color: var(--color-text-primary);
 }
@@ -195,11 +206,11 @@
   border-radius: var(--radius-pill);
   color: var(--color-text-secondary);
   cursor: pointer;
-  transition: background-color var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
+  transition: background-color var(--transition-fast), color var(--transition-fast);
 }
 
 .ppanel__ref button:hover {
-  background: #f1f5f9;
+  background: var(--studio-hover);
   color: var(--color-text-primary);
 }
 
@@ -224,7 +235,8 @@
   font-size: var(--text-base);
   font-weight: 700;
   cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast),
+    opacity var(--transition-fast);
 }
 
 .ppanel__generate {
@@ -235,21 +247,21 @@
 }
 
 .ppanel__generate:hover:not(:disabled) {
-  background: #333;
+  background: var(--color-accent-hover);
   transform: translateY(-1px);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
   opacity: 1;
 }
 
 .ppanel__generate:disabled {
-  background: #cbd5e1;
-  color: #94a3b8;
+  background: var(--studio-border-strong);
+  color: var(--studio-text-disabled);
   box-shadow: none;
   cursor: not-allowed;
 }
 
 .ppanel__apply {
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--studio-border-strong);
   background: var(--color-white);
   color: var(--color-text-primary);
 }
@@ -257,12 +269,12 @@
 .ppanel__apply:hover:not(:disabled) {
   border-color: var(--color-black);
   color: var(--color-black);
-  background: #f8fafc;
+  background: var(--studio-surface);
 }
 
 .ppanel__apply:disabled {
-  border-color: #e2e8f0;
-  color: #94a3b8;
+  border-color: var(--studio-border);
+  color: var(--studio-text-disabled);
   cursor: not-allowed;
 }
 

@@ -20,7 +20,7 @@
 
   --color-accent: #111111;
   --color-accent-hover: #2a2a2a;
-  --color-hover: #f1f3f5;
+  --color-hover: #f1f3f5; /* byte-identical to --color-surface-secondary; keep both in sync */
 
   --color-chip-bg: #f5f5f5;
   --color-chip-border: #e5e5e5;
@@ -57,7 +57,6 @@
   --text-md: 16px;    /* body copy, inputs */
   --text-lg: 20px;    /* panel and section headings */
   --text-xl: 26px;    /* page headings */
-  --text-2xl: 34px;   /* home headline base; clamps up to 52px */
 
   /* Fluid display type. The fixed scale cannot express these, and a later
      task needs them for the hero headline — without tokens it would write

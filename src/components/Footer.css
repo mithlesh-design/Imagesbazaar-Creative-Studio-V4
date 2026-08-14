@@ -1,6 +1,6 @@
 .footer-v2 {
-  background-color: #000000;
-  color: #ffffff;
+  background-color: var(--color-black);
+  color: var(--color-white);
   /* One step down the 8px scale from --space-8/--space-6 (48px/32px):
      the desktop vertical rhythm was heavier than the content needs. */
   padding-top: var(--space-7);
@@ -42,17 +42,17 @@
   display: flex;
   align-items: center;
   gap: 14px;
-  color: #ffffff;
+  color: var(--color-white);
   font-size: var(--text-md);
 }
 
 .footer-v2__icon {
-  color: #ffffff;
+  color: var(--color-white);
   flex-shrink: 0;
 }
 
 .footer-v2__link-text {
-  color: #ffffff;
+  color: var(--color-white);
   text-decoration: none;
   font-size: var(--text-md);
   transition: opacity 0.2s ease;
@@ -63,7 +63,7 @@
 }
 
 .footer-v2__text {
-  color: #ffffff;
+  color: var(--color-white);
   font-size: var(--text-md);
 }
 
@@ -79,7 +79,7 @@
 .footer-v2__social-title {
   font-size: var(--text-md);
   font-weight: 700;
-  color: #ffffff;
+  color: var(--color-white);
   margin-bottom: 12px;
 }
 
@@ -95,7 +95,7 @@
   justify-content: center;
   width: 44px;
   height: 44px;
-  background-color: #ffffff;
+  background-color: var(--color-white);
   border-radius: 8px;
   transition: transform 0.2s ease, opacity 0.2s ease;
   text-decoration: none;
@@ -131,7 +131,7 @@
 .footer-v2__col-title {
   font-size: var(--text-md);
   font-weight: 700;
-  color: #ffffff;
+  color: var(--color-white);
   margin-bottom: 20px;
 }
 
@@ -151,14 +151,14 @@
   display: inline-flex;
   align-items: center;
   min-height: 44px;
-  color: #d1d5db;
+  color: var(--color-border);
   text-decoration: none;
   font-size: var(--text-base);
   transition: color 0.2s ease;
 }
 
 .footer-v2__list a:hover {
-  color: #ffffff;
+  color: var(--color-white);
   text-decoration: underline;
 }
 
@@ -170,7 +170,7 @@
 
 .footer-v2__copyright {
   font-size: var(--text-base);
-  color: #d1d5db;
+  color: var(--color-border);
   margin-bottom: 24px;
 }
 
@@ -194,24 +194,24 @@
   align-items: center;
   gap: 12px;
   font-size: var(--text-sm);
-  color: #d1d5db;
+  color: var(--color-border);
 }
 
 .footer-v2__legal a {
   display: inline-flex;
   align-items: center;
   min-height: 44px;
-  color: #d1d5db;
+  color: var(--color-border);
   text-decoration: none;
   transition: color 0.2s ease;
 }
 
 .footer-v2__legal a:hover {
-  color: #ffffff;
+  color: var(--color-white);
 }
 
 .footer-v2__pipe {
-  color: #4b5563;
+  color: var(--color-text-secondary);
 }
 
 /* Payment & Security Badges — one muted row, not a badge wall. */

@@ -119,14 +119,6 @@ textarea {
   top: var(--space-4);
 }
 
-/* ---------- Section rhythm ---------- */
-.section-heading {
-  font-size: var(--text-xl);
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  text-align: center;
-}
-
 /* ---------- Motion preferences ---------- */
 @media (prefers-reduced-motion: reduce) {
   *,

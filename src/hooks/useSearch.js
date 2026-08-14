@@ -147,15 +147,7 @@ export function useSearch() {
 
   const retry = useCallback(() => run(query.trim(), { allowError: false }), [query, run])
 
-  const reset = useCallback(() => {
-    requestId.current += 1
-    clearTimer()
-    setQuery('')
-    setResults([])
-    setStatus('idle')
-  }, [])
-
   useEffect(() => clearTimer, [])
 
-  return { query, setQuery, status, results, reset, retry, generate }
+  return { query, setQuery, status, results, retry, generate }
 }

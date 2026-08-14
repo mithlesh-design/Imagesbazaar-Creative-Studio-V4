@@ -30,6 +30,7 @@ const CreativeStudio = forwardRef(function CreativeStudio({ onFocusSearch }, ref
 
   const [prompt, setPrompt] = useState('')
   const [refs, setRefs] = useState([])
+  const nextRefKey = useRef(0)
 
   const sectionRef = useRef(null)
   useImperativeHandle(ref, () => sectionRef.current)
@@ -53,7 +54,8 @@ const CreativeStudio = forwardRef(function CreativeStudio({ onFocusSearch }, ref
   const clearCharacters = useCallback(() => setSelectedCharacters([]), [])
 
   const addRef = useCallback(
-    (item) => setRefs((r) => [...r, { ...item, key: `${item.type}-${r.length}-${item.name}` }]),
+    (item) =>
+      setRefs((r) => [...r, { ...item, key: `${item.type}-${nextRefKey.current++}-${item.name}` }]),
     []
   )
 
