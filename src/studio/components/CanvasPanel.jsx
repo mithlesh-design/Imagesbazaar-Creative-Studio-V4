@@ -1,5 +1,6 @@
 import {
   Download,
+  Maximize,
   Maximize2,
   Minimize2,
   Minus,
@@ -8,7 +9,6 @@ import {
   RotateCcw,
   SplitSquareHorizontal,
   Undo2,
-  Users,
 } from 'lucide-react'
 import { useStudio, useStudioActions } from '../StudioProvider'
 import RatioPills from './controls/RatioPills'
@@ -25,8 +25,6 @@ export default function CanvasPanel({
   fitScale,
   onFitScale,
   onFocusSearch,
-  onOpenCharacters,
-  selectedCharactersCount = 0,
 }) {
   const { hasImage, canUndo, canRedo, isEdited, comparing, view } = useStudio()
   const a = useStudioActions()
@@ -53,33 +51,7 @@ export default function CanvasPanel({
         <RatioPills />
 
         <div className="cvpanel__actions">
-          {/* Character Popup Tool Button */}
-          <button
-            type="button"
-            className="cvpanel__character-btn"
-            onClick={onOpenCharacters}
-            aria-label="Select Characters"
-            title="Open ImagesBazaar Character Selector"
-          >
-            <Users size={16} aria-hidden="true" />
-            <span>Character</span>
-            {selectedCharactersCount > 0 && (
-              <span className="cvpanel__character-badge">{selectedCharactersCount}</span>
-            )}
-          </button>
-
-          <button
-            type="button"
-            className={`cvpanel__fit${view.fit ? ' is-active' : ''}`}
-            onClick={a.zoomFit}
-            disabled={!hasImage}
-            aria-pressed={view.fit}
-            title="Fit to canvas (0)"
-          >
-            Fit to Canvas
-          </button>
-
-          <div className="cvpanel__group" role="group" aria-label="Zoom">
+          <div className="cvpanel__group" role="group" aria-label="View">
             <button
               type="button"
               className="cvpanel__icon"
@@ -102,6 +74,42 @@ export default function CanvasPanel({
               title="Zoom in (+)"
             >
               <Plus size={15} aria-hidden="true" />
+            </button>
+            <button
+              type="button"
+              className={`cvpanel__icon${view.fit ? ' is-active' : ''}`}
+              onClick={a.zoomFit}
+              disabled={!hasImage}
+              aria-pressed={view.fit}
+              aria-label="Fit to canvas"
+              title="Fit to canvas (0)"
+            >
+              <Maximize size={15} aria-hidden="true" />
+            </button>
+            <button
+              type="button"
+              className={`cvpanel__icon${comparing ? ' is-active' : ''}`}
+              disabled={!hasImage || !isEdited}
+              aria-pressed={comparing}
+              aria-label="Hold to see the original"
+              title="Hold to see the original (\)"
+              {...holdCompare}
+            >
+              <SplitSquareHorizontal size={15} aria-hidden="true" />
+            </button>
+            <button
+              type="button"
+              className="cvpanel__icon"
+              onClick={onToggleFullscreen}
+              aria-pressed={fullscreen}
+              aria-label={fullscreen ? 'Exit full screen' : 'Expand to full screen'}
+              title={fullscreen ? 'Exit full screen (Esc)' : 'Expand to full screen'}
+            >
+              {fullscreen ? (
+                <Minimize2 size={15} aria-hidden="true" />
+              ) : (
+                <Maximize2 size={15} aria-hidden="true" />
+              )}
             </button>
           </div>
 
@@ -137,33 +145,6 @@ export default function CanvasPanel({
               <RotateCcw size={15} aria-hidden="true" />
             </button>
           </div>
-
-          <button
-            type="button"
-            className={`cvpanel__icon cvpanel__icon--bare${comparing ? ' is-active' : ''}`}
-            disabled={!hasImage || !isEdited}
-            aria-pressed={comparing}
-            aria-label="Hold to see the original"
-            title="Hold to see the original (\)"
-            {...holdCompare}
-          >
-            <SplitSquareHorizontal size={15} aria-hidden="true" />
-          </button>
-
-          <button
-            type="button"
-            className="cvpanel__icon cvpanel__icon--bare"
-            onClick={onToggleFullscreen}
-            aria-pressed={fullscreen}
-            aria-label={fullscreen ? 'Exit full screen' : 'Expand to full screen'}
-            title={fullscreen ? 'Exit full screen (Esc)' : 'Expand to full screen'}
-          >
-            {fullscreen ? (
-              <Minimize2 size={15} aria-hidden="true" />
-            ) : (
-              <Maximize2 size={15} aria-hidden="true" />
-            )}
-          </button>
 
           <button
             type="button"

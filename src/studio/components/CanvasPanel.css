@@ -12,109 +12,68 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: space-between;
   gap: var(--space-3);
-  flex-shrink: 0;
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--studio-border);
 }
 
 .cvpanel__actions {
   display: flex;
   align-items: center;
   gap: var(--space-2);
+  margin-left: auto;
 }
 
-.cvpanel__character-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  min-height: 34px;
-  padding-inline: var(--space-4);
-  border: 1px solid var(--color-accent);
-  border-radius: var(--radius-pill);
-  background: var(--studio-accent-soft);
-  font-family: inherit;
-  font-size: var(--text-sm);
-  font-weight: 600;
-  color: var(--color-accent);
-  white-space: nowrap;
-  cursor: pointer;
-  transition: background-color var(--dur-fast) var(--ease),
-    border-color var(--dur-fast) var(--ease);
-}
-
-.cvpanel__character-btn:hover {
-  background: var(--studio-mat);
-}
-
-.cvpanel__character-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 18px;
-  height: 18px;
-  padding-inline: 4px;
-  border-radius: 999px;
-  background-color: var(--color-accent);
-  color: #ffffff;
-  font-size: var(--text-2xs);
-  font-weight: 700;
-  line-height: 1;
-}
-
-.cvpanel__fit {
-  min-height: 34px;
-  padding-inline: var(--space-4);
-  border: 1px solid var(--studio-border);
-  border-radius: var(--radius-pill);
-  background: var(--color-white);
-  font-family: inherit;
-  font-size: var(--text-sm);
-  font-weight: 600;
-  color: var(--color-text-primary);
-  white-space: nowrap;
-  cursor: pointer;
-  transition: background-color var(--dur-fast) var(--ease),
-    border-color var(--dur-fast) var(--ease);
-}
-
-.cvpanel__fit:hover:not(:disabled) {
-  border-color: var(--color-accent);
-  background: var(--studio-hover);
-}
-
-.cvpanel__fit.is-active {
-  border-color: var(--studio-border-strong);
-  background: var(--studio-accent-soft);
-}
-
-.cvpanel__fit:disabled {
-  color: var(--studio-text-disabled);
-  cursor: not-allowed;
-}
-
-/* Segmented clusters, so related icons read as one control. */
+/* Three zones — ratio, view, history — separated by hairlines. Every control
+   inside them is the same 32px square. Four different button shapes in one row
+   is what made this bar unreadable. */
 .cvpanel__group {
   display: flex;
   align-items: center;
-  border: 1px solid var(--studio-border);
-  border-radius: var(--radius-pill);
-  background: var(--color-white);
+  gap: 2px;
+  padding-inline: var(--space-2);
+  border-left: 1px solid var(--studio-border);
+}
+
+.cvpanel__group:first-of-type {
+  border-left: none;
 }
 
 .cvpanel__icon {
-  display: grid;
-  place-items: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   width: 32px;
   height: 32px;
-  border-radius: var(--radius-pill);
-  background: none;
-  color: var(--color-text-primary);
-  cursor: pointer;
-  transition: background-color var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
+  color: var(--color-text-secondary);
+  border-radius: var(--radius-md);
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+/* The visual box is 32px; the hit area is 40px, centred on the icon rather
+   than anchored at the content-box origin. */
+.cvpanel__icon::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 40px;
+  height: 40px;
+  transform: translate(-50%, -50%);
+}
+
+.cvpanel__icon {
+  position: relative;
 }
 
 .cvpanel__icon:hover:not(:disabled) {
+  color: var(--color-text-primary);
   background: var(--studio-hover);
+}
+
+.cvpanel__icon.is-active {
+  color: var(--color-white);
+  background: var(--studio-accent);
 }
 
 .cvpanel__icon:disabled {
@@ -122,20 +81,9 @@
   cursor: not-allowed;
 }
 
-.cvpanel__icon--bare {
-  border: 1px solid var(--studio-border);
-}
-
-.cvpanel__icon--bare.is-active {
-  border-color: var(--color-accent);
-  background: var(--color-accent);
-  color: var(--color-white);
-}
-
 .cvpanel__level {
   min-width: 44px;
-  font-size: var(--text-xs);
-  font-weight: 600;
+  font-size: var(--text-sm);
   color: var(--color-text-secondary);
   text-align: center;
   font-variant-numeric: tabular-nums;
@@ -145,26 +93,20 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
-  min-height: 34px;
-  padding-inline: var(--space-4);
-  border-radius: var(--radius-pill);
-  background: var(--color-accent);
-  font-family: inherit;
-  font-size: var(--text-sm);
+  height: 36px;
+  margin-left: var(--space-2);
+  padding: 0 var(--space-4);
+  font-size: var(--text-base);
   font-weight: 600;
   color: var(--color-white);
-  white-space: nowrap;
-  cursor: pointer;
-  transition: background-color var(--dur-fast) var(--ease);
-}
-
-.cvpanel__download:hover:not(:disabled) {
-  background: var(--color-accent-hover);
+  background: var(--studio-accent);
+  border-radius: var(--radius-md);
+  transition: opacity var(--transition-fast);
 }
 
 .cvpanel__download:disabled {
+  color: var(--color-text-muted);
   background: var(--studio-surface);
-  color: var(--studio-text-disabled);
   cursor: not-allowed;
 }
 
@@ -195,25 +137,15 @@
   .cvpanel {
     padding: var(--space-3);
   }
-
-  /* Below this the picture needs every pixel, so zoom stepping goes back to
-     the pinch gesture and the keyboard. */
-  .cvpanel__group[aria-label='Zoom'] {
-    display: none;
-  }
 }
 
 @media (pointer: coarse) {
   /* `flex-shrink: 0` is the operative part: the actions row is flex, so a
      declared 44px width is only a starting size — without this the buttons
      squeezed to 37px and quietly failed the 2.5.8 target minimum. */
-  .cvpanel__fit,
   .cvpanel__download {
     flex-shrink: 0;
     min-height: 44px;
-  }
-
-  .cvpanel__download {
     min-width: 44px;
     justify-content: center;
   }
