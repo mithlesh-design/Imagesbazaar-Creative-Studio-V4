@@ -66,7 +66,11 @@ export default function PromptPanel({
           onChange={(e) => onPromptChange(e.target.value)}
           placeholder="Describe how you want to edit or generate the image…"
           aria-label="Prompt"
-          rows={4}
+          /* Low on purpose: `rows` sets an intrinsic height that outranks
+             `min-height`, so leaving it at 7 pinned the field at 191px and the
+             short-viewport rule in the stylesheet could never take effect.
+             Height is owned by CSS. */
+          rows={2}
         />
 
         <h3 className="ppanel__legend">Suggestions</h3>
@@ -77,8 +81,12 @@ export default function PromptPanel({
               type="button"
               className="ppanel__chip"
               onClick={() => onPromptChange(prompt ? `${prompt}, ${s.text}` : s.text)}
+              /* The chip is a short label; the tooltip and accessible name
+                 carry the instruction it will actually insert. */
+              title={s.text}
+              aria-label={s.text}
             >
-              {s.text}
+              {s.label}
             </button>
           ))}
         </div>

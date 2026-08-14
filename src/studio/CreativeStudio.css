@@ -29,6 +29,52 @@
   min-height: 0;
 }
 
+/* ---------- Scrollbars ----------
+   Scoped to the studio so every scroller in the editor matches — the prompt
+   panel, the character browser, the download dialog.
+
+   The thumb is 6px of colour floating inside a 12px gutter. That is done with a
+   transparent border plus `background-clip: content-box` rather than a narrow
+   scrollbar, because a 6px-wide scrollbar is a 6px-wide *hit target*; this way
+   the grabbable width stays 12px while the visible mark stays hairline. The
+   track is transparent, so the bar reads as a floating mark on the panel rather
+   than a channel cut into it. */
+/* Firefox only. These MUST be scoped away from Chromium: setting
+   `scrollbar-width` on an element makes Chromium ignore every
+   `::-webkit-scrollbar` rule for it and fall back to the OS overlay scrollbar,
+   which on macOS is invisible at rest — the styled bar silently disappears. */
+@supports not selector(::-webkit-scrollbar) {
+  .studio * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--studio-scrollbar) transparent;
+  }
+}
+
+.studio *::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+.studio *::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.studio *::-webkit-scrollbar-thumb {
+  background-color: var(--studio-scrollbar);
+  background-clip: content-box;
+  border: 3px solid transparent;
+  border-radius: var(--radius-pill);
+  transition: background-color var(--transition-fast);
+}
+
+.studio *::-webkit-scrollbar-thumb:hover {
+  background-color: var(--studio-scrollbar-hover);
+}
+
+.studio *::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
 /* Fullscreen mode */
 .studio.is-fullscreen {
   position: fixed;

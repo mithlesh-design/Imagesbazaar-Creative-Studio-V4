@@ -6,23 +6,32 @@
 }
 
 /* Content scrolls; the actions never leave. min-height:0 is what lets the
-   scroller actually scroll instead of stretching its ancestors. */
+   scroller actually scroll instead of stretching its ancestors.
+   Right padding is trimmed because the scrollbar gutter supplies the rest. */
 .ppanel__scroll {
   flex: 1;
   min-height: 0;
   overflow-y: auto;
-  padding: var(--space-4);
+  /* Reserve the gutter permanently. Without it the panel reflows by the
+     scrollbar's width the moment content crosses the fold — chips reflowing
+     mid-interaction is exactly the cheapness this redesign is removing. */
+  scrollbar-gutter: stable;
+  padding: var(--space-5) var(--space-2) var(--space-5) var(--space-5);
 }
 
+/* Sections are separated by space, not rules. A hairline between every group
+   in a panel this narrow reads as a form; the eye already groups on proximity,
+   so the borders were only adding noise. */
 .ppanel__legend {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  min-height: 24px;
   margin-top: var(--space-5);
-  margin-bottom: var(--space-2);
-  font-size: var(--text-xs);
+  margin-bottom: var(--space-3);
+  font-size: var(--text-2xs);
   font-weight: 600;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--color-text-muted);
 }
@@ -31,18 +40,23 @@
   margin-top: 0;
 }
 
+/* Room to actually write. A filled well rather than an outlined box: at rest
+   it is one soft shape, and the border appears only on focus, where it means
+   something. */
 .ppanel__input {
-  min-height: 90px;
-  padding: var(--space-3);
-  border: 1px solid var(--studio-border);
-  border-radius: var(--radius-lg);
-  background: var(--color-white);
+  width: 100%;
+  min-height: 168px;
+  padding: var(--space-4);
+  border: 1px solid transparent;
+  border-radius: var(--radius-xl);
+  background: var(--studio-surface);
   font-family: inherit;
   font-size: var(--text-base);
-  line-height: 1.55;
+  line-height: 1.6;
   color: var(--color-text-primary);
   resize: vertical;
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  transition: background-color var(--transition-fast), border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
 }
 
 .ppanel__input::placeholder {
@@ -50,7 +64,9 @@
 }
 
 .ppanel__input:focus {
-  border-color: var(--color-accent);
+  outline: none;
+  background: var(--color-white);
+  border-color: var(--studio-border-strong);
   box-shadow: var(--shadow-ring);
 }
 
@@ -88,28 +104,33 @@
 .ppanel__chips {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-2);
+  gap: 6px;
 }
 
+/* Small on purpose. Full sentences wrapped to two lines each and cost six rows;
+   short labels cost two, and the space goes to Characters and References, which
+   used to sit below the fold. */
 .ppanel__chip,
 .ppanel__token {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-2) var(--space-3);
-  font-size: var(--text-sm);
-  line-height: 1.35;
-  text-align: left;
+  gap: 6px;
+  height: 28px;
+  padding: 0 var(--space-3);
+  font-size: var(--text-xs);
+  white-space: nowrap;
   color: var(--color-text-secondary);
   background: var(--studio-surface);
-  border: 1px solid var(--studio-border);
-  border-radius: var(--radius-md);
-  transition: background-color var(--transition-fast), color var(--transition-fast);
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
+  transition: background-color var(--transition-fast), border-color var(--transition-fast),
+    color var(--transition-fast);
 }
 
 .ppanel__chip:hover {
   color: var(--color-text-primary);
-  background: var(--studio-hover);
+  background: var(--color-white);
+  border-color: var(--studio-border-strong);
 }
 
 .ppanel__clear {
@@ -119,55 +140,56 @@
 }
 
 /* ---------- References ---------- */
+/* Three dashed 56px drop-zones were the panel's heaviest element and its least
+   used. One row of quiet buttons says the same thing in a third of the height,
+   and dashed borders stop implying a drag target that was never wired. */
 .ppanel__adders {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-2);
+  display: flex;
+  gap: 6px;
 }
 
 .ppanel__adder {
-  display: grid;
-  justify-items: center;
-  align-content: center;
+  display: inline-flex;
+  align-items: center;
   gap: 6px;
-  min-height: 56px;
-  padding: var(--space-2);
-  border: 1px dashed var(--studio-border-strong);
-  border-radius: var(--radius-lg);
+  flex: 1;
+  justify-content: center;
+  height: 34px;
+  padding: 0 var(--space-2);
+  border: 1px solid var(--studio-border);
+  border-radius: var(--radius-md);
   background: var(--color-white);
   font-family: inherit;
   font-size: var(--text-xs);
   font-weight: 500;
-  line-height: 1.2;
   color: var(--color-text-secondary);
-  text-align: center;
   cursor: pointer;
   transition: border-color var(--transition-fast), background-color var(--transition-fast),
     color var(--transition-fast);
 }
 
 .ppanel__adder:hover {
-  border-color: var(--color-accent);
-  background: var(--color-hover);
-  color: var(--color-accent);
-}
-
-.ppanel__adder svg {
+  border-color: var(--studio-border-strong);
+  background: var(--studio-surface);
   color: var(--color-text-primary);
 }
 
+.ppanel__adder svg {
+  color: var(--color-text-muted);
+}
+
+.ppanel__adder:hover svg {
+  color: var(--color-text-primary);
+}
+
+/* A plain list. The well it used to sit in reserved height whether or not
+   anything was in it. */
 .ppanel__refs {
   display: flex;
   flex-direction: column;
-  flex: 1;
-  min-height: 54px;
   gap: 4px;
-  overflow-y: auto;
-  padding: var(--space-2);
+  margin-top: 6px;
   list-style: none;
-  border-radius: var(--radius-lg);
-  background: var(--studio-surface);
-  border: 1px solid var(--studio-border);
 }
 
 /* One line, not a 300px box reserved to say nothing. */
@@ -180,11 +202,10 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  min-height: 32px;
-  padding-inline: var(--space-2);
+  min-height: 34px;
+  padding-inline: var(--space-3);
   border-radius: var(--radius-md);
-  background: var(--color-white);
-  border: 1px solid var(--studio-border);
+  background: var(--studio-surface);
   font-size: var(--text-sm);
   color: var(--color-text-primary);
 }
@@ -215,11 +236,13 @@
 }
 
 /* ---------- The two actions ---------- */
+/* The hairline here earns its place: it marks the boundary between what scrolls
+   and what does not. It is the only rule left in the panel. */
 .ppanel__cta {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
-  padding: var(--space-4);
+  padding: var(--space-4) var(--space-5);
   border-top: 1px solid var(--studio-border);
 }
 
@@ -229,51 +252,49 @@
   align-items: center;
   justify-content: center;
   gap: var(--space-2);
-  min-height: 48px;
+  min-height: 46px;
   border-radius: var(--radius-lg);
   font-family: inherit;
   font-size: var(--text-base);
-  font-weight: 700;
+  font-weight: 600;
   cursor: pointer;
-  transition: transform var(--transition-fast), box-shadow var(--transition-fast),
-    opacity var(--transition-fast);
+  transition: background-color var(--transition-fast), border-color var(--transition-fast),
+    color var(--transition-fast);
 }
 
+/* No lift, no drop shadow. Weight and fill are enough to make it primary in a
+   panel where nothing else is filled. */
 .ppanel__generate {
   background: var(--color-black);
   color: var(--color-white);
-  border: none;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--color-black);
 }
 
 .ppanel__generate:hover:not(:disabled) {
   background: var(--color-accent-hover);
-  transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
-  opacity: 1;
+  border-color: var(--color-accent-hover);
 }
 
 .ppanel__generate:disabled {
-  background: var(--studio-border-strong);
+  background: var(--studio-surface);
+  border-color: transparent;
   color: var(--studio-text-disabled);
-  box-shadow: none;
   cursor: not-allowed;
 }
 
 .ppanel__apply {
-  border: 1px solid var(--studio-border-strong);
-  background: var(--color-white);
+  border: 1px solid transparent;
+  background: var(--studio-surface);
   color: var(--color-text-primary);
 }
 
 .ppanel__apply:hover:not(:disabled) {
-  border-color: var(--color-black);
-  color: var(--color-black);
-  background: var(--studio-surface);
+  border-color: var(--studio-border-strong);
+  background: var(--color-white);
 }
 
 .ppanel__apply:disabled {
-  border-color: var(--studio-border);
+  background: transparent;
   color: var(--studio-text-disabled);
   cursor: not-allowed;
 }
@@ -285,5 +306,29 @@
 @keyframes ppanel-spin {
   to {
     transform: rotate(360deg);
+  }
+}
+
+/* Laptop-class heights. At 900px everything fits; at 768 References fell below
+   the fold and at 720 so did Characters. The prompt keeps the largest share —
+   it is the point of the panel — but yields enough for both sections to be
+   reachable without scrolling, which is the whole reason they were moved up. */
+@media (max-height: 860px) {
+  .ppanel__scroll {
+    padding-top: var(--space-4);
+    padding-bottom: var(--space-4);
+  }
+
+  .ppanel__input {
+    min-height: 116px;
+  }
+
+  .ppanel__legend {
+    margin-top: var(--space-4);
+    margin-bottom: var(--space-2);
+  }
+
+  .ppanel__cta {
+    padding-block: var(--space-3);
   }
 }

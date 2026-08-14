@@ -124,6 +124,12 @@
   --studio-scrim: rgba(24, 24, 27, 0.55);
   --studio-frame-shadow: 0 2px 10px rgba(0, 0, 0, 0.14), 0 0 0 1px rgba(0, 0, 0, 0.06);
 
+  /* Scrollbar. Sits between border and border-strong at rest so the thumb reads
+     as part of the chrome rather than as content, and darkens past
+     border-strong on hover so it is unmistakably grabbable. */
+  --studio-scrollbar: #d5d5da;
+  --studio-scrollbar-hover: #a9a9b2;
+
   --studio-border: #e5e5e7;
   --studio-border-strong: #c9c9ce;
   --studio-text-disabled: #b4b4bb;
