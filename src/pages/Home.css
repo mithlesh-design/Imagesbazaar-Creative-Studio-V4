@@ -16,9 +16,13 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: var(--space-5);
+  /* Tightened from space-5/space-8/space-7 when the mode toggle was added: it
+     costs ~90px, which put generate mode's taller panel exactly on the fold.
+     The space comes from the hero's own rhythm rather than from the generate
+     interface, which stays as designed. */
+  gap: var(--space-4);
   min-height: calc(100dvh - var(--header-h));
-  padding: var(--space-8) var(--page-pad) var(--space-7);
+  padding: var(--space-6) var(--page-pad) var(--space-6);
   text-align: center;
 }
 
@@ -35,6 +39,35 @@
   font-size: var(--text-md);
   line-height: 1.5;
   color: var(--color-text-secondary);
+}
+
+/* The toggle sits between the subheading and the interface it switches, so it
+   takes a little more air above than below — it belongs to what follows it. */
+.modetoggle {
+  margin-top: var(--space-2);
+}
+
+.hero__panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-5);
+  width: 100%;
+  animation: hero-panel-in var(--dur-slow) var(--ease) both;
+}
+
+/* Rises rather than sliding sideways: the panel replaces what was in this slot
+   rather than arriving from the direction of the tab that was clicked.
+   Suppressed wholesale by the reduced-motion rule in globals.css. */
+@keyframes hero-panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 .hero__suggestions {
@@ -75,6 +108,17 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+/* Laptop-class heights — 768 and 720 — where generate mode is the tall panel
+   and clears the fold by only ~10px. Give the space back from the field rather
+   than shrinking the headline, which at these widths is still large type doing
+   real work. Extends the existing short-viewport behaviour below rather than
+   introducing a new idea. */
+@media (max-height: 820px) {
+  .heroprompt {
+    min-height: 180px;
+  }
 }
 
 /* Short viewports: clamp the block so it still fits one screen. */

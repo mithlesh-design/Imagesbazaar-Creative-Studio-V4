@@ -3,6 +3,9 @@ import Header from '../components/Header'
 import MobileMenu from '../components/MobileMenu'
 import HeroPrompt from '../components/HeroPrompt'
 import VoiceButton from '../components/VoiceButton'
+import ModeToggle from '../components/ModeToggle'
+import SearchPanel from '../components/SearchPanel'
+import ImageSearchModal from '../components/ImageSearchModal'
 import CollectionCard from '../components/CollectionCard'
 import Footer from '../components/Footer'
 import SupportButton from '../components/SupportButton'
@@ -15,6 +18,8 @@ export default function Home({ onNavigateStudio }) {
   const search = useSearch()
   const studio = useStudioActions()
   const [menuOpen, setMenuOpen] = useState(false)
+  const [imageSearchOpen, setImageSearchOpen] = useState(false)
+  const [mode, setMode] = useState('search')
 
   const inputRef = useRef(null)
   const resultsRef = useRef(null)
@@ -76,35 +81,55 @@ export default function Home({ onNavigateStudio }) {
         <section className="hero">
           <h1 className="hero__title">Every image India can imagine</h1>
           <p className="hero__sub">
-            Describe the photograph you need — we’ll generate ten authentic Indian
-            variations, ready to edit and licence.
+            {mode === 'search'
+              ? 'Search over 100,000 authentic Indian photographs, ready to edit and licence.'
+              : 'Describe the photograph you need — we’ll generate ten authentic Indian variations, ready to edit and licence.'}
           </p>
 
-          <HeroPrompt
-            ref={inputRef}
-            value={search.query}
-            onChange={search.setQuery}
-            onSubmit={submit}
-            busy={search.status === 'loading'}
-            voiceSlot={<VoiceButton onTranscript={search.setQuery} />}
-          />
+          <ModeToggle mode={mode} onChange={setMode} />
 
-          <ul className="hero__suggestions">
-            {heroSuggestions.map((s) => (
-              <li key={s.id}>
-                <button
-                  type="button"
-                  className="hero__suggestion"
-                  onClick={() => useSuggestion(s.text)}
-                >
-                  <span className="hero__suggestion-glyph" aria-hidden="true">
-                    ✦
-                  </span>
-                  <span className="hero__suggestion-text">{s.text}</span>
-                </button>
-              </li>
-            ))}
-          </ul>
+          {/* `key` on the panel restarts the entry animation on every switch —
+              without it React reuses the element and the motion plays once. */}
+          <div className="hero__panel" key={mode} role="tabpanel" id={`panel-${mode}`} aria-labelledby={`mode-${mode}`}>
+            {mode === 'search' ? (
+              <SearchPanel
+                ref={inputRef}
+                value={search.query}
+                onChange={search.setQuery}
+                onSubmit={submit}
+                onSearchByImage={() => setImageSearchOpen(true)}
+                busy={search.status === 'loading'}
+              />
+            ) : (
+              <>
+                <HeroPrompt
+                  ref={inputRef}
+                  value={search.query}
+                  onChange={search.setQuery}
+                  onSubmit={submit}
+                  busy={search.status === 'loading'}
+                  voiceSlot={<VoiceButton onTranscript={search.setQuery} />}
+                />
+
+                <ul className="hero__suggestions">
+                  {heroSuggestions.map((s) => (
+                    <li key={s.id}>
+                      <button
+                        type="button"
+                        className="hero__suggestion"
+                        onClick={() => useSuggestion(s.text)}
+                      >
+                        <span className="hero__suggestion-glyph" aria-hidden="true">
+                          ✦
+                        </span>
+                        <span className="hero__suggestion-text">{s.text}</span>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
+          </div>
         </section>
 
         <div ref={resultsRef}>
@@ -140,7 +165,11 @@ export default function Home({ onNavigateStudio }) {
                 <div className="search-results__content">
                   <div className="search-results__head-wrap">
                     <h2 className="search-results__heading">
-                      10 variations for “{search.query}”
+                      {mode === 'search'
+                        ? `${generatedResults.length} ${
+                            generatedResults.length === 1 ? 'image' : 'images'
+                          } for “${search.query}”`
+                        : `10 variations for “${search.query}”`}
                     </h2>
                     <p className="search-results__sub">
                       Pick one to open it in the Creative Studio.
@@ -166,6 +195,11 @@ export default function Home({ onNavigateStudio }) {
 
       <Footer />
       <SupportButton />
+
+      <ImageSearchModal
+        open={imageSearchOpen}
+        onClose={() => setImageSearchOpen(false)}
+      />
     </div>
   )
 }

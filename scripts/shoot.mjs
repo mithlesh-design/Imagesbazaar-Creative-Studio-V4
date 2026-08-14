@@ -56,9 +56,41 @@ for (const v of VIEWPORTS) {
   // Studio: navigate in, assert no page scrollbar and a visible back button.
   // Wrapped so a missing/renamed selector still lets every viewport finish and
   // still produce screenshots — a thrown exception here must not abort the run.
+  // The hero lands in Search mode, so the Generate field is not mounted until
+  // the toggle is switched. Assert the switch works, then switch back — the
+  // studio is reached below via the default path a real visitor takes.
   try {
-    await page.fill('.heroprompt__input', 'family celebrating diwali')
-    await page.click('.heroprompt__submit')
+    await page.click('#mode-generate')
+    await page.waitForSelector('.heroprompt__input', { timeout: 4000 })
+    check(true, `${v.name}: toggle reveals the generate field`)
+
+    // Generate is the TALLER panel, so the fit check above — which runs in the
+    // default search mode — does not cover it. Measure content against the box
+    // rather than the fold: the hero has a min-height, so an overflowing panel
+    // still reports a bottom edge at the fold while spilling inside.
+    const genHeadroom = await page.evaluate(() => {
+      const h = document.querySelector('.hero')
+      const kids = [...h.children]
+      const s = getComputedStyle(h)
+      const content =
+        kids.reduce((a, el) => a + el.getBoundingClientRect().height, 0) +
+        parseFloat(s.rowGap) * (kids.length - 1) +
+        parseFloat(s.paddingTop) +
+        parseFloat(s.paddingBottom)
+      return Math.round(h.clientHeight - content)
+    })
+    check(genHeadroom >= 0, `${v.name}: generate panel fits the hero (headroom ${genHeadroom}px)`)
+
+    await page.click('#mode-search')
+    await page.waitForSelector('.searchpanel__input', { timeout: 4000 })
+    check(true, `${v.name}: toggle returns to search`)
+  } catch (e) {
+    check(false, `${v.name}: mode toggle — ${e.message}`)
+  }
+
+  try {
+    await page.fill('.searchpanel__input', 'family celebrating diwali')
+    await page.click('.searchpanel__submit')
     await page.waitForSelector('.search-results__grid-5x2 .card__button', { timeout: 8000 })
     await page.click('.search-results__grid-5x2 .card__button')
     await page.waitForSelector('.studio', { timeout: 8000 })
