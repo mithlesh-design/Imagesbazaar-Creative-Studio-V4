@@ -88,8 +88,8 @@ for (const v of VIEWPORTS) {
     // The bar has no submit button by design; Enter runs the search.
     await page.fill('.sitesearch__input', 'family')
     await page.press('.sitesearch__input', 'Enter')
-    await page.waitForSelector('.search-results__grid-5x2 .card__button', { timeout: 8000 })
-    await page.click('.search-results__grid-5x2 .card__button')
+    await page.waitForSelector('.search-results__grid .card__button', { timeout: 8000 })
+    await page.click('.search-results__grid .card__button')
     await page.waitForSelector('.studio', { timeout: 8000 })
     await page.waitForTimeout(800)
     await page.screenshot({ path: `${OUT}/studio-${v.name}.png` })

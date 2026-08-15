@@ -4,19 +4,22 @@ import { collections } from '../data/collections'
 /**
  * Client-side search engine.
  *
- * Configured to return at least 10 relevant images for any search query.
+ * Search returns only genuinely relevant matches; generation pads to a fixed
+ * variant count. See MIN_RESULTS.
  */
 
 const LATENCY = 2500
 const MAX_RESULTS = 24
-const MIN_RESULTS = 10
+/** Generation promises a fixed number of variants and must deliver exactly
+ *  that many; see VARIANT_COUNT in Home.jsx, which this must match. */
+const MIN_RESULTS = 4
 
 // Typing "fail" anywhere forces the error branch for state testing.
 const ERROR_TRIGGER = 'fail'
 
 /**
  * Keyword hints expanded so queries like "family", "business", "festival", "wedding", etc.
- * match 10+ distinct relevant stock photos.
+ * match several distinct relevant stock photos.
  */
 const KEYWORD_HINTS = {
   families: ['family', 'parents', 'home', 'children', 'mother', 'father', 'kids', 'lifestyle', 'people'],
@@ -63,8 +66,9 @@ const INDEX = collections.map((c) => ({
 /**
  * Matches a query against the image index.
  *
- * `pad` is the difference between the two flows. Generation promises ten
- * variations and must produce ten, so it tops up from the rest of the library.
+ * `pad` is the difference between the two flows. Generation promises a fixed
+ * number of variants and must produce exactly that many, so it tops up from the
+ * rest of the library.
  * Search promises relevance and must not: nearly every item's haystack contains
  * "indian", so a two-term query like "indian family" scores currency and
  * healthcare on the strength of one word. Unpadded, only the best-scoring tier
@@ -99,7 +103,7 @@ export function match(query, { pad = true } = {}) {
 
   let filtered = hits.map((r) => r.item)
 
-  // If match count is less than MIN_RESULTS (10), pad with relevant lifestyle fallbacks
+  // Short of the promised count: top up so a generation always delivers it.
   if (filtered.length < MIN_RESULTS) {
     const existingIds = new Set(filtered.map((item) => item.id))
     const fallbacks = INDEX.filter((item) => !existingIds.has(item.id))

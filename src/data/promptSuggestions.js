@@ -39,7 +39,10 @@ export function followUpPrompts(query, limit = 4) {
   const head = subject.charAt(0).toUpperCase() + subject.slice(1)
 
   return promptScenarios
-    .filter((scenario) => !asked.includes(scenario.split(' ').pop()))
+    // `asked` is lowercased, so the compared word must be too — without this,
+    // "Diwali" never matches a query containing "diwali" and the filter yields
+    // suggestions like "Diwali campaign celebrating Diwali".
+    .filter((scenario) => !asked.includes(scenario.split(' ').pop().toLowerCase()))
     .slice(0, limit)
     .map((scenario) => ({ id: scenario, text: `${head} ${scenario}` }))
 }

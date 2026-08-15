@@ -30,9 +30,11 @@
 
 .card__img {
   width: 100%;
-  /* See HeroBanner.css — height:auto lets aspect-ratio beat the height attr. */
+  /* height:auto lets aspect-ratio beat the height attribute on the element. */
   height: auto;
-  aspect-ratio: 4 / 3;
+  /* Square. The library is a mix of 4:3 and 3:2 originals, so `cover` crops to
+     the frame rather than letterboxing — a grid of uniform squares is the point. */
+  aspect-ratio: 1 / 1;
   object-fit: cover;
   transition: transform var(--dur-slow) var(--ease);
 }

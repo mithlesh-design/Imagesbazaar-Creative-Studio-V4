@@ -175,7 +175,7 @@ export default function PromptPanel({
           ) : (
             <>
               <Sparkles size={16} aria-hidden="true" />
-              Generate 10 variations
+              Generate 4 variants
             </>
           )}
         </button>

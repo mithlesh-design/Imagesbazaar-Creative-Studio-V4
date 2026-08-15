@@ -13,6 +13,12 @@ import { useSearch } from '../hooks/useSearch'
 import { followUpPrompts } from '../data/promptSuggestions'
 import './Home.css'
 
+/** How many variants a generation produces. The subheading promises this
+ *  number in words, the results heading quotes it, the skeleton renders this
+ *  many placeholders, and `MIN_RESULTS` in useSearch.js pads to match. Change
+ *  it here and in that constant together. */
+const VARIANT_COUNT = 4
+
 export default function Home({ onNavigateStudio }) {
   const search = useSearch()
   const studio = useStudioActions()
@@ -90,7 +96,7 @@ export default function Home({ onNavigateStudio }) {
   // Which action produced these results — a lookup or a generation. The two
   // present differently, and only generation has anything to animate.
   const isSearch = search.source === 'search'
-  const shownResults = isSearch ? search.results : search.results.slice(0, 10)
+  const shownResults = isSearch ? search.results : search.results.slice(0, VARIANT_COUNT)
   const followUps = isSearch ? [] : followUpPrompts(search.query)
 
   return (
@@ -185,7 +191,7 @@ export default function Home({ onNavigateStudio }) {
                 <div className="search-results__content">
                   <div className="search-results__head-wrap">
                     <h2 className="search-results__heading">
-                      {isSearch ? 'Search results' : `10 variations for “${search.query}”`}
+                      {isSearch ? 'Search results' : `${VARIANT_COUNT} variants for “${search.query}”`}
                     </h2>
                     <p className="search-results__sub">
                       {isSearch
@@ -195,7 +201,7 @@ export default function Home({ onNavigateStudio }) {
                     </p>
                   </div>
 
-                  <ul className="search-results__grid-5x2">
+                  <ul className="search-results__grid">
                     {shownResults.map((item, i) => (
                       <CollectionCard
                         key={item.id}
@@ -270,8 +276,8 @@ function GenerationLoadingState({ query }) {
           {loadingTexts[textIndex]}
         </p>
       </div>
-      <ul className="search-results__grid-5x2">
-        {Array.from({ length: 10 }).map((_, i) => (
+      <ul className="search-results__grid">
+        {Array.from({ length: VARIANT_COUNT }).map((_, i) => (
           <li key={i} className="skeleton-card">
             <div className="skeleton-card__image" />
             <div className="skeleton-card__text" />
