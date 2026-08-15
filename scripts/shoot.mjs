@@ -56,19 +56,12 @@ for (const v of VIEWPORTS) {
   // Studio: navigate in, assert no page scrollbar and a visible back button.
   // Wrapped so a missing/renamed selector still lets every viewport finish and
   // still produce screenshots — a thrown exception here must not abort the run.
-  // The hero lands in Search mode, so the Generate field is not mounted until
-  // the toggle is switched. Assert the switch works, then switch back — the
-  // studio is reached below via the default path a real visitor takes.
+  // The hero has a min-height, so an overflowing panel still reports its bottom
+  // edge at the fold while spilling inside it. Measure content against the box,
+  // not against the viewport.
   try {
-    await page.click('#mode-generate')
     await page.waitForSelector('.heroprompt__input', { timeout: 4000 })
-    check(true, `${v.name}: toggle reveals the generate field`)
-
-    // Generate is the TALLER panel, so the fit check above — which runs in the
-    // default search mode — does not cover it. Measure content against the box
-    // rather than the fold: the hero has a min-height, so an overflowing panel
-    // still reports a bottom edge at the fold while spilling inside.
-    const genHeadroom = await page.evaluate(() => {
+    const headroom = await page.evaluate(() => {
       const h = document.querySelector('.hero')
       const kids = [...h.children]
       const s = getComputedStyle(h)
@@ -79,18 +72,22 @@ for (const v of VIEWPORTS) {
         parseFloat(s.paddingBottom)
       return Math.round(h.clientHeight - content)
     })
-    check(genHeadroom >= 0, `${v.name}: generate panel fits the hero (headroom ${genHeadroom}px)`)
+    check(headroom >= 0, `${v.name}: studio panel fits the hero (headroom ${headroom}px)`)
 
-    await page.click('#mode-search')
-    await page.waitForSelector('.searchpanel__input', { timeout: 4000 })
-    check(true, `${v.name}: toggle returns to search`)
+    // The site search bar sits above the hero and shares the first screen.
+    const barVisible = await page.evaluate(() => {
+      const b = document.querySelector('.sitesearch__bar')
+      return b ? b.getBoundingClientRect().bottom <= window.innerHeight : null
+    })
+    check(barVisible === true, `${v.name}: site search bar on the first screen`)
   } catch (e) {
-    check(false, `${v.name}: mode toggle — ${e.message}`)
+    check(false, `${v.name}: hero — ${e.message}`)
   }
 
   try {
-    await page.fill('.searchpanel__input', 'family celebrating diwali')
-    await page.click('.searchpanel__submit')
+    // The bar has no submit button by design; Enter runs the search.
+    await page.fill('.sitesearch__input', 'family')
+    await page.press('.sitesearch__input', 'Enter')
     await page.waitForSelector('.search-results__grid-5x2 .card__button', { timeout: 8000 })
     await page.click('.search-results__grid-5x2 .card__button')
     await page.waitForSelector('.studio', { timeout: 8000 })

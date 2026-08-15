@@ -1,33 +1,5 @@
 /** Prompt suggestions. Copy never lives in components — see README "data-driven". */
 
-/** Shown under the hero prompt box on the home page. */
-export const heroSuggestions = [
-  { id: 'diwali', text: 'Family celebrating Diwali at home' },
-  { id: 'corporate', text: 'Corporate team meeting in a Mumbai office' },
-  { id: 'farmer', text: 'Farmer in a green field at sunrise' },
-  { id: 'wedding', text: 'Bride and groom at a traditional wedding' },
-]
-
-/**
- * Shown under the search bar. Short subjects rather than sentences: a search is
- * a lookup, and a chip that reads like a prompt teaches the wrong gesture.
- *
- * Single words on purpose. Search matches strictly — it will not pad a thin
- * result set with unrelated images — so a two-word chip narrows to whatever
- * matches both terms, which in a 24-image placeholder library is often one
- * picture. These six are the best-populated subjects in `collections.js`
- * (family 15, children 4, business 3, wedding 2, celebration 2, culture 2) and
- * should be revisited when the placeholder photography is replaced.
- */
-export const searchSuggestions = [
-  { id: 'family', text: 'Family' },
-  { id: 'children', text: 'Children' },
-  { id: 'business', text: 'Business' },
-  { id: 'wedding', text: 'Wedding' },
-  { id: 'celebration', text: 'Celebration' },
-  { id: 'culture', text: 'Culture' },
-]
-
 /** Scenario tails appended to whatever the user asked for, to suggest a next
  *  generation. Each must read naturally straight after a noun phrase. */
 export const promptScenarios = [

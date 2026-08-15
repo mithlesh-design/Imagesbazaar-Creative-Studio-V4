@@ -3,19 +3,14 @@ import Header from '../components/Header'
 import MobileMenu from '../components/MobileMenu'
 import HeroPrompt from '../components/HeroPrompt'
 import VoiceButton from '../components/VoiceButton'
-import ModeToggle from '../components/ModeToggle'
-import SearchPanel from '../components/SearchPanel'
+import SiteSearch from '../components/SiteSearch'
 import ImageSearchModal from '../components/ImageSearchModal'
 import CollectionCard from '../components/CollectionCard'
 import Footer from '../components/Footer'
 import SupportButton from '../components/SupportButton'
 import { useStudioActions } from '../studio/StudioProvider'
 import { useSearch } from '../hooks/useSearch'
-import {
-  followUpPrompts,
-  heroSuggestions,
-  searchSuggestions,
-} from '../data/promptSuggestions'
+import { followUpPrompts } from '../data/promptSuggestions'
 import './Home.css'
 
 export default function Home({ onNavigateStudio }) {
@@ -23,42 +18,47 @@ export default function Home({ onNavigateStudio }) {
   const studio = useStudioActions()
   const [menuOpen, setMenuOpen] = useState(false)
   const [imageSearchOpen, setImageSearchOpen] = useState(false)
-  const [mode, setMode] = useState('search')
+
+  /* Two inputs are on screen at once now, so they cannot share the hook's
+     `query` — typing in one would rewrite the other. Each owns its text, and
+     the hook's query is set at submit purely so the results heading can quote
+     whichever one ran. */
+  const [prompt, setPrompt] = useState('')
+  const [siteQuery, setSiteQuery] = useState('')
 
   const inputRef = useRef(null)
+  const searchRef = useRef(null)
   const resultsRef = useRef(null)
 
-  // One button per mode, two different actions behind it: a library lookup and
-  // a generation. They differ in more than labelling, so they are not one call
-  // with a flag.
+  /** The studio's prompt box: generate ten variations. */
   const submit = useCallback(() => {
-    if (mode === 'search') search.search()
-    else search.generate()
-  }, [mode, search])
+    search.setQuery(prompt)
+    search.generate(prompt)
+  }, [prompt, search])
 
-  /** A search chip: fill the field and run it in one gesture. */
-  const runSearch = useCallback(
-    (text) => {
-      search.setQuery(text)
-      search.search(text)
-    },
-    [search]
-  )
+  /** The site search bar above the studio: a library lookup. */
+  const runSearch = useCallback(() => {
+    search.setQuery(siteQuery)
+    search.search(siteQuery)
+  }, [siteQuery, search])
 
   /** A follow-up chip under the generated grid: swap the prompt and re-run. */
   const regenerate = useCallback(
     (text) => {
+      setPrompt(text)
       search.setQuery(text)
       search.generate(text)
     },
     [search]
   )
 
+  /** A category from the mobile menu searches the library. */
   const useSuggestion = useCallback(
     (text) => {
       setMenuOpen(false)
+      setSiteQuery(text)
       search.setQuery(text)
-      inputRef.current?.focus()
+      search.search(text)
     },
     [search]
   )
@@ -87,8 +87,8 @@ export default function Home({ onNavigateStudio }) {
     }
   }, [search.status])
 
-  // `source` rather than `mode`: flipping the toggle must not relabel results
-  // that are already on screen.
+  // Which action produced these results — a lookup or a generation. The two
+  // present differently, and only generation has anything to animate.
   const isSearch = search.source === 'search'
   const shownResults = isSearch ? search.results : search.results.slice(0, 10)
   const followUps = isSearch ? [] : followUpPrompts(search.query)
@@ -108,74 +108,30 @@ export default function Home({ onNavigateStudio }) {
       />
 
       <main id="main" className="home-page__main">
+        {/* Site-wide image search, above the studio and independent of it. */}
+        <SiteSearch
+          ref={searchRef}
+          value={siteQuery}
+          onChange={setSiteQuery}
+          onSubmit={runSearch}
+          onSearchByImage={() => setImageSearchOpen(true)}
+        />
+
         <section className="hero">
-          <h1 className="hero__title">Every image India can imagine</h1>
+          <h1 className="hero__title">Smart Creative Studio</h1>
           <p className="hero__sub">
-            {mode === 'search'
-              ? 'Search over 100,000 authentic Indian photographs, ready to edit and licence.'
-              : 'Describe the photograph you need — we’ll generate ten authentic Indian variations, ready to edit and licence.'}
+            Describe the photograph you need — we’ll generate ten authentic Indian
+            variations, ready to edit and licence.
           </p>
 
-          <ModeToggle mode={mode} onChange={setMode} />
-
-          {/* `key` on the panel restarts the entry animation on every switch —
-              without it React reuses the element and the motion plays once. */}
-          <div className="hero__panel" key={mode} role="tabpanel" id={`panel-${mode}`} aria-labelledby={`mode-${mode}`}>
-            {mode === 'search' ? (
-              <>
-              <SearchPanel
-                ref={inputRef}
-                value={search.query}
-                onChange={search.setQuery}
-                onSubmit={submit}
-                onSearchByImage={() => setImageSearchOpen(true)}
-                busy={search.status === 'loading'}
-              />
-
-              <ul className="hero__suggestions">
-                {searchSuggestions.map((s) => (
-                  <li key={s.id}>
-                    <button
-                      type="button"
-                      className="hero__suggestion hero__suggestion--search"
-                      onClick={() => runSearch(s.text)}
-                    >
-                      {s.text}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-              </>
-            ) : (
-              <>
-                <HeroPrompt
-                  ref={inputRef}
-                  value={search.query}
-                  onChange={search.setQuery}
-                  onSubmit={submit}
-                  busy={search.status === 'loading'}
-                  voiceSlot={<VoiceButton onTranscript={search.setQuery} />}
-                />
-
-                <ul className="hero__suggestions">
-                  {heroSuggestions.map((s) => (
-                    <li key={s.id}>
-                      <button
-                        type="button"
-                        className="hero__suggestion"
-                        onClick={() => useSuggestion(s.text)}
-                      >
-                        <span className="hero__suggestion-glyph" aria-hidden="true">
-                          ✦
-                        </span>
-                        <span className="hero__suggestion-text">{s.text}</span>
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              </>
-            )}
-          </div>
+          <HeroPrompt
+            ref={inputRef}
+            value={prompt}
+            onChange={setPrompt}
+            onSubmit={submit}
+            busy={search.status === 'loading'}
+            voiceSlot={<VoiceButton onTranscript={setPrompt} />}
+          />
         </section>
 
         <div ref={resultsRef}>
@@ -232,9 +188,8 @@ export default function Home({ onNavigateStudio }) {
                     </h2>
                     <p className="search-results__sub">
                       {isSearch
-                        ? `${shownResults.length} ${
-                            shownResults.length === 1 ? 'image' : 'images'
-                          } for “${search.query}” — pick one to open it in the Creative Studio.`
+                        ? `${shownResults.length} ${shownResults.length === 1 ? 'image' : 'images'
+                        } for “${search.query}” — pick one to open it in the Creative Studio.`
                         : 'Pick one to open it in the Creative Studio.'}
                     </p>
                   </div>

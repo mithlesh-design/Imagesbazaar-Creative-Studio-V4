@@ -1,0 +1,108 @@
+/* Site-wide image search. Squared off rather than pilled, and outlined rather
+   than filled — it is page furniture sitting directly under the header, not the
+   studio's primary input, and it should not compete with the prompt box below
+   it for the eye. */
+.sitesearch {
+  padding-top: var(--space-5);
+}
+
+.sitesearch__bar {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  max-width: var(--search-max);
+  min-height: 72px;
+  margin-inline: auto;
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  transition: border-color var(--transition-fast);
+}
+
+.sitesearch__bar:focus-within {
+  border-color: var(--color-border-strong);
+}
+
+.sitesearch__icon {
+  flex: none;
+  align-self: center;
+  margin-inline: var(--space-5) var(--space-4);
+  color: var(--color-text-primary);
+}
+
+.sitesearch__input {
+  flex: 1;
+  min-width: 0;
+  align-self: stretch;
+  padding: 0;
+  appearance: none;
+  background: none;
+  border: none;
+  outline: none;
+  font-size: var(--text-md);
+  color: var(--color-text-primary);
+}
+
+.sitesearch__input::placeholder {
+  color: var(--color-text-secondary);
+}
+
+.sitesearch__input::-webkit-search-decoration,
+.sitesearch__input::-webkit-search-cancel-button {
+  appearance: none;
+}
+
+/* Inset from both ends so it reads as a separator between two zones rather
+   than a second border. */
+.sitesearch__divider {
+  flex: none;
+  width: 1px;
+  margin-block: var(--space-3);
+  background: var(--color-border-light);
+}
+
+/* Icon over label, matching the reference. The whole stack is one target. */
+.sitesearch__byimage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  flex: none;
+  min-width: 116px;
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--text-2xs);
+  line-height: 1.2;
+  color: var(--color-text-primary);
+  text-align: center;
+  transition: color var(--transition-fast), background-color var(--transition-fast);
+}
+
+.sitesearch__byimage:hover {
+  background: var(--color-surface);
+}
+
+@media (max-width: 639px) {
+  .sitesearch__bar {
+    min-height: 60px;
+  }
+
+  .sitesearch__icon {
+    margin-inline: var(--space-4) var(--space-3);
+  }
+
+  .sitesearch__input {
+    font-size: var(--text-base);
+  }
+
+  /* The label would take a third of a phone's width. The icon keeps the
+     44px target and the accessible name still reads "Search by image". */
+  .sitesearch__byimage {
+    min-width: 56px;
+    padding-inline: var(--space-3);
+  }
+
+  .sitesearch__byimage span {
+    display: none;
+  }
+}

@@ -101,6 +101,9 @@
   --page-max: 100%;
   --page-pad: var(--space-5); /* 24px, at every breakpoint */
   --search-max: 1020px;
+  /* The site search bar's full vertical cost — its own top padding plus the bar
+     — so the hero below it can subtract it from the first screen. */
+  --sitesearch-h: 96px;
   --header-h: 64px;
   --z-header: 20;
   --z-dropdown: 40;
@@ -166,6 +169,14 @@
 @media (min-width: 640px) {
   :root {
     --header-h: 68px;
+  }
+}
+
+/* Below 640px the bar itself shrinks to 60px (see SiteSearch.css), so the
+   budget it costs the hero shrinks with it. */
+@media (max-width: 639px) {
+  :root {
+    --sitesearch-h: 84px;
   }
 }
 
