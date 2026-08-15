@@ -120,8 +120,9 @@ export default function Home({ onNavigateStudio }) {
         <section className="hero">
           <h1 className="hero__title">Smart Creative Studio</h1>
           <p className="hero__sub">
-            Describe the photograph you need — we’ll generate ten authentic Indian
-            variations, ready to edit and licence.
+            Provide a detailed campaign brief, specifying the brand and product or
+            service, and we will generate four unique authentic Indian variants for
+            your campaign.
           </p>
 
           <HeroPrompt

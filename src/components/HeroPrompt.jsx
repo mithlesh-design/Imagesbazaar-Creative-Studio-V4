@@ -61,8 +61,8 @@ const HeroPrompt = forwardRef(function HeroPrompt(
         value={value}
         onChange={(e) => onChange(e.target.value)}
         onKeyDown={onKeyDown}
-        placeholder="Describe the image you need…"
-        aria-label="Describe the image you need"
+        placeholder="Describe your campaign vision, target brand, and specific product"
+        aria-label="Describe your campaign vision, target brand, and specific product"
         rows={1}
       />
 
