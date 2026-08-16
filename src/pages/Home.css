@@ -187,51 +187,6 @@
   background: var(--color-accent-hover);
 }
 
-/* Suggested prompts, under the generated grid. A hairline above rather than a
-   card around: it is a continuation of the results, not a separate module. */
-/* The rule sits a block's distance below the grid; the title sits a group's
-   distance below the rule. */
-.followups {
-  margin-top: var(--flow-block);
-  padding-top: var(--flow-group);
-  border-top: 1px solid var(--color-border-light);
-}
-
-.followups__title {
-  margin-bottom: var(--flow-group);
-  font-size: var(--text-xs);
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--color-text-muted);
-}
-
-.followups__list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-}
-
-.followups__chip {
-  display: inline-flex;
-  align-items: center;
-  min-height: 44px;
-  padding: 0 var(--space-5);
-  font-size: var(--text-base);
-  color: var(--color-text-secondary);
-  background: var(--color-white);
-  border: 1px solid var(--color-border-light);
-  border-radius: var(--radius-pill);
-  transition: background-color var(--transition-fast), border-color var(--transition-fast),
-    color var(--transition-fast);
-}
-
-.followups__chip:hover {
-  color: var(--color-text-primary);
-  background: var(--color-hover);
-  border-color: var(--color-border);
-}
-
 /* Premium Generation Loading State */
 .generation-loading {
   padding-bottom: var(--space-8);

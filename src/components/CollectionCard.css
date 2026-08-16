@@ -17,6 +17,12 @@
   position: relative;
 }
 
+/* The scrim exists only to keep the title legible. With no title it is just
+   decoration darkening the bottom of every picture, so it goes with it. */
+.card__button--bare .card__media::after {
+  content: none;
+}
+
 /* Guarantees the title's contrast regardless of what is in the frame.
    The photographs vary too much for a text shadow to be reliable. */
 .card__media::after {

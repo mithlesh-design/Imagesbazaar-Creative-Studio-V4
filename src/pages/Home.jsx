@@ -10,7 +10,6 @@ import Footer from '../components/Footer'
 import SupportButton from '../components/SupportButton'
 import { useStudioActions } from '../studio/StudioProvider'
 import { useSearch } from '../hooks/useSearch'
-import { followUpPrompts } from '../data/promptSuggestions'
 import './Home.css'
 
 /** How many variants a generation produces. The subheading promises this
@@ -47,16 +46,6 @@ export default function Home({ onNavigateStudio }) {
     search.setQuery(siteQuery)
     search.search(siteQuery)
   }, [siteQuery, search])
-
-  /** A follow-up chip under the generated grid: swap the prompt and re-run. */
-  const regenerate = useCallback(
-    (text) => {
-      setPrompt(text)
-      search.setQuery(text)
-      search.generate(text)
-    },
-    [search]
-  )
 
   /** A category from the mobile menu searches the library. */
   const useSuggestion = useCallback(
@@ -97,7 +86,6 @@ export default function Home({ onNavigateStudio }) {
   // present differently, and only generation has anything to animate.
   const isSearch = search.source === 'search'
   const shownResults = isSearch ? search.results : search.results.slice(0, VARIANT_COUNT)
-  const followUps = isSearch ? [] : followUpPrompts(search.query)
 
   return (
     <div className="home-page">
@@ -208,30 +196,10 @@ export default function Home({ onNavigateStudio }) {
                         collection={item.collection}
                         onSelect={selectImage}
                         priority={i < 5}
+                        showTitle={isSearch}
                       />
                     ))}
                   </ul>
-
-                  {/* Generate only: where next, having seen these ten. Search
-                      users already have a query box and chips above. */}
-                  {!isSearch && followUps.length > 0 && (
-                    <div className="followups">
-                      <h3 className="followups__title">Suggested prompts</h3>
-                      <ul className="followups__list">
-                        {followUps.map((s) => (
-                          <li key={s.id}>
-                            <button
-                              type="button"
-                              className="followups__chip"
-                              onClick={() => regenerate(s.text)}
-                            >
-                              {s.text}
-                            </button>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
                 </div>
               )}
             </section>
