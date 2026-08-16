@@ -28,7 +28,11 @@
   outline: none;
   resize: none;
   background: none;
-  font-size: var(--text-lg);
+  /* 16px, down from 20px. The placeholder is a full sentence now, and display-
+     sized type made it read as a headline rather than a hint. 16px is also the
+     floor: iOS Safari zooms the page when a focused field is under 16px, so
+     going smaller would trade a cosmetic gain for a jarring zoom on every tap. */
+  font-size: var(--text-md);
   line-height: 1.5;
   color: var(--color-text-primary);
 }
@@ -183,16 +187,11 @@
    so hiding the label costs nothing to a screen reader. */
 @media (max-width: 767px) {
   .heroprompt {
-    /* Tall enough that the placeholder — five lines at this width — is not cut
-       off mid-sentence. A truncated placeholder is how the old search bar read
-       "Explain what kind of ir"; sizing the field to its own prompt text avoids
-       repeating it. */
-    min-height: 232px;
+    /* Sized to its own placeholder — four lines at 16px on a 360px screen —
+       so it is never cut off mid-sentence. A truncated placeholder is how the
+       old search bar came to read "Explain what kind of ir". */
+    min-height: 196px;
     padding: var(--space-4);
-  }
-
-  .heroprompt__input {
-    font-size: var(--text-md);
   }
 
   .heroprompt__pill {
