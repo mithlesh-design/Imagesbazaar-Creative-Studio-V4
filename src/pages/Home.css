@@ -26,13 +26,11 @@
   /* Asymmetric on purpose. `justify-content: center` centres inside the content
      box, so a heavier bottom padding lifts the composition by half the
      difference — a constant optical lift at every viewport height, instead of
-     the block sitting dead centre and reading as marooned. */
-  padding: var(--flow-section) var(--page-pad) calc(var(--flow-section) * 1.5);
+     the block sitting dead centre and reading as marooned. The lift comes from
+     the difference, not the absolute size, which is why 48/96 buys the same
+     24px lift as 96/144 while leaving room for the taller field. */
+  padding: var(--flow-block) var(--page-pad) calc(var(--flow-block) * 2);
   text-align: center;
-}
-
-.hero__sub {
-  margin-top: var(--flow-related);
 }
 
 .hero > .heroprompt {
@@ -48,25 +46,25 @@
 }
 
 .hero__sub {
+  margin-top: var(--flow-related);
   max-width: 54ch;
   font-size: var(--text-md);
   line-height: 1.5;
   color: var(--color-text-secondary);
 }
 
-/* Laptop-class heights — 768 and 720 — where generate mode is the tall panel
-   and clears the fold by only ~10px. Give the space back from the field rather
-   than shrinking the headline, which at these widths is still large type doing
-   real work. Extends the existing short-viewport behaviour below rather than
-   introducing a new idea. */
+/* The field yields height before the headline or the rhythm does — it is the
+   one element with slack, and a 200px brief field is still a generous one. */
 @media (max-height: 820px) {
-  /* Section-sized padding does not fit a 768 or 720 tall screen. Step the
-     hero's own padding down a tier while holding the same 1.5x ratio, so the
-     optical lift survives the compression — it just becomes 24px instead
-     of 48px. */
+  .heroprompt {
+    min-height: 200px;
+  }
+}
+
+@media (max-height: 760px) {
   .hero {
-    padding-top: var(--flow-block);
-    padding-bottom: calc(var(--flow-block) * 1.5);
+    padding-top: var(--flow-group);
+    padding-bottom: var(--flow-block);
   }
 
   .heroprompt {

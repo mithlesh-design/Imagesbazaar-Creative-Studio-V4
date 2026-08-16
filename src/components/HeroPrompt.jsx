@@ -1,8 +1,14 @@
 import { forwardRef, useRef, useState } from 'react'
-import { ArrowUp, FileText, ImagePlus, Link2, X } from 'lucide-react'
+import { ArrowUp, FileText, ImagePlus, Link2, Paperclip, X } from 'lucide-react'
+import ReferenceLinksModal from './ReferenceLinksModal'
 import './HeroPrompt.css'
 
 const REF_ICON = { image: ImagePlus, pdf: FileText, link: Link2 }
+
+/** One picker for both kinds — the split into separate image and PDF buttons
+ *  made the user classify the file before choosing it, which the file dialog
+ *  already does. */
+const ACCEPT = 'image/*,application/pdf'
 
 /**
  * The hero's prompt box. Structure follows the reference pattern: a tall field
@@ -15,31 +21,29 @@ const HeroPrompt = forwardRef(function HeroPrompt(
   { value, onChange, onSubmit, busy = false, voiceSlot = null },
   ref
 ) {
-  const imgInputRef = useRef(null)
-  const pdfInputRef = useRef(null)
+  const fileInputRef = useRef(null)
   const nextRefId = useRef(0)
   const [references, setReferences] = useState([])
+  const [linksOpen, setLinksOpen] = useState(false)
 
-  const addLink = () => {
-    const url = window.prompt('Paste a reference URL')
-    if (!url?.trim()) return
-    let name = url.trim()
-    try {
-      const u = new URL(name)
-      name = u.hostname.replace(/^www\./, '') + u.pathname
-    } catch {
-      /* keep the raw text as the label */
-    }
-    setReferences((r) => [...r, { id: `link-${nextRefId.current++}-${name}`, type: 'link', name }])
-  }
+  /** Ids come from a monotonic counter, never the array length: removing an
+   *  entry and adding another would otherwise recompute a colliding id, and two
+   *  chips sharing a React key makes removal hit the wrong one. */
+  const attach = (items) =>
+    setReferences((r) => [
+      ...r,
+      ...items.map((it) => ({ ...it, id: `${it.type}-${nextRefId.current++}-${it.name}` })),
+    ])
 
-  const addFile = (type) => (e) => {
-    const file = e.target.files?.[0]
-    if (file) {
-      setReferences((r) => [
-        ...r,
-        { id: `${type}-${nextRefId.current++}-${file.name}`, type, name: file.name },
-      ])
+  const addFiles = (e) => {
+    const files = [...(e.target.files ?? [])]
+    if (files.length) {
+      attach(
+        files.map((f) => ({
+          type: f.type === 'application/pdf' ? 'pdf' : 'image',
+          name: f.name,
+        }))
+      )
     }
     e.target.value = ''
   }
@@ -72,7 +76,8 @@ const HeroPrompt = forwardRef(function HeroPrompt(
             const Icon = REF_ICON[r.type] ?? Link2
             return (
               <li className="heroprompt__ref" key={r.id}>
-                <Icon size={13} aria-hidden="true" />
+                <Icon size={12} aria-hidden="true" />
+                {r.kind && <span className="heroprompt__ref-kind">{r.kind}</span>}
                 <span className="heroprompt__ref-name">{r.name}</span>
                 <button
                   type="button"
@@ -80,7 +85,7 @@ const HeroPrompt = forwardRef(function HeroPrompt(
                   onClick={() => setReferences((list) => list.filter((x) => x.id !== r.id))}
                   aria-label={`Remove reference ${r.name}`}
                 >
-                  <X size={12} aria-hidden="true" />
+                  <X size={11} aria-hidden="true" />
                 </button>
               </li>
             )
@@ -92,31 +97,22 @@ const HeroPrompt = forwardRef(function HeroPrompt(
         <button
           type="button"
           className="heroprompt__pill"
-          onClick={addLink}
-          aria-label="Add link reference"
+          onClick={() => setLinksOpen(true)}
+          aria-haspopup="dialog"
+          aria-label="Add Reference Links"
         >
-          <Link2 size={15} aria-hidden="true" />
-          <span>Add link</span>
+          <Link2 size={14} aria-hidden="true" />
+          <span>Add Reference Links</span>
         </button>
 
         <button
           type="button"
           className="heroprompt__pill"
-          onClick={() => imgInputRef.current?.click()}
-          aria-label="Upload image reference"
+          onClick={() => fileInputRef.current?.click()}
+          aria-label="Upload Reference Files"
         >
-          <ImagePlus size={15} aria-hidden="true" />
-          <span>Upload image</span>
-        </button>
-
-        <button
-          type="button"
-          className="heroprompt__pill"
-          onClick={() => pdfInputRef.current?.click()}
-          aria-label="Upload PDF reference"
-        >
-          <FileText size={15} aria-hidden="true" />
-          <span>Upload PDF</span>
+          <Paperclip size={14} aria-hidden="true" />
+          <span>Upload Reference Files</span>
         </button>
 
         {voiceSlot}
@@ -133,22 +129,20 @@ const HeroPrompt = forwardRef(function HeroPrompt(
       </div>
 
       <input
-        ref={imgInputRef}
+        ref={fileInputRef}
         type="file"
-        accept="image/*"
+        accept={ACCEPT}
+        multiple
         className="sr-only"
         tabIndex={-1}
-        aria-label="Upload a reference image"
-        onChange={addFile('image')}
+        aria-label="Upload reference files"
+        onChange={addFiles}
       />
-      <input
-        ref={pdfInputRef}
-        type="file"
-        accept="application/pdf"
-        className="sr-only"
-        tabIndex={-1}
-        aria-label="Upload a reference PDF"
-        onChange={addFile('pdf')}
+
+      <ReferenceLinksModal
+        open={linksOpen}
+        onClose={() => setLinksOpen(false)}
+        onAttach={attach}
       />
     </div>
   )

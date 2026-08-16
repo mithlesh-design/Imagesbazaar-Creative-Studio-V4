@@ -5,7 +5,7 @@
   flex-direction: column;
   width: 100%;
   max-width: var(--search-max);
-  min-height: 230px;
+  min-height: 300px;
   padding: var(--space-5);
   text-align: left;
   background: var(--color-white);
@@ -63,8 +63,9 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
-  height: 44px;
-  padding: 0 var(--space-4);
+  position: relative;
+  height: 34px;
+  padding: 0 var(--space-3);
   font-size: var(--text-sm);
   color: var(--color-text-secondary);
   background: var(--color-chip-bg);
@@ -72,6 +73,19 @@
   border-radius: var(--radius-pill);
   white-space: nowrap;
   transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+/* Smaller to look at, unchanged to press. The 34px box keeps the control row
+   quiet; the pseudo-element restores the 44px target the visual box gives up,
+   so shrinking these costs nothing in reachability. */
+.heroprompt__pill::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 44px;
+  transform: translate(-50%, -50%);
 }
 
 .heroprompt__pill:hover {
@@ -83,7 +97,7 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
-  height: 44px;
+  height: 38px;
   margin-left: auto;
   padding: 0 var(--space-5);
   font-size: var(--text-base);
@@ -116,9 +130,9 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
-  max-width: 240px;
-  padding: 4px var(--space-3);
-  font-size: var(--text-xs);
+  max-width: 220px;
+  padding: 3px var(--space-2) 3px var(--space-3);
+  font-size: var(--text-2xs);
   color: var(--color-text-secondary);
   background: var(--color-chip-bg);
   border: 1px solid var(--color-chip-border);
@@ -136,9 +150,9 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
-  margin-right: -6px;
+  width: 18px;
+  height: 18px;
+  margin-right: -2px;
   color: var(--color-text-muted);
   border-radius: var(--radius-pill);
   transition: background-color var(--transition-fast), color var(--transition-fast);
@@ -149,21 +163,25 @@
   background: var(--color-border-light);
 }
 
-/* The chip is 24px tall by design; extend the pressable area to 44px without
-   changing the layout box. */
+/* 28px, not the 44px used elsewhere. These sit inside a chip a few pixels from
+   the next one, and a 44px area would overlap its neighbour — a target that
+   activates the wrong control is worse than a smaller accurate one. 28px still
+   clears WCAG 2.5.8's 24px minimum. */
 .heroprompt__ref-remove::before {
   content: '';
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 44px;
-  height: 44px;
+  width: 28px;
+  height: 28px;
   transform: translate(-50%, -50%);
 }
 
-/* Below 480px the four controls cannot hold their labels without wrapping the
-   row. Icons only, but the 44px target is kept. */
-@media (max-width: 479px) {
+/* The two labels are long — "Upload Reference Files" alone is wider than the
+   old three buttons combined — so they collapse to icons at tablet width rather
+   than waiting for phones. The accessible name is on the button, not the span,
+   so hiding the label costs nothing to a screen reader. */
+@media (max-width: 767px) {
   .heroprompt {
     min-height: 140px;
     padding: var(--space-4);
@@ -174,7 +192,7 @@
   }
 
   .heroprompt__pill {
-    width: 44px;
+    width: 40px;
     padding: 0;
     justify-content: center;
   }
@@ -186,4 +204,12 @@
   .heroprompt__submit {
     padding: 0 var(--space-4);
   }
+}
+
+/* The source of a link, ahead of its shortened URL. Carries the distinction the
+   modal's four fields make, which a bare hostname would lose. */
+.heroprompt__ref-kind {
+  flex: none;
+  font-weight: 600;
+  color: var(--color-text-primary);
 }

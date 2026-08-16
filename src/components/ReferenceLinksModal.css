@@ -1,0 +1,161 @@
+.rlm {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-modal);
+  display: grid;
+  place-items: center;
+  padding: var(--page-pad);
+}
+
+.rlm__backdrop {
+  position: absolute;
+  inset: 0;
+  background: var(--color-overlay);
+}
+
+.rlm__panel {
+  position: relative;
+  width: 100%;
+  max-width: 460px;
+  max-height: calc(100dvh - var(--flow-section));
+  overflow-y: auto;
+  padding: var(--flow-group);
+  background: var(--color-white);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-2xl);
+}
+
+.rlm__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--flow-related);
+}
+
+.rlm__title {
+  font-size: var(--text-lg);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.rlm__close {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  color: var(--color-text-secondary);
+  border-radius: var(--radius-md);
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+/* 32px box, 44px pressable — the visual weight stays light without shrinking
+   the target. Same technique as .cvpanel__icon. */
+.rlm__close::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 44px;
+  height: 44px;
+  transform: translate(-50%, -50%);
+}
+
+.rlm__close:hover {
+  color: var(--color-text-primary);
+  background: var(--color-surface);
+}
+
+.rlm__hint {
+  margin-top: var(--flow-tight);
+  font-size: var(--text-base);
+  color: var(--color-text-secondary);
+}
+
+.rlm__fields {
+  display: grid;
+  gap: var(--flow-group);
+  margin-top: var(--flow-group);
+}
+
+.rlm__field {
+  display: grid;
+  gap: 6px;
+}
+
+.rlm__label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--flow-tight);
+  font-size: var(--text-base);
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.rlm__label svg {
+  color: var(--color-text-muted);
+}
+
+.rlm__input {
+  width: 100%;
+  height: 44px;
+  padding: 0 var(--space-3);
+  font-size: var(--text-md);
+  color: var(--color-text-primary);
+  background: var(--color-surface);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  outline: none;
+  transition: background-color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.rlm__input::placeholder {
+  color: var(--color-text-muted);
+}
+
+.rlm__input:focus {
+  background: var(--color-white);
+  border-color: var(--color-border-strong);
+}
+
+.rlm__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--flow-tight);
+  margin-top: var(--flow-block);
+}
+
+.rlm__cancel,
+.rlm__attach {
+  min-height: 44px;
+  padding: 0 var(--space-5);
+  font-size: var(--text-base);
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.rlm__cancel {
+  color: var(--color-text-secondary);
+}
+
+.rlm__cancel:hover {
+  color: var(--color-text-primary);
+  background: var(--color-surface);
+}
+
+.rlm__attach {
+  color: var(--color-white);
+  background: var(--color-accent);
+}
+
+.rlm__attach:hover:not(:disabled) {
+  background: var(--color-accent-hover);
+}
+
+.rlm__attach:disabled {
+  color: var(--color-text-muted);
+  background: var(--color-surface-secondary);
+  cursor: not-allowed;
+}
