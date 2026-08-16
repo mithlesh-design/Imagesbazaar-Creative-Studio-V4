@@ -54,14 +54,18 @@
 }
 
 /* The field yields height before the headline or the rhythm does — it is the
-   one element with slack, and a 200px brief field is still a generous one. */
-@media (max-height: 820px) {
+   one element with slack, and a 200px brief field is still a generous one.
+   Gated to >=768px because below that the field's height is set by how many
+   lines its placeholder wraps to, not by the viewport: these rules would
+   otherwise win on source order and clip the placeholder mid-sentence on a
+   narrow phone. */
+@media (max-height: 820px) and (min-width: 768px) {
   .heroprompt {
     min-height: 200px;
   }
 }
 
-@media (max-height: 760px) {
+@media (max-height: 760px) and (min-width: 768px) {
   .hero {
     padding-top: var(--flow-group);
     padding-bottom: var(--flow-block);
@@ -76,7 +80,7 @@
    optical lift is preserved by holding the 1.5x ratio between the paddings,
    and `gap` stays 0 so the children's own spacing still carries the
    hierarchy. */
-@media (max-height: 700px) {
+@media (max-height: 700px) and (min-width: 768px) {
   .hero {
     padding-top: var(--flow-group);
     padding-bottom: var(--flow-block);

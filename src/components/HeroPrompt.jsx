@@ -65,8 +65,8 @@ const HeroPrompt = forwardRef(function HeroPrompt(
         value={value}
         onChange={(e) => onChange(e.target.value)}
         onKeyDown={onKeyDown}
-        placeholder="Describe your campaign vision, target brand, and specific product"
-        aria-label="Describe your campaign vision, target brand, and specific product"
+        placeholder="Describe the exact product or service along with the brand name that you want us to create a campaign for?"
+        aria-label="Describe the exact product or service along with the brand name that you want us to create a campaign for?"
         rows={1}
       />
 

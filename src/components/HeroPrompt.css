@@ -183,7 +183,11 @@
    so hiding the label costs nothing to a screen reader. */
 @media (max-width: 767px) {
   .heroprompt {
-    min-height: 140px;
+    /* Tall enough that the placeholder — five lines at this width — is not cut
+       off mid-sentence. A truncated placeholder is how the old search bar read
+       "Explain what kind of ir"; sizing the field to its own prompt text avoids
+       repeating it. */
+    min-height: 232px;
     padding: var(--space-4);
   }
 
