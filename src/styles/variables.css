@@ -43,6 +43,22 @@
   --space-12: 96px;
   --space-13: 120px;
 
+  /* ---- Vertical rhythm ----
+     The gap between two blocks states how related they are, so these are named
+     for the relationship rather than the pixel count. Steps jump by ~1.5–2x on
+     purpose: two tiers four pixels apart read as the same gap and flatten the
+     hierarchy they exist to express — which is what happened here when a
+     section boundary and a heading's own subtitle were both 16px.
+
+     One rule when applying them: a gap is declared once, by one side. Two
+     elements each declaring half of it collapse, and the survivor is invisible
+     to whoever reads the stylesheet next. */
+  --flow-tight: 8px; /* within one component */
+  --flow-related: 12px; /* a heading and its own subtitle */
+  --flow-group: 24px; /* siblings of one group */
+  --flow-block: 48px; /* blocks inside a section */
+  --flow-section: 96px; /* between major sections */
+
   /* ---- Typography ---- */
   --font-sans: 'Manrope', 'Inter', Arial, sans-serif;
 
@@ -101,9 +117,11 @@
   --page-max: 100%;
   --page-pad: var(--space-5); /* 24px, at every breakpoint */
   --search-max: 1020px;
-  /* The site search bar's full vertical cost — its own top padding plus the bar
-     — so the hero below it can subtract it from the first screen. */
-  --sitesearch-h: 96px;
+  /* The site search bar's full vertical cost — its own top padding (--flow-block)
+     plus the bar — so the hero below it can subtract it from the first screen.
+     Kept as a literal because calc() in a min-height chain is harder to read
+     than the number; update it if either input changes. */
+  --sitesearch-h: 120px;
   --header-h: 64px;
   --z-header: 20;
   --z-dropdown: 40;
@@ -174,9 +192,19 @@
 
 /* Below 640px the bar itself shrinks to 60px (see SiteSearch.css), so the
    budget it costs the hero shrinks with it. */
+/* The rhythm compresses on small screens rather than scaling one-for-one: 24px
+   between siblings is a different proportion of a 390px viewport than of a
+   1440px one, and holding the desktop values here is what turned the footer
+   back into half the page. The ratios between tiers are preserved, so the
+   hierarchy reads identically — only the amplitude drops. */
 @media (max-width: 639px) {
   :root {
-    --sitesearch-h: 84px;
+    --flow-group: 20px;
+    --flow-block: 32px;
+    --flow-section: 64px;
+
+    /* 32px padding (--flow-block) + a 60px bar. */
+    --sitesearch-h: 92px;
   }
 }
 

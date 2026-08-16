@@ -3,7 +3,7 @@
    studio's primary input, and it should not compete with the prompt box below
    it for the eye. */
 .sitesearch {
-  padding-top: var(--space-5);
+  padding-top: var(--flow-block);
 }
 
 .sitesearch__bar {

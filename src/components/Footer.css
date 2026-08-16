@@ -1,10 +1,11 @@
 .footer-v2 {
   background-color: var(--color-black);
   color: var(--color-white);
-  /* One step down the 8px scale from --space-8/--space-6 (48px/32px):
-     the desktop vertical rhythm was heavier than the content needs. */
-  padding-top: var(--space-7);
-  padding-bottom: var(--space-5);
+  /* On the shared rhythm scale: a block's distance in, a group's distance out.
+     The footer is the page's last section and should speak the same spacing
+     vocabulary as everything above it. */
+  padding-top: var(--flow-block);
+  padding-bottom: var(--flow-group);
   font-family: inherit;
   position: relative;
 }
@@ -20,14 +21,14 @@
 .footer-v2__top {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 40px;
-  padding-bottom: 40px;
+  gap: var(--flow-block);
+  padding-bottom: var(--flow-block);
 }
 
 @media (min-width: 900px) {
   .footer-v2__top {
     grid-template-columns: 1.2fr 2fr;
-    gap: 60px;
+    gap: var(--flow-section);
   }
 }
 
@@ -35,13 +36,13 @@
 .footer-v2__contact {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: var(--flow-group);
 }
 
 .footer-v2__contact-item {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: var(--flow-related);
   color: var(--color-white);
   font-size: var(--text-md);
 }
@@ -73,20 +74,20 @@
 
 /* Social Buttons */
 .footer-v2__social {
-  margin-top: 12px;
+  margin-top: var(--flow-group);
 }
 
 .footer-v2__social-title {
   font-size: var(--text-md);
   font-weight: 700;
   color: var(--color-white);
-  margin-bottom: 12px;
+  margin-bottom: var(--flow-related);
 }
 
 .footer-v2__social-btns {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--flow-related);
 }
 
 .footer-v2__social-btn {
@@ -111,7 +112,7 @@
 .footer-v2__nav {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 32px;
+  gap: var(--flow-block);
 }
 
 /* Three stacked columns run to ~1400px on a phone. Two-up halves that
@@ -132,7 +133,7 @@
   font-size: var(--text-md);
   font-weight: 700;
   color: var(--color-white);
-  margin-bottom: 20px;
+  margin-bottom: var(--flow-group);
 }
 
 .footer-v2__list {
@@ -164,21 +165,21 @@
 
 /* Bottom Bar */
 .footer-v2__bottom {
-  padding-top: 32px;
+  padding-top: var(--flow-block);
   text-align: center;
 }
 
 .footer-v2__copyright {
   font-size: var(--text-base);
   color: var(--color-border);
-  margin-bottom: 24px;
+  margin-bottom: var(--flow-group);
 }
 
 .footer-v2__sub-bar {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 20px;
+  gap: var(--flow-group);
   justify-content: center;
 }
 
