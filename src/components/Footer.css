@@ -148,17 +148,22 @@
   gap: var(--space-1);
 }
 
-.footer-v2__list a {
+.footer-v2__list a,
+/* Re-opening the walkthrough is an action, not a destination, so it is a button
+   — styled to sit in the column as if it were one of the links. */
+.footer-v2__guide {
   display: inline-flex;
   align-items: center;
   min-height: 44px;
   color: var(--color-border);
   text-decoration: none;
   font-size: var(--text-base);
-  transition: color 0.2s ease;
+  text-align: left;
+  transition: color var(--transition-fast);
 }
 
-.footer-v2__list a:hover {
+.footer-v2__list a:hover,
+.footer-v2__guide:hover {
   color: var(--color-white);
   text-decoration: underline;
 }

@@ -1,0 +1,189 @@
+/* Portalled to body, so it contributes nothing to `.hero`'s children or to the
+   document's scroll height. Fixed and non-interactive by default — only the
+   tooltip takes pointer events back. */
+.herotour {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-tour);
+  pointer-events: none;
+}
+
+/* An open modal outranks the tour (--z-tour sits below --z-modal by design).
+   `visibility` rather than opacity alone: it also removes the tooltip from the
+   accessibility tree and the tab order, so it cannot become a stray tab stop
+   underneath a focus-trapped dialog. */
+.herotour.is-paused {
+  visibility: hidden;
+  opacity: 0;
+}
+
+/* The spotlight is a hole, not a highlight: no background, so the target paints
+   through untouched, and a spread shadow darkens everything else. Spread grows
+   the border-radius with it, so a pill control keeps its pill shape for free.
+
+   100vmax rather than 9999px — provably reaches every edge from any point in the
+   viewport without handing the compositor a 20000px paint rect. */
+.herotour__spot {
+  position: absolute;
+  pointer-events: none;
+  background: none;
+  border-radius: var(--radius-lg);
+  box-shadow:
+    0 0 0 6px var(--tour-halo),
+    0 0 0 7px var(--tour-ring),
+    0 0 0 100vmax var(--tour-scrim);
+}
+
+/* The pills are a 34px box with a ::before restoring a 44px touch target.
+   34 + 6 + 6 = 46, so the lit area matches what is actually pressable. */
+.herotour__spot[data-step='hero-links'],
+.herotour__spot[data-step='hero-files'],
+.herotour__spot[data-step='hero-generate'] {
+  border-radius: var(--radius-pill);
+}
+
+/* Movement is enabled only while changing step — see the is-moving comment in
+   HeroTour.jsx. Zeroed automatically by the prefers-reduced-motion block in
+   globals.css, which is why no local media query is needed. */
+.herotour__spot.is-moving,
+.herotour__tip.is-moving {
+  transition: top var(--dur-slow) var(--ease), left var(--dur-slow) var(--ease),
+    width var(--dur-slow) var(--ease), height var(--dur-slow) var(--ease);
+}
+
+.herotour__tip {
+  position: absolute;
+  width: min(340px, calc(100vw - var(--space-8)));
+  padding: var(--flow-group);
+  pointer-events: auto;
+  text-align: left;
+  background: var(--color-white);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  animation: herotour-in var(--dur-slow) var(--ease) both;
+}
+
+.herotour__tip:focus-visible {
+  outline: 2px solid var(--color-black);
+  outline-offset: 3px;
+}
+
+@keyframes herotour-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Square rotated behind the card, with two of its borders showing — the same
+   trick the studio's tool popover uses, so the two read as one system. */
+.herotour__caret {
+  position: absolute;
+  top: -6px;
+  width: 11px;
+  height: 11px;
+  margin-left: -5px;
+  background: var(--color-white);
+  border-left: 1px solid var(--color-border-light);
+  border-top: 1px solid var(--color-border-light);
+  transform: rotate(45deg);
+}
+
+.herotour__caret.is-below {
+  top: auto;
+  bottom: -6px;
+  border-left: none;
+  border-top: none;
+  border-right: 1px solid var(--color-border-light);
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.herotour__count {
+  font-size: var(--text-2xs);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.herotour__title {
+  margin-top: var(--flow-tight);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--color-text-primary);
+}
+
+.herotour__body {
+  margin-top: var(--flow-related);
+  font-size: var(--text-base);
+  line-height: 1.55;
+  color: var(--color-text-secondary);
+}
+
+.herotour__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--flow-tight);
+  margin-top: var(--flow-group);
+}
+
+.herotour__spacer {
+  flex: 1;
+}
+
+.herotour__skip,
+.herotour__back,
+.herotour__next {
+  min-height: 44px;
+  padding: 0 var(--space-4);
+  font-size: var(--text-base);
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.herotour__skip,
+.herotour__back {
+  color: var(--color-text-secondary);
+}
+
+.herotour__skip:hover,
+.herotour__back:hover {
+  color: var(--color-text-primary);
+  background: var(--color-surface);
+}
+
+.herotour__next {
+  padding-inline: var(--space-5);
+  color: var(--color-white);
+  background: var(--color-accent);
+}
+
+.herotour__next:hover {
+  background: var(--color-accent-hover);
+}
+
+/* Below 640px both target pills are 40px icon squares. A floating card pointing
+   at one of those is fiddly, so the tooltip becomes a sheet and stops pointing. */
+@media (max-width: 640px) {
+  .herotour__tip.is-sheet {
+    top: auto;
+    right: var(--space-4);
+    bottom: var(--space-4);
+    left: var(--space-4);
+    width: auto;
+  }
+
+  /* The controls row sits low on a phone, so a bottom sheet lands on top of the
+     button being described. Move to the top edge in that case. */
+  .herotour__tip.is-sheet-top {
+    top: var(--space-4);
+    bottom: auto;
+  }
+}

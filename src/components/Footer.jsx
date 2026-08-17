@@ -1,7 +1,7 @@
 import { Mail, Phone, MessageCircle, Facebook, Linkedin, Twitter } from 'lucide-react'
 import './Footer.css'
 
-export default function Footer() {
+export default function Footer({ onViewGuide }) {
   return (
     <footer className="footer-v2">
       <div className="container footer-v2__container">
@@ -74,6 +74,13 @@ export default function Footer() {
               <ul className="footer-v2__list">
                 <li><a href="#">Contact Us</a></li>
                 <li><a href="#">Search Tips</a></li>
+                {onViewGuide && (
+                  <li>
+                    <button type="button" className="footer-v2__guide" onClick={onViewGuide}>
+                      View Guide
+                    </button>
+                  </li>
+                )}
                 <li><a href="#">FAQ</a></li>
                 <li><a href="#">Technical</a></li>
               </ul>

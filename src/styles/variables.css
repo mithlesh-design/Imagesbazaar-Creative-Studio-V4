@@ -28,6 +28,19 @@
   --color-error: #b3261e;
   --color-overlay: rgba(0, 0, 0, 0.78);
 
+  /* ---- Walkthrough spotlight ----
+     Not --color-overlay: that is the modal scrim at 0.78, and on a white-first
+     page it turns the walkthrough into a black lightbox — which reads as a
+     blocker, the opposite of a guide you can click straight through.
+
+     0.20 is the middle of a narrow band: past ~0.28 the page reads as modal,
+     below ~0.14 the spotlight stops registering at all. The lit edge is carried
+     by the 1px ring, not by contrast — without it, step one lifts a white field
+     out of a white box and looks like a rendering fault. */
+  --tour-scrim: rgba(23, 23, 23, 0.2);
+  --tour-halo: rgba(255, 255, 255, 0.92);
+  --tour-ring: rgba(23, 23, 23, 0.14);
+
   /* ---- Spacing: 8px base (DESIGN.md §15) ---- */
   --space-1: 4px;
   --space-2: 8px;
@@ -126,6 +139,9 @@
   --z-header: 20;
   --z-dropdown: 40;
   --z-support: 50;
+  /* Below --z-modal on purpose: when a modal opens mid-walkthrough the modal
+     must cover the tour, not the other way round. */
+  --z-tour: 55;
   --z-modal: 60;
   --z-studio: 70;
   --z-studio-dialog: 80;

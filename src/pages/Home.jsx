@@ -8,8 +8,10 @@ import ImageSearchModal from '../components/ImageSearchModal'
 import CollectionCard from '../components/CollectionCard'
 import Footer from '../components/Footer'
 import SupportButton from '../components/SupportButton'
+import HeroTour from '../components/HeroTour'
 import { useStudioActions } from '../studio/StudioProvider'
 import { useSearch } from '../hooks/useSearch'
+import { useHeroTour } from '../hooks/useHeroTour'
 import './Home.css'
 
 /** How many variants a generation produces. The subheading promises this
@@ -34,6 +36,11 @@ export default function Home({ onNavigateStudio }) {
   const inputRef = useRef(null)
   const searchRef = useRef(null)
   const resultsRef = useRef(null)
+
+  /* Ends by putting the cursor where the user must now act. */
+  const tour = useHeroTour({
+    onFinish: () => inputRef.current?.focus(),
+  })
 
   /** The studio's prompt box: generate ten variations. */
   const submit = useCallback(() => {
@@ -81,6 +88,12 @@ export default function Home({ onNavigateStudio }) {
       resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
     }
   }, [search.status])
+
+  /* The user has acted, and the hero is about to scroll off screen — a
+     walkthrough of controls they can no longer see would be worse than none. */
+  useEffect(() => {
+    if (tour.isRunning && search.status !== 'idle') tour.complete()
+  }, [search.status, tour])
 
   // Which action produced these results — a lookup or a generation. The two
   // present differently, and only generation has anything to animate.
@@ -207,8 +220,22 @@ export default function Home({ onNavigateStudio }) {
         </div>
       </main>
 
-      <Footer />
+      <Footer onViewGuide={tour.start} />
       <SupportButton />
+
+      {tour.isRunning && (
+        <HeroTour
+          steps={tour.steps}
+          step={tour.step}
+          spotRect={tour.spotRect}
+          boxRect={tour.boxRect}
+          paused={tour.paused}
+          onNext={tour.next}
+          onBack={tour.back}
+          onSkip={tour.skip}
+          onComplete={tour.complete}
+        />
+      )}
 
       <ImageSearchModal
         open={imageSearchOpen}

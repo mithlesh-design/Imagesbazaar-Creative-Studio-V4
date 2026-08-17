@@ -5,6 +5,7 @@
  */
 import { mkdirSync } from 'node:fs'
 import { chromium } from 'playwright'
+import { TOUR_KEY } from '../src/tour/tourStorage.js'
 
 const BASE = process.env.SHOT_URL ?? 'http://localhost:5173'
 const LABEL = process.argv[2] ?? 'after'
@@ -33,6 +34,16 @@ for (const v of VIEWPORTS) {
     isMobile: v.mobile ?? false,
     hasTouch: v.mobile ?? false,
   })
+  // Each viewport gets a fresh context, so the first-run walkthrough would open
+  // in every screenshot below. Seed it as already seen; the tour has its own
+  // pass at the end of this file with unseeded contexts.
+  await ctx.addInitScript((key) => {
+    try {
+      localStorage.setItem(key, JSON.stringify({ v: 1, outcome: 'completed' }))
+    } catch {
+      /* storage unavailable; the tour treats that as seen anyway */
+    }
+  }, TOUR_KEY)
   const page = await ctx.newPage()
   await page.goto(BASE, { waitUntil: 'networkidle' })
   await page.waitForTimeout(600)
@@ -110,6 +121,121 @@ for (const v of VIEWPORTS) {
     }
   } catch (e) {
     check(false, `${v.name}: studio reachable — ${e.message}`)
+  }
+
+  await ctx.close()
+}
+
+// ---------------------------------------------------------------------------
+// The walkthrough, on clean profiles so it actually opens.
+// ---------------------------------------------------------------------------
+for (const v of VIEWPORTS) {
+  const ctx = await browser.newContext({
+    viewport: { width: v.width, height: v.height },
+    deviceScaleFactor: 2,
+    isMobile: v.mobile ?? false,
+    hasTouch: v.mobile ?? false,
+  })
+  const page = await ctx.newPage()
+
+  try {
+    await page.goto(BASE, { waitUntil: 'networkidle' })
+
+    // The anchor contract. Without this a refactor of HeroPrompt can drop a
+    // data-tour attribute and the walkthrough degrades silently.
+    const anchors = await page.evaluate(() =>
+      ['hero-brief', 'hero-links', 'hero-files', 'hero-generate'].map(
+        (t) => document.querySelectorAll(`[data-tour="${t}"]`).length
+      )
+    )
+    check(
+      anchors.every((n) => n === 1),
+      `${v.name}: all four tour anchors resolve exactly once (got ${anchors.join(',')})`
+    )
+
+    await page.waitForSelector('.herotour__tip', { timeout: 5000 })
+    check(true, `${v.name}: walkthrough opens on a first visit`)
+
+    // The hero arithmetic must still hold WITH the tour open — this is the
+    // assertion that catches a mount inside .hero rather than a portal.
+    const headroom = await page.evaluate(() => {
+      const h = document.querySelector('.hero')
+      const kids = [...h.children]
+      const s = getComputedStyle(h)
+      const content =
+        kids.reduce((a, el) => a + el.getBoundingClientRect().height, 0) +
+        parseFloat(s.rowGap) * (kids.length - 1) +
+        parseFloat(s.paddingTop) +
+        parseFloat(s.paddingBottom)
+      return Math.round(h.clientHeight - content)
+    })
+    check(headroom >= 0, `${v.name}: hero still fits with the tour open (${headroom}px)`)
+
+    // Walk all four steps: spotlight tracks its target, tooltip stays on screen.
+    for (let i = 0; i < 4; i++) {
+      const r = await page.evaluate(() => {
+        const spot = document.querySelector('.herotour__spot')
+        const target = document.querySelector(`[data-tour="${spot.dataset.step}"]`)
+        const s = spot.getBoundingClientRect()
+        const t = target.getBoundingClientRect()
+        const tip = document.querySelector('.herotour__tip').getBoundingClientRect()
+        return {
+          tracks:
+            Math.abs(s.top - t.top) < 1.5 &&
+            Math.abs(s.left - t.left) < 1.5 &&
+            Math.abs(s.width - t.width) < 1.5,
+          onScreen:
+            tip.left >= 0 &&
+            tip.right <= window.innerWidth &&
+            tip.top >= 0 &&
+            tip.bottom <= window.innerHeight,
+        }
+      })
+      check(r.tracks, `${v.name}: step ${i + 1} spotlight tracks its target`)
+      check(r.onScreen, `${v.name}: step ${i + 1} tooltip fully on screen`)
+      await page.screenshot({ path: `${OUT}/tour-step${i + 1}-${v.name}.png` })
+      if (i < 3) {
+        await page.click('.herotour__next')
+        await page.waitForTimeout(420)
+      }
+    }
+
+    // The spotlight is a hole, not a cover: the control underneath stays
+    // clickable. One dropped `pointer-events: none` regresses this and no
+    // screenshot would show it. Generate is skipped — it is legitimately
+    // disabled while the brief is empty.
+    await page.click('.herotour__back')
+    await page.waitForTimeout(300)
+    await page.click('.herotour__back')
+    await page.waitForTimeout(420)
+    for (const t of ['hero-links', 'hero-files']) {
+      const hit = await page.evaluate((sel) => {
+        const r = document.querySelector(`[data-tour="${sel}"]`).getBoundingClientRect()
+        const el = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2)
+        return el?.closest(`[data-tour="${sel}"]`) !== null
+      }, t)
+      check(hit, `${v.name}: ${t} still clickable through the spotlight`)
+    }
+
+    // Finish, then prove it stays gone across a reload in the same profile.
+    await page.click('.herotour__next')
+    await page.waitForTimeout(300)
+    await page.click('.herotour__next')
+    await page.waitForTimeout(420)
+    await page.click('.herotour__next')
+    await page.waitForTimeout(420)
+    check(
+      (await page.$('.herotour__tip')) === null,
+      `${v.name}: walkthrough closes on Start Creating`
+    )
+    await page.reload({ waitUntil: 'networkidle' })
+    await page.waitForTimeout(1400)
+    check(
+      (await page.$('.herotour__tip')) === null,
+      `${v.name}: walkthrough does not return after being completed`
+    )
+  } catch (e) {
+    check(false, `${v.name}: walkthrough — ${e.message}`)
   }
 
   await ctx.close()

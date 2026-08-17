@@ -62,6 +62,7 @@ const HeroPrompt = forwardRef(function HeroPrompt(
       <textarea
         ref={ref}
         className="heroprompt__input"
+        data-tour="hero-brief"
         value={value}
         onChange={(e) => onChange(e.target.value)}
         onKeyDown={onKeyDown}
@@ -97,6 +98,7 @@ const HeroPrompt = forwardRef(function HeroPrompt(
         <button
           type="button"
           className="heroprompt__pill"
+          data-tour="hero-links"
           onClick={() => setLinksOpen(true)}
           aria-haspopup="dialog"
           aria-label="Add Reference Links"
@@ -108,6 +110,7 @@ const HeroPrompt = forwardRef(function HeroPrompt(
         <button
           type="button"
           className="heroprompt__pill"
+          data-tour="hero-files"
           onClick={() => fileInputRef.current?.click()}
           aria-label="Upload Reference Files"
         >
@@ -120,6 +123,7 @@ const HeroPrompt = forwardRef(function HeroPrompt(
         <button
           type="button"
           className="heroprompt__submit"
+          data-tour="hero-generate"
           onClick={onSubmit}
           disabled={!canSubmit}
         >
