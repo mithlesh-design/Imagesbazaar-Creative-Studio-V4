@@ -130,6 +130,11 @@
   --page-max: 100%;
   --page-pad: var(--space-5); /* 24px, at every breakpoint */
   --search-max: 1020px;
+  /* The hero's text column, ~0.6 of --search-max. One declared cap shared by the
+     headline and its subtitle, rather than the 16ch / 54ch they carried before —
+     two `ch` values at two different font sizes that landed 12px apart, which is
+     too close to read as two measures and too far to read as one. */
+  --hero-measure: 620px;
   /* The site search bar's full vertical cost — its own top padding (--flow-block)
      plus the bar — so the hero below it can subtract it from the first screen.
      Kept as a literal because calc() in a min-height chain is harder to read

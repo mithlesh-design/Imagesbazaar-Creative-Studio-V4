@@ -76,14 +76,34 @@ for (const v of VIEWPORTS) {
       const h = document.querySelector('.hero')
       const kids = [...h.children]
       const s = getComputedStyle(h)
+      // Margins are counted deliberately. getBoundingClientRect().height excludes
+      // them, and the hero carries 60px of child margin — so without this term the
+      // script reported 100px of room at 1366x768 where only 40px existed, and a
+      // change could overflow the fold while the gate still looked healthy.
       const content =
-        kids.reduce((a, el) => a + el.getBoundingClientRect().height, 0) +
+        kids.reduce((a, el) => {
+          const m = getComputedStyle(el)
+          return (
+            a +
+            el.getBoundingClientRect().height +
+            parseFloat(m.marginTop) +
+            parseFloat(m.marginBottom)
+          )
+        }, 0) +
         parseFloat(s.rowGap) * (kids.length - 1) +
         parseFloat(s.paddingTop) +
         parseFloat(s.paddingBottom)
       return Math.round(h.clientHeight - content)
     })
     check(headroom >= 0, `${v.name}: studio panel fits the hero (headroom ${headroom}px)`)
+
+    // The band is what gives the prompt card a ground to sit on. A refactor that
+    // drops it would look merely flat rather than broken, so it is asserted.
+    const banded = await page.evaluate(() => {
+      const bg = getComputedStyle(document.querySelector('.hero')).backgroundColor
+      return bg !== 'rgba(0, 0, 0, 0)' && bg !== 'transparent'
+    })
+    check(banded === true, `${v.name}: studio section has its band (got ${banded})`)
 
     // The site search bar sits above the hero and shares the first screen.
     const barVisible = await page.evaluate(() => {
@@ -162,8 +182,20 @@ for (const v of VIEWPORTS) {
       const h = document.querySelector('.hero')
       const kids = [...h.children]
       const s = getComputedStyle(h)
+      // Margins are counted deliberately. getBoundingClientRect().height excludes
+      // them, and the hero carries 60px of child margin — so without this term the
+      // script reported 100px of room at 1366x768 where only 40px existed, and a
+      // change could overflow the fold while the gate still looked healthy.
       const content =
-        kids.reduce((a, el) => a + el.getBoundingClientRect().height, 0) +
+        kids.reduce((a, el) => {
+          const m = getComputedStyle(el)
+          return (
+            a +
+            el.getBoundingClientRect().height +
+            parseFloat(m.marginTop) +
+            parseFloat(m.marginBottom)
+          )
+        }, 0) +
         parseFloat(s.rowGap) * (kids.length - 1) +
         parseFloat(s.paddingTop) +
         parseFloat(s.paddingBottom)
