@@ -11,6 +11,7 @@ import { join } from 'node:path'
 const JS_SET = new Set([
   '--fill-from', // src/studio/components/controls/Slider.jsx:109
   '--fill-to',   // src/studio/components/controls/Slider.jsx:109
+  '--alwayzz-bg', // src/components/AnimatedBackground/AnimatedBackground.jsx:47
 ])
 
 function cssFiles(dir, out = []) {

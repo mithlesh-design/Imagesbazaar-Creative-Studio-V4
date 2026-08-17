@@ -83,6 +83,10 @@ for (const v of VIEWPORTS) {
       const content =
         kids.reduce((a, el) => {
           const m = getComputedStyle(el)
+          // Out-of-flow children take up no space in the column, but still
+          // report a full rect — the hero's animated background layer is
+          // absolutely positioned and would otherwise be counted twice over.
+          if (m.position === 'absolute' || m.position === 'fixed') return a
           return (
             a +
             el.getBoundingClientRect().height +
@@ -189,6 +193,10 @@ for (const v of VIEWPORTS) {
       const content =
         kids.reduce((a, el) => {
           const m = getComputedStyle(el)
+          // Out-of-flow children take up no space in the column, but still
+          // report a full rect — the hero's animated background layer is
+          // absolutely positioned and would otherwise be counted twice over.
+          if (m.position === 'absolute' || m.position === 'fixed') return a
           return (
             a +
             el.getBoundingClientRect().height +

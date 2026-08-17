@@ -135,6 +135,10 @@
      two `ch` values at two different font sizes that landed 12px apart, which is
      too close to read as two measures and too far to read as one. */
   --hero-measure: 620px;
+  /* The animated arcs behind the studio band. Deliberately close to the band
+     itself (#f7f8fa): they are ambient motion, not an element of the design —
+     any more contrast and they compete with the prompt card in front of them. */
+  --hero-line: #e4e7ec;
   /* The site search bar's full vertical cost — its own top padding (--flow-block)
      plus the bar — so the hero below it can subtract it from the first screen.
      Kept as a literal because calc() in a min-height chain is harder to read

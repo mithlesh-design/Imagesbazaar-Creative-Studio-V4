@@ -1,0 +1,153 @@
+@keyframes alwayzz-line-pulse {
+  0% {
+    opacity: 0;
+    transform: scale(1);
+  }
+  15% {
+    opacity: 0.9;
+  }
+  70% {
+    opacity: 0.4;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+}
+
+/* Adapted from the drop-in component: it shipped as a full-page wrapper with
+   `position: relative; min-height: 100vh`, which would have fought the hero's
+   own `calc(100dvh - header - sitesearch)` budget. Here it is a layer behind a
+   section, so it fills its positioned parent instead of claiming a viewport. */
+.alwayzz-bg-root {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background-color: var(--alwayzz-bg, transparent);
+}
+
+/* Background image layer */
+.alwayzz-bg-image {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Optional Overlay */
+.alwayzz-bg-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Curved lines animation container */
+.alwayzz-lines-container {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.alwayzz-lines-side {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 75vh;
+  max-height: 700px;
+  pointer-events: none;
+}
+
+.alwayzz-lines-left {
+  left: 0;
+}
+
+.alwayzz-lines-right {
+  right: 0;
+}
+
+.alwayzz-curved-line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  opacity: 0;
+  animation-name: alwayzz-line-pulse;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  transform-origin: center;
+}
+
+/* Left lines: no left border, radius on right */
+.alwayzz-lines-left .alwayzz-curved-line {
+  left: 0;
+  border-left: none !important;
+  border-top-right-radius: 80%;
+  border-bottom-right-radius: 80%;
+}
+
+/* Right lines: no right border, radius on left */
+.alwayzz-lines-right .alwayzz-curved-line {
+  right: 0;
+  border-right: none !important;
+  border-top-left-radius: 80%;
+  border-bottom-left-radius: 80%;
+}
+
+/* Top horizontal lines for mobile */
+.alwayzz-lines-top-mobile {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  height: 50vh;
+  pointer-events: none;
+}
+
+.alwayzz-lines-top-mobile .alwayzz-curved-line-top {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  border-top: none !important;
+  border-bottom-left-radius: 80%;
+  border-bottom-right-radius: 80%;
+  opacity: 0;
+  animation-name: alwayzz-line-pulse;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  transform-origin: center top;
+}
+
+/* Children content container */
+.alwayzz-bg-content {
+  position: relative;
+  z-index: 3;
+  width: 100%;
+  height: 100%;
+}
+
+/* -------------------------------------------
+   Mobile Breakpoint (<810px)
+------------------------------------------- */
+@media (max-width: 810px) {
+  .alwayzz-bg-image {
+    transform: rotate(90deg) scale(1.4);
+    transform-origin: center center;
+  }
+
+  .alwayzz-lines-side {
+    display: none;
+  }
+
+  .alwayzz-lines-top-mobile {
+    display: block;
+  }
+}

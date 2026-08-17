@@ -44,6 +44,17 @@
      band ends at the hero's edge, leaving results on white: input on tint,
      output on white. */
   background: var(--color-surface);
+  /* Containing block for the animated layer, and a new stacking context so its
+     lines can never escape over the header or the results below. */
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+/* Everything except the background layer sits above it. */
+.hero > *:not(.alwayzz-bg-root) {
+  position: relative;
+  z-index: 1;
 }
 
 .hero > .heroprompt {
