@@ -115,6 +115,12 @@
      active-state emphasis) — a hue with no place in an editorial mono system.
      Same shape and weight as before, just black instead of rose. */
   --shadow-ring: 0 0 0 3px rgba(17, 17, 17, 0.2);
+  /* Focus for fields that carry their own indication on the wrapper. A soft
+     halo for feel; the perceivable part is the border darkening to
+     --color-text-muted, which clears 3:1 against white where the resting
+     --color-border-light does not. Removing an outline without replacing what
+     it did is how a light theme quietly loses its keyboard users. */
+  --focus-ring: 0 0 0 4px rgba(17, 17, 17, 0.05);
   --shadow-glow: 0 4px 14px rgba(17, 17, 17, 0.3);
 
   /* ---- Motion (DESIGN.md §17: 150–350ms, ease-out) ---- */

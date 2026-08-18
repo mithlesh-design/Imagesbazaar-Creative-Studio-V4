@@ -20,7 +20,13 @@
 }
 
 .sitesearch__bar:focus-within {
-  border-color: var(--color-border-strong);
+  border-color: var(--color-text-muted);
+  box-shadow: var(--focus-ring);
+}
+
+.sitesearch__input:focus,
+.sitesearch__input:focus-visible {
+  outline: none;
 }
 
 .sitesearch__icon {

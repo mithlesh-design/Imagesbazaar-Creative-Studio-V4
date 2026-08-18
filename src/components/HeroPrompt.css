@@ -15,9 +15,20 @@
   transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
 }
 
+/* The box shows the focus, not the field inside it — a hard stroke around the
+   textarea reads as a browser artefact pasted over the design. The border does
+   the accessible work; the ring and the lift do the feel. */
 .heroprompt:focus-within {
-  border-color: var(--color-border-strong);
-  box-shadow: var(--shadow-lg);
+  border-color: var(--color-text-muted);
+  box-shadow: var(--shadow-lg), var(--focus-ring);
+}
+
+/* Suppressed with a two-class selector so it wins on specificity rather than on
+   import order — the global :focus-visible rule is a single pseudo-class and
+   was beating the plain `outline: none` below. */
+.heroprompt__input:focus,
+.heroprompt__input:focus-visible {
+  outline: none;
 }
 
 .heroprompt__input {

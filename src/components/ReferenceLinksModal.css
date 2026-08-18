@@ -114,9 +114,15 @@
   color: var(--color-text-muted);
 }
 
-.rlm__input:focus {
+/* Same treatment as the fields it was opened from: the input's own border
+   carries the focus, so the global black outline is suppressed here too — with
+   a two-class selector, since :focus-visible would otherwise win on order. */
+.rlm__input:focus,
+.rlm__input:focus-visible {
+  outline: none;
   background: var(--color-white);
-  border-color: var(--color-border-strong);
+  border-color: var(--color-text-muted);
+  box-shadow: var(--focus-ring);
 }
 
 .rlm__actions {
