@@ -31,30 +31,6 @@
      24px lift as 96/144 while leaving room for the taller field. */
   padding: var(--flow-block) var(--page-pad) calc(var(--flow-block) * 2);
   text-align: center;
-  /* The band. Full-bleed by default — .hero has padding-inline but no max-width
-     — and it costs nothing in the fold budget, unlike padding or a wrapper.
-
-     Its job is to give the white prompt card something to sit on: before this,
-     the card was #fff on a transparent .hero on a #fff page on a #fff body, and
-     its entire separation from the page was a 1px hairline 8% off white.
-
-     No top rule. The tone change is the boundary, per the house rule that
-     sections are separated by space rather than lines — and the search bar's own
-     border sits directly above, so a second line there would just be noise. The
-     band ends at the hero's edge, leaving results on white: input on tint,
-     output on white. */
-  background: var(--color-surface);
-  /* Containing block for the animated layer, and a new stacking context so its
-     lines can never escape over the header or the results below. */
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
-}
-
-/* Everything except the background layer sits above it. */
-.hero > *:not(.alwayzz-bg-root) {
-  position: relative;
-  z-index: 1;
 }
 
 .hero > .heroprompt {

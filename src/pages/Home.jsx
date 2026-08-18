@@ -9,7 +9,6 @@ import CollectionCard from '../components/CollectionCard'
 import Footer from '../components/Footer'
 import SupportButton from '../components/SupportButton'
 import HeroTour from '../components/HeroTour'
-import AnimatedBackground from '../components/AnimatedBackground'
 import { useStudioActions } from '../studio/StudioProvider'
 import { useSearch } from '../hooks/useSearch'
 import { useHeroTour } from '../hooks/useHeroTour'
@@ -126,21 +125,6 @@ export default function Home({ onNavigateStudio }) {
         />
 
         <section className="hero">
-          {/* A layer behind the section, not a wrapper around it. Wrapping the
-              content would hand the width contract to this component and change
-              what the layout gate measures. */}
-          <AnimatedBackground
-            /* Transparent, not the component's #ffffff default — that default
-               would paint white over the section's own tint. */
-            backgroundColor="transparent"
-            showImage={false}
-            lineColor="var(--hero-line)"
-            lineBorderWidth={1}
-            lineCount={14}
-            animationDuration={7}
-            staggerDelay={0.35}
-          />
-
           <h1 className="hero__title">Smart Creative Studio</h1>
           <p className="hero__sub">
             Provide a detailed campaign brief, specifying the brand and product or

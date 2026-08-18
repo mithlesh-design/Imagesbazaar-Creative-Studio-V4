@@ -5,8 +5,10 @@
   position: relative;
   z-index: var(--z-header);
   /* Soft blue wash across the top edge, fading to white. */
+  /* No bottom rule: the wash already resolves to white at 100%, so the header
+     dissolves into the page and the two read as one surface. A hairline here
+     would draw the boundary the gradient exists to remove. */
   background: linear-gradient(180deg, #e9f0fd 0%, #f6f9ff 46%, var(--color-white) 100%);
-  border-bottom: 1px solid var(--color-border-light);
 }
 
 .header__inner {
