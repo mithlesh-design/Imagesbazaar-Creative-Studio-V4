@@ -2,8 +2,6 @@
    rather than announcing itself. No amber, no red, no left accent bar: nothing
    has gone wrong, and the editorial mono system has no warning hue to borrow. */
 .briefnotice {
-  display: flex;
-  gap: var(--flow-related);
   width: 100%;
   max-width: var(--search-max);
   margin-top: var(--flow-related);
@@ -26,34 +24,68 @@
   }
 }
 
-.briefnotice__icon {
-  flex: none;
-  margin-top: 1px;
-  color: var(--color-text-muted);
-}
-
-.briefnotice__text {
-  min-width: 0;
-}
-
 .briefnotice__title {
   font-size: var(--text-base);
   font-weight: 600;
   color: var(--color-text-primary);
 }
 
-.briefnotice__body {
-  margin-top: 2px;
-  font-size: var(--text-base);
-  line-height: 1.4;
+.briefnotice__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px var(--flow-group);
+  margin-top: 6px;
+  list-style: none;
+}
+
+.briefnotice__row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  font-size: var(--text-sm);
+  line-height: 1.5;
+}
+
+.briefnotice__mark {
+  flex: none;
+}
+
+/* Satisfied reads as settled, not celebratory — this is a checklist, not a
+   reward. Missing is the same neutral grey: it is a prompt, not a failure. */
+.briefnotice__row.is-yes .briefnotice__mark {
+  color: var(--color-text-primary);
+}
+
+.briefnotice__row.is-no .briefnotice__mark,
+.briefnotice__row.is-maybe .briefnotice__mark {
+  color: var(--color-text-muted);
+}
+
+.briefnotice__label {
+  flex: none;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.briefnotice__row.is-no .briefnotice__label,
+.briefnotice__row.is-maybe .briefnotice__label {
   color: var(--color-text-secondary);
 }
 
-/* The tip is genuinely optional, so it is set one step quieter than the
-   requirement above it — the hierarchy says which one blocks you. */
-.briefnotice__tip {
-  margin-top: 6px;
-  font-size: var(--text-sm);
-  line-height: 1.4;
+.briefnotice__hint {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   color: var(--color-text-muted);
+}
+
+/* The rows stack on a phone: three of them on one line would each truncate to
+   a few characters. */
+@media (max-width: 767px) {
+  .briefnotice__list {
+    flex-direction: column;
+    gap: 2px;
+  }
 }

@@ -10,11 +10,9 @@ import Footer from '../components/Footer'
 import SupportButton from '../components/SupportButton'
 import HeroTour from '../components/HeroTour'
 import AnimatedBackground from '../components/AnimatedBackground'
-import BriefNotice from '../components/BriefNotice'
 import { useStudioActions } from '../studio/StudioProvider'
 import { useSearch } from '../hooks/useSearch'
 import { useHeroTour } from '../hooks/useHeroTour'
-import { isBriefComplete } from '../data/briefNotice'
 import './Home.css'
 
 /** How many variants a generation produces. The subheading promises this
@@ -98,10 +96,6 @@ export default function Home({ onNavigateStudio }) {
     if (tour.isRunning && search.status !== 'idle') tour.complete()
   }, [search.status, tour])
 
-  /* One rule, read by both the submit gate and the notice, so the button and
-     the message can never disagree about whether the brief is ready. */
-  const briefReady = isBriefComplete(prompt)
-
   // Which action produced these results — a lookup or a generation. The two
   // present differently, and only generation has anything to animate.
   const isSearch = search.source === 'search'
@@ -160,11 +154,8 @@ export default function Home({ onNavigateStudio }) {
             onChange={setPrompt}
             onSubmit={submit}
             busy={search.status === 'loading'}
-            ready={briefReady}
             voiceSlot={<VoiceButton onTranscript={setPrompt} />}
           />
-
-          {!briefReady && <BriefNotice />}
         </section>
 
         <div ref={resultsRef}>
