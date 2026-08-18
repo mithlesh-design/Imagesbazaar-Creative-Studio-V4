@@ -86,10 +86,10 @@
    otherwise win on source order and clip the placeholder mid-sentence on a
    narrow phone. */
 @media (max-height: 820px) and (min-width: 768px) {
-  /* The notice is ~95px and appears in the section's opening state, so on a
-     laptop it has to be paid for. The hero's own padding funds most of it —
-     144px down to 72px — which keeps the field generous and the headline at
-     full size. */
+  /* The brief checklist appears once the user is composing, not on arrival, but
+     the section still has to hold it when it does. The hero's own padding funds
+     it — 144px down to 72px — which keeps the field generous and the headline at
+     full size rather than shrinking either. */
   .hero {
     padding-top: var(--flow-group);
     padding-bottom: var(--flow-block);

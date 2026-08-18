@@ -1,4 +1,4 @@
-import { forwardRef, useRef, useState } from "react";
+import { forwardRef, useEffect, useRef, useState } from "react";
 import {
   ArrowUp,
   FileText,
@@ -18,6 +18,11 @@ const REF_ICON = { image: ImagePlus, pdf: FileText, link: Link2 };
  *  made the user classify the file before choosing it, which the file dialog
  *  already does. */
 const ACCEPT = "image/*,application/pdf";
+
+/** How long the brief must sit still before the checklist judges it. Long
+ *  enough to finish typing a word without being interrupted, short enough to
+ *  read as a response to stopping rather than a delayed complaint. */
+const SETTLE_MS = 700;
 
 /**
  * The hero's prompt box. Structure follows the reference pattern: a tall field
@@ -69,7 +74,24 @@ const HeroPrompt = forwardRef(function HeroPrompt(
      reads as missing, and blocking on a guess that wrong would lock people out
      of their own campaign. */
   const canSubmit = signals.ready && !busy;
-  const showNotice = !signals.ready || !signals.brand || !signals.product;
+  /* The checklist waits for two things: that the user has written something,
+     and that they have stopped typing.
+
+     An empty field is not a mistake — telling someone their brand is missing
+     before they have touched the box scolds them for arriving. And re-judging
+     on every keystroke makes it flash in and out while a brand name is
+     half-typed, which reads as the interface arguing mid-word. */
+  const [settled, setSettled] = useState(false);
+
+  useEffect(() => {
+    setSettled(false);
+    if (!value.trim()) return undefined;
+    const t = window.setTimeout(() => setSettled(true), SETTLE_MS);
+    return () => window.clearTimeout(t);
+  }, [value]);
+
+  const showNotice =
+    settled && (!signals.ready || !signals.brand || !signals.product);
 
   const onKeyDown = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
