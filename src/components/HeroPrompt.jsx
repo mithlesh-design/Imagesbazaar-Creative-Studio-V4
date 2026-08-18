@@ -18,7 +18,7 @@ const ACCEPT = 'image/*,application/pdf'
  * SpeechRecognition.
  */
 const HeroPrompt = forwardRef(function HeroPrompt(
-  { value, onChange, onSubmit, busy = false, voiceSlot = null },
+  { value, onChange, onSubmit, busy = false, ready = true, voiceSlot = null },
   ref
 ) {
   const fileInputRef = useRef(null)
@@ -48,7 +48,10 @@ const HeroPrompt = forwardRef(function HeroPrompt(
     e.target.value = ''
   }
 
-  const canSubmit = Boolean(value.trim()) && !busy
+  /* `ready` is the page's brief-completeness rule. Gating here rather than in
+     the parent keeps one gate for both routes into submit — the button and the
+     Enter key — so they can never disagree. */
+  const canSubmit = Boolean(value.trim()) && ready && !busy
 
   const onKeyDown = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {

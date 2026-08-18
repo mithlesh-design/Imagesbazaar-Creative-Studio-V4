@@ -86,12 +86,10 @@
    otherwise win on source order and clip the placeholder mid-sentence on a
    narrow phone. */
 @media (max-height: 820px) and (min-width: 768px) {
-  .heroprompt {
-    min-height: 200px;
-  }
-}
-
-@media (max-height: 760px) and (min-width: 768px) {
+  /* The notice is ~95px and appears in the section's opening state, so on a
+     laptop it has to be paid for. The hero's own padding funds most of it —
+     144px down to 72px — which keeps the field generous and the headline at
+     full size. */
   .hero {
     padding-top: var(--flow-group);
     padding-bottom: var(--flow-block);
@@ -130,6 +128,15 @@
 
   .hero > .heroprompt {
     margin-top: var(--flow-group);
+  }
+}
+
+/* A short phone: the notice wraps to ~150px at this width, more than the
+   standing mobile padding leaves room for. */
+@media (max-width: 639px) and (max-height: 780px) {
+  .hero {
+    padding-top: var(--flow-group);
+    padding-bottom: var(--flow-block);
   }
 }
 

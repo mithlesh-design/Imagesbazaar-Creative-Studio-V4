@@ -1,0 +1,59 @@
+/* A white card on the section's tinted band, matching the prompt box above it
+   rather than announcing itself. No amber, no red, no left accent bar: nothing
+   has gone wrong, and the editorial mono system has no warning hue to borrow. */
+.briefnotice {
+  display: flex;
+  gap: var(--flow-related);
+  width: 100%;
+  max-width: var(--search-max);
+  margin-top: var(--flow-related);
+  padding: var(--space-3) var(--space-4) 14px;
+  text-align: left;
+  background: var(--color-white);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-lg);
+  animation: briefnotice-in var(--dur-base) var(--ease) both;
+}
+
+@keyframes briefnotice-in {
+  from {
+    opacity: 0;
+    transform: translateY(-2px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.briefnotice__icon {
+  flex: none;
+  margin-top: 1px;
+  color: var(--color-text-muted);
+}
+
+.briefnotice__text {
+  min-width: 0;
+}
+
+.briefnotice__title {
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.briefnotice__body {
+  margin-top: 2px;
+  font-size: var(--text-base);
+  line-height: 1.4;
+  color: var(--color-text-secondary);
+}
+
+/* The tip is genuinely optional, so it is set one step quieter than the
+   requirement above it — the hierarchy says which one blocks you. */
+.briefnotice__tip {
+  margin-top: 6px;
+  font-size: var(--text-sm);
+  line-height: 1.4;
+  color: var(--color-text-muted);
+}
