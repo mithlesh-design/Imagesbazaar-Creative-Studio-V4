@@ -129,11 +129,10 @@ export const resolutionTiers = [
   { id: 'large', label: 'Large', scale: 1, note: 'Print and large displays' },
 ]
 
-export const exportFormats = [
-  { id: 'image/jpeg', label: 'JPEG', ext: 'jpg', lossy: true, note: 'Smallest file' },
-  { id: 'image/png', label: 'PNG', ext: 'png', lossy: false, note: 'Lossless' },
-  { id: 'image/webp', label: 'WebP', ext: 'webp', lossy: true, note: 'Best for web' },
-]
+/** Downloads are always JPEG. The format picker was removed from the dialog —
+ *  one decision fewer between the user and the file — so this is the single
+ *  source for the mime type and extension the export uses. */
+export const downloadFormat = { id: 'image/jpeg', ext: 'jpg' }
 
 /** Demo subscription plans shown at the download gate. No payment is taken. */
 export const subscriptionPlans = [

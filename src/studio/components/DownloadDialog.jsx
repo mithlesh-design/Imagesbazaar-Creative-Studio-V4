@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Check, Crown, Download, Loader2, Lock, X } from 'lucide-react'
-import { exportFormats, resolutionTiers, subscriptionPlans } from '../config'
+import { downloadFormat, resolutionTiers, subscriptionPlans } from '../config'
 import { exportSizeFor } from '../cropMath'
 import { useStudio, useStudioActions } from '../StudioProvider'
 import { useFocusTrap } from '../../hooks/useFocusTrap'
@@ -17,7 +17,8 @@ const formatBytes = (bytes) => {
 }
 
 /**
- * Download flow: pick a size and format, then clear the subscription gate.
+ * Download flow: pick a size, then clear the subscription gate. The format is
+ * fixed to JPEG, so quality is always meaningful and always shown.
  *
  * Every size offered is derived from the crop, so nothing is ever upscaled —
  * a 2000×1500 source cropped square can only give 1500×1500, and the list says
@@ -31,7 +32,6 @@ export default function DownloadDialog({ open, onClose, subscription }) {
   const [step, setStep] = useState('resolution') // resolution | plans
   const [working, setWorking] = useState(false)
   const [tierId, setTierId] = useState('medium')
-  const [formatId, setFormatId] = useState('image/jpeg')
   const [quality, setQuality] = useState(92)
   const [estimate, setEstimate] = useState(null)
   const [done, setDone] = useState(null)
@@ -45,7 +45,7 @@ export default function DownloadDialog({ open, onClose, subscription }) {
     setDone(null)
   }, [open])
 
-  const format = exportFormats.find((f) => f.id === formatId) ?? exportFormats[0]
+  const format = downloadFormat
 
   const tiers = resolutionTiers.map((t) => {
     const longEdge = Math.max(200, Math.round((maxLongEdge * t.scale) / 50) * 50)
@@ -154,38 +154,19 @@ export default function DownloadDialog({ open, onClose, subscription }) {
               </ul>
             </section>
 
+            {/* No legend: the slider renders its own visible "Quality" label,
+                and two of them stacked would just repeat the word. */}
             <section className="dl__section">
-              <h3 className="dl__legend">Format</h3>
-              <div className="dl__formats" role="radiogroup" aria-label="File format">
-                {exportFormats.map((f) => (
-                  <button
-                    key={f.id}
-                    type="button"
-                    role="radio"
-                    aria-checked={formatId === f.id}
-                    className={`dl__format${formatId === f.id ? ' is-active' : ''}`}
-                    onClick={() => setFormatId(f.id)}
-                  >
-                    <span className="dl__format-name">{f.label}</span>
-                    <span className="dl__format-note">{f.note}</span>
-                  </button>
-                ))}
-              </div>
-
-              {format.lossy && (
-                <div className="dl__quality">
-                  <Slider
-                    label="Quality"
-                    value={quality}
-                    min={60}
-                    max={100}
-                    step={1}
-                    suffix="%"
-                    reset={92}
-                    onChange={setQuality}
-                  />
-                </div>
-              )}
+              <Slider
+                label="Quality"
+                value={quality}
+                min={60}
+                max={100}
+                step={1}
+                suffix="%"
+                reset={92}
+                onChange={setQuality}
+              />
             </section>
 
             <p className="dl__estimate">

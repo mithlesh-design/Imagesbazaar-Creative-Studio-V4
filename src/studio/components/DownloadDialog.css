@@ -147,46 +147,6 @@
 }
 
 /* ---------- Format ---------- */
-.dl__formats {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 6px;
-}
-
-.dl__format {
-  display: grid;
-  gap: 1px;
-  padding: var(--space-2) var(--space-2);
-  border: 1px solid var(--studio-border);
-  border-radius: var(--radius-md);
-  background: var(--color-white);
-  cursor: pointer;
-  transition: border-color var(--dur-fast) var(--ease), background-color var(--dur-fast) var(--ease);
-}
-
-.dl__format:hover {
-  border-color: var(--studio-border-strong);
-}
-
-.dl__format.is-active {
-  border-color: var(--color-accent);
-  background: var(--studio-accent-soft);
-}
-
-.dl__format-name {
-  font-size: var(--text-sm);
-  font-weight: 700;
-}
-
-.dl__format-note {
-  font-size: var(--text-2xs);
-  color: var(--color-text-secondary);
-}
-
-.dl__quality {
-  margin-top: var(--space-3);
-}
-
 /* ---------- Estimate & gate ---------- */
 .dl__estimate {
   display: flex;
